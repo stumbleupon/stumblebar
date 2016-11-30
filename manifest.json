@@ -1,0 +1,71 @@
+{
+
+  "manifest_version": 2,
+  "name": "DiscoverBar",
+  "version": "1.0",
+
+  "content_scripts": [{
+    "js": ["bar.js"],
+    "css": ["bar.css"],
+    "matches": ["*://*/*"],
+    "all_frames": true,
+		"run_at": "document_start"
+  }],
+
+//  "externally_connectable": true,
+
+  "web_accessible_resources": [
+    "*://*.stumbleupon.com/*",
+    "bar.html",
+    "reset.css",
+    "toolbar.html",
+    "toolbar.js",
+    "toolbar.css"
+  ],
+
+
+  "description": "Discover the best of the webs",
+  "icons": {
+    "48": "icons/discover-48.png"
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "discover@mix.com",
+      "strict_min_version": "45.0"
+    }
+  }, 
+
+  "permissions": [
+    "bookmarks",
+    "tabs",
+    "cookies",
+    "*://*.stumbleupon.com/*",
+    "storage"
+  ], 
+
+  "browser_action": {
+    "default_icon": {
+     "32" : "icons/discover-32.png"
+    },
+    "default_title": "DiscoverBar"
+    //"default_popup": "content/discover.html"
+  },
+
+  "background": {
+    "scripts": [
+			"utils.js",
+			"config.js",
+			"cache.js",
+			"cookie.js",
+			"api.js",
+			"stumbleuponapi.js",
+			"toolbarevent.js",
+			"pageevent.js",
+			"background.js"
+		]
+		//"page": "background.html"
+  }
+
+}
+

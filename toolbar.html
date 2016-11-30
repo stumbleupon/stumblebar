@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="reset.css" type="text/css" />
+    <link rel="stylesheet" href="toolbar.css" type="text/css" />
+    <link rel="prerender"  href="" id="prerender">
+  </head>
+  <body>
+  
+  
+   <div class="toolbar-container">
+<!--
+     <div style="display:none;" class="toolbar" id="toolbar">
+       <span class="toolbar-action" action="stumble" id="stumble">STUMBLE</span>
+       <span class="toolbar-action" id="like">LIKE</span>
+       <span class="toolbar-action" id="share">SHARE</span>
+       <span class="toolbar-action" id="add-to-list">+LIST</span>
+       <span class="toolbar-action" id="dislike">DISLIKE</span>
+       <span class="toolbar-action" id="mode">MODE</span>
+       <span class="toolbar-action" id="info">INFO</span>
+       <span class="toolbar-action" id="user">USER</span>
+     </div>
+-->
+<style>
+.toolbar-action {
+	float: left;
+	font-weight: bold;
+	background-color: gray;
+	display: inline-block;
+	font-size: 10px;
+	margin: 0;
+	vertical-align: middle;
+	width: 25%;
+	height: 20px;
+	outline: 1px solid black;
+}
+.right-most {
+	float: right;
+	border-radius: 0 10px 10px 0;
+	width: 25%;
+}
+.left-most {
+	float: left;
+	border-radius: 10px 0 0 10px;
+	width: 25%;
+}
+.bottom-most {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+.top-most {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.clear {
+	clear: both;
+	width: 100%;
+}
+</style>
+     <div class="toolbar" id="toolbar">
+       <span class="toolbar-action top-most left-most" action="list" id="add-to-list">+LIST</span>
+       <span class="toolbar-action top-most right-most" action="share" id="share">SHARE</span>
+       <span class="toolbar-action" action="dislike" id="dislike">DISLIKE</span>
+       <span class="toolbar-action" action="like" id="like">LIKE</span>
+
+       <span class="toolbar-action clear" style="height: 40px" action="stumble" id="stumble">STUMBLE</span>
+
+       <span class="toolbar-action left-most bottom-most" action="info" id="info">INFO</span>
+       <span class="toolbar-action right-most bottom-most" action="settings" id="settings">SETTINGS</span>
+       <span class="toolbar-action" style="width: 50%;" action="mode" id="mode">MODE</span>
+     </div>
+   </div>
+   
+   <script src="toolbar.js"></script>
+  </body>
+</html>
+

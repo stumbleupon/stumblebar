@@ -1,0 +1,26 @@
+body {
+  font-family: Helvetica, Arial, Sans-Serif;
+/*
+  background-color: #eee;
+  border-bottom: 1px solid black;
+  border: 1px solid black;
+*/
+}
+.toolbar-container {
+  vertical-align: middle;
+}
+.toolbar {
+  vertical-align: middle;
+  text-align: center;
+}
+.toolbar-action {
+  cursor: pointer;
+  font-size: 24px;
+  margin: 0 10px 0 10px;
+  display: block;
+}
+.enabled {
+	-webkit-filter: invert(100%);
+	filter: invert(100%);
+	background-color: green !important;
+}
