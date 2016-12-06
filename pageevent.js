@@ -26,6 +26,10 @@ Page.getUrl = function(tabid) {
 
 Page.urlCache = [];
 
+Page.dirty = function() {
+	Page.urlCache = [];
+}
+
 Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
@@ -46,6 +50,27 @@ Page.note = function(tabid, url) {
 	return Page.tab[tabid].url = url;
 }
 
+Page.urlChange = function(href, tabid) {
+	return ToolbarEvent
+		.getUrlFromPageCache(href)
+		.then(function(url) {
+			return url || ToolbarEvent.api.getUrlByUrl(href);
+		})
+		.then(function(url) {
+			console.log(url);
+			Page.note(tabid, url);
+			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
+			debug('Notify Url Change', tabid, url);
+			if (url.urlid)
+				ToolbarEvent.api.reportStumble([url.urlid]);
+		})
+		.catch(function(error) {
+			Page.note(tabid, { url: href });
+			chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
+		});
+	;
+}
+
 Page.handleTabUpdate = function(tabid, info, tab) {
 	console.log('update', tabid, info, tab);
 
@@ -56,7 +81,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 		// User is changing the URL
 		if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
 			Page.tab[tabid].url = {}
-		ToolbarEvent.urlChange(tab.url, tabid);
+		Page.urlChange(tab.url, tabid);
 	}
 
 	if (info.status == "complete") {

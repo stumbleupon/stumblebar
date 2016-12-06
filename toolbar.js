@@ -59,6 +59,7 @@ var Toolbar = {
 	init: function() {
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar.handleResponse);
+		this.dispatch('urlChange');
 		//Toolbar._events.forEach(function(entry) {
 		//	document.getElementById(entry.id).addEventListener(entry.ev, Toolbar[entry.cb])
 		//});

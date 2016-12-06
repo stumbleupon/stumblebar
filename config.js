@@ -45,7 +45,7 @@ config.endpoint = {
 }
 String.prototype.form = function(map) {
 	var newstr = this;
-	this.match(/:[^a-zA-Z0-9]+/).forEach(function(key) {
+	this.match(/:[-_a-zA-Z0-9]+/).forEach(function(key) {
 		newstr = newstr.replace(key, map[key.slice(1)]);
 	});
 	return newstr;

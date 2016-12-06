@@ -4,9 +4,9 @@ var Toolbar = {
 };
 Toolbar.theme = {
   url: "toolbar.html",
-	iframe: 'position:fixed;bottom:0;left:0;display:block;' +
-        	'width:200px;height:200px;z-index:2147483647;border:0;' +
-					'overflow:hidden;',
+	iframe: 'position:fixed;bottom:69px;left:69px;display:block;' +
+        	'width:288px;height:90px;z-index:2147483647;border:0;' +
+			'overflow:hidden;box-shadow: 0 0 16px #ccc; border-radius:4px; border: 1px solid #aaa;',
   draggable: true,
 }
 
@@ -35,6 +35,7 @@ console.log("NEW IFRAME", location.href);
 		document.adoptNode(iframe);
     iframe.src = chrome.runtime.getURL(Toolbar.theme.url);
     iframe.style.cssText = Toolbar.theme.iframe;
+	iframe.allowTransparency = "true";
     iframe.id = Toolbar.id;
 		if (Toolbar.theme.draggable) {
       iframe.draggable = "true";

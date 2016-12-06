@@ -39,7 +39,7 @@ StumbleUponApi.prototype = {
 	},
 
 	rate: function(urlid, score) {
-		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: 1 }, { method: 'POST' });
+		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' });
 	},
 
 	like: function(urlid) {
@@ -50,7 +50,7 @@ StumbleUponApi.prototype = {
 		return this.rate(urlid, -1);
 	},
 
-	unlike: function(urlid) {
+	unrate: function(urlid) {
 		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' });
 	},
 

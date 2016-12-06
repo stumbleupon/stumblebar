@@ -12,22 +12,6 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	return true;
 }
 
-ToolbarEvent.unrate = function(request, sender) {
-	ToolbarEvent.api
-		.unrate(request.url.urlid)
-		.catch(ToolbarEvent.error);
-	request.url.userRating = { type: 0, subtype: 0 };
-	return Promise.resolve(request);
-}
-
-ToolbarEvent.dislike = function(request, sender) {
-	ToolbarEvent.api
-		.dislike(PageEvent.url.urlid || request.url.urlid)
-		.catch(ToolbarEvent.error);
-	request.url.userRating = { type: -1, subtype: 0 };
-	return Promise.resolve(request);
-}
-
 ToolbarEvent.sanity = function() {
 	return ToolbarEvent.api.cache.get('user')
 		.then(function(user) {
@@ -48,7 +32,54 @@ ToolbarEvent.discover = function(request, sender) {
 	});
 }
 
+ToolbarEvent.dislike = function(request, sender) {
+	if (request.url.userRating.type == -1)
+		return ToolbarEvent.unrate(request, sender);
+
+	ToolbarEvent
+		.sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.resolve(request);
+			}
+			return ToolbarEvent.api.dislike(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		})
+		.catch(ToolbarEvent.error);
+
+	request.url.userRating = { type: -1, subtype: 0 };
+	return Promise.resolve(request);
+}
+
+ToolbarEvent.unrate = function(request, sender) {
+	ToolbarEvent
+		.sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to unrate url that doesn't exist", request);
+				return Promise.resolve(request);
+			}
+			return ToolbarEvent.api.unrate(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		})
+		.catch(ToolbarEvent.error);
+
+	request.url.userRating = { type: 0, subtype: 0 };
+	return Promise.resolve(request);
+}
+
+
 ToolbarEvent.like = function(request, sender) {
+	if (request.url.userRating.type == 1)
+		return ToolbarEvent.unrate(request, sender);
+
 	ToolbarEvent
 		.sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id) })
@@ -57,7 +88,10 @@ ToolbarEvent.like = function(request, sender) {
 				.then(function(url) { return url.urlid; });
 		})
 		.then(function(urlid) { 
-			return ToolbarEvent.api.like(urlid);
+			return ToolbarEvent.api.like(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
 		})
 		.catch(ToolbarEvent.error);
 
@@ -121,24 +155,13 @@ ToolbarEvent.getUrlFromPageCache = function(url) {
 	return Promise.resolve(Page.urlCache[url]);
 }
 
-ToolbarEvent.urlChange = function(href, tabid) {
-	ToolbarEvent
-		.getUrlFromPageCache(href)
-		.then(function(url) {
-			return url || ToolbarEvent.api.getUrlByUrl(href);
-		})
-		.then(function(url) {
-			console.log(url);
-			Page.note(tabid, url);
-			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
-			if (url.urlid)
-				ToolbarEvent.api.reportStumble([url.urlid]);
-		})
-		.catch(function(error) {
-			Page.note(tabid, { url: href });
-			chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
-		});
-	;
+ToolbarEvent.urlChange = function(request, sender) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
+		if (url)
+			Page.urlChange(url, tabs[0].id);
+	});
+	return Promise.resolve(request);
 }
 
 ToolbarEvent.init = function() {

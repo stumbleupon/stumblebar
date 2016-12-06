@@ -20,43 +20,8 @@
        <span class="toolbar-action" id="user">USER</span>
      </div>
 -->
-<style>
-.toolbar-action {
-	float: left;
-	font-weight: bold;
-	background-color: gray;
-	display: inline-block;
-	font-size: 10px;
-	margin: 0;
-	vertical-align: middle;
-	width: 25%;
-	height: 20px;
-	outline: 1px solid black;
-}
-.right-most {
-	float: right;
-	border-radius: 0 10px 10px 0;
-	width: 25%;
-}
-.left-most {
-	float: left;
-	border-radius: 10px 0 0 10px;
-	width: 25%;
-}
-.bottom-most {
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-}
-.top-most {
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
-}
-.clear {
-	clear: both;
-	width: 100%;
-}
-</style>
-     <div class="toolbar" id="toolbar">
+     <div class="toolbar theme-dark" id="toolbar">
+		 <!--
        <span class="toolbar-action top-most left-most" action="list" id="add-to-list">+LIST</span>
        <span class="toolbar-action top-most right-most" action="share" id="share">SHARE</span>
        <span class="toolbar-action" action="dislike" id="dislike">DISLIKE</span>
@@ -67,6 +32,22 @@
        <span class="toolbar-action left-most bottom-most" action="info" id="info">INFO</span>
        <span class="toolbar-action right-most bottom-most" action="settings" id="settings">SETTINGS</span>
        <span class="toolbar-action" style="width: 50%;" action="mode" id="mode">MODE</span>
+		 -->
+		 <div class="toolbar-background"></div>
+		 <div class="toolbar-logo-container">
+			 <div class="toolbar-background-logo"></div>
+			 <span class="toolbar-logo"></span>
+		 </div>
+		<div class="toolbar-mode-container">
+			<span class="toolbar-mode" action="mode">All Interests</span>
+		</div>
+		<div class="toolbar-action-container toolbar-border-top">
+			<span class="toolbar-action action-stumble btn primary-background" action="stumble" id="stumble">Stumble</span>
+			<span class="toolbar-action action-like"    action="like"    id="like"></span>
+			<span class="toolbar-action action-share"   action="share"   id="share"></span>
+			<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
+			<span class="toolbar-action action-extra"   action="extra"   id="extra">...</span>
+		</div>
      </div>
    </div>
    
