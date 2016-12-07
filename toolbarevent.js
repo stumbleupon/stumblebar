@@ -4,6 +4,8 @@ ToolbarEvent.api = new StumbleUponApi(config);
 
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
+	if (!ToolbarEvent[request.action])
+		return false;
 	ToolbarEvent[request.action](request, sender)
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", response);
@@ -30,6 +32,12 @@ ToolbarEvent.discover = function(request, sender) {
 		Page.note(sender.tab.id, url); 
 		return url;
 	});
+}
+
+ToolbarEvent.repos = function(request, sender) {
+	config.rpos = request.data.rpos;
+	request.config = { rpos: config.rpos };
+	return Promise.resolve(request);
 }
 
 ToolbarEvent.dislike = function(request, sender) {
@@ -77,8 +85,8 @@ ToolbarEvent.unrate = function(request, sender) {
 
 
 ToolbarEvent.like = function(request, sender) {
-	if (request.url.userRating.type == 1)
-		return ToolbarEvent.unrate(request, sender);
+	//if (request.url.userRating.type == 1)
+	//	return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
 		.sanity()
@@ -164,7 +172,12 @@ ToolbarEvent.urlChange = function(request, sender) {
 	return Promise.resolve(request);
 }
 
-ToolbarEvent.init = function() {
+ToolbarEvent.init = function(request, sender) {
+	request.config = { rpos: config.rpos };
+	return Promise.resolve(request);
+}
+
+ToolbarEvent._init = function() {
 	ToolbarEvent.ping();
 
 	ToolbarEvent._prerender  = document.createElement('link');
@@ -183,6 +196,6 @@ ToolbarEvent.init = function() {
 }
 
 
-ToolbarEvent.init();
+ToolbarEvent._init();
 ToolbarEvent.api.flush();
 

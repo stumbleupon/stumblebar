@@ -6,7 +6,8 @@ Toolbar.theme = {
   url: "toolbar.html",
 	iframe: 'position:fixed;bottom:69px;left:69px;display:block;' +
         	'width:288px;height:90px;z-index:2147483647;border:0;' +
-			'overflow:hidden;box-shadow: 0 0 16px #000; border-radius:4px; border: 1px solid #aaa;',
+			'overflow:hidden;box-shadow: 0 0 16px -4px #000; border-radius:4px; border: 1px solid #aaa;',
+	css:    '#discoverbar { transition: height .2s,width .2s; }',
   draggable: true,
 }
 
@@ -38,6 +39,13 @@ console.log(		  chrome.extension.onRequest);
     iframe.style.cssText = Toolbar.theme.iframe;
 	iframe.allowTransparency = "true";
     iframe.id = Toolbar.id;
+
+	document.addEventListener("readystatechange", function() {
+		var node = document.createElement('style');
+		node.innerHTML = Toolbar.theme.css;
+		document.body.appendChild(node);
+	});
+
 	var itop = iframe.offsetTop, ileft = iframe.offsetLeft;
 	var dtop = 0, dleft = 0, dstate = false;
 	var mtop = 0, mleft = 0, mstate = false;
@@ -45,6 +53,45 @@ console.log(		  chrome.extension.onRequest);
 	var mpos = { mouse: {} }
 	iframe.style.bottom = 'inherit';
 	iframe.style.top = itop + 'px';
+
+function throttle(fn, threshhold, scope) {
+  threshhold || (threshhold = 250);
+  var last,
+      deferTimer;
+  return function () {
+    var context = scope || this;
+
+    var now = +new Date,
+        args = arguments;
+    if (last && now < last + threshhold) {
+      // hold on to it
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(function () {
+        last = now;
+        fn.apply(context, args);
+      }, threshhold);
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+}
+function debounce(fn, delay) {
+  var timer = null;
+  return function () {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      fn.apply(context, args);
+    }, delay || 250);
+  };
+}
+
+var communicateMouseMove = debounce(function() {
+	if (iframe.contentWindow)
+		iframe.contentWindow.postMessage({action: 'mouse', data: mpos }, extensionOrigin);
+}, 1);
+
 window.top.addEventListener("mousemove", function(event) {
 	if (!(event instanceof MouseEvent) || !event.isTrusted)
 		return;
@@ -52,6 +99,7 @@ window.top.addEventListener("mousemove", function(event) {
 	mpos.mouse.y = event.clientY;
 	mpos.from    = 'window';
 	updateIframePos();
+	communicateMouseMove();
 });
 
 function updateIframePos() {
@@ -70,15 +118,41 @@ function updateIframePos() {
 		}
 		iframe.style.left = Math.min(window.innerWidth  - iframe.offsetWidth , Math.max(0, mpos.iframe.x)) + 'px';
 		iframe.style.top  = Math.min(window.innerHeight - iframe.offsetHeight, Math.max(0, mpos.iframe.y)) + 'px';
+
 		//iframe.style.left = (mpos.mouse.x + (mpos.internal.client.x - dpos.internal.client.x)) + 'px';
 		//iframe.style.top  = (mpos.mouse.y + (mpos.internal.client.y - dpos.internal.client.y)) + 'px';
 		//iframe.style.top  = (mpos.y - dpos.iframe.y + (mpos.y - dpos.mouse.y) + (mpos.internal.client.y - dpos.internal.client.y)) + 'px';
 	}
 }
 
+function handleRepos(rpos, noMargin) {
+	['top', 'left', 'right', 'bottom'].forEach(function(side) {
+		iframe.style[side] = 'initial';
+		iframe.style['margin-' + side] = 'initial';
+	});
+	iframe.style[rpos.vside] = rpos.v + '%';
+	iframe.style[rpos.hside] = rpos.h + '%';
+	if (rpos.v <= 1)
+		iframe.style['margin-' + rpos.vside] = '-3px';
+	if (rpos.h <= 1)
+		iframe.style['margin-' + rpos.hside] = '-3px';
+}
+
 window.top.addEventListener("message", function(event) {
 	if (!event.data || !event.data.type) {
 		return
+	}
+	if (event.data.type == 'drag') {
+		if (dpos.state == 'down') {
+			['top', 'left', 'right', 'bottom'].forEach(function(side) {
+				iframe.style['margin-' + side] = 'initial';
+			});
+			dpos.state = 'drag';
+		}
+		mpos.internal = event.data.message;
+		mpos.from = 'iframe';
+		updateIframePos();
+		return;
 	}
 	if (event.data.type == 'down' && dpos.state != 'down') {
 		dpos = { from: 'iframe', mouse: mpos.mouse, iframe: { y: iframe.offsetTop, x: iframe.offsetLeft }, internal: event.data.message };
@@ -88,45 +162,39 @@ window.top.addEventListener("message", function(event) {
 	}
 	if (event.data.type == 'up') {
 		dpos.state = 'up';
+		var rpos = {
+			v: Math.max((iframe.offsetTop ) / window.innerHeight * 100, 0),
+			h: Math.max((iframe.offsetLeft) / window.innerWidth  * 100, 0),
+			vside: 'top',
+			hside: 'left',
+		}
+		if (rpos.v > 50) {
+			rpos.v = Math.max(100 - rpos.v - 100 * iframe.offsetHeight / window.innerHeight, 0);
+			rpos.vside = 'bottom';
+		}
+		if (rpos.h > 50) {
+			rpos.h = Math.max(100 - rpos.h - 100 * iframe.offsetWidth  / window.innerWidth , 0);
+			rpos.hside = 'right';
+		}
+		handleRepos(rpos);
+		chrome.runtime.sendMessage({action: 'repos', data: { rpos: rpos } }, function(response) {
+		});
+		return;
 	}
-	if (event.data.type == 'drag') {
-		if (dpos.state == 'down')
-			dpos.state = 'drag';
-		mpos.internal = event.data.message;
-		mpos.from = 'iframe';
-		updateIframePos();
+	if (event.data.type == 'redraw') {
+		if (event.data.message.toolbar.h && event.data.message.toolbar.w) {
+			iframe.style.height = event.data.message.toolbar.h + 'px';
+			iframe.style.width  = event.data.message.toolbar.w + 'px';
+			updateIframePos();
+		}
+		if (event.data.message.toolbar.rpos)
+			handleRepos(event.data.message.toolbar.rpos);
+		return;
 	}
-	return;
-		iframe.style.bottom = 'inherit';
-		console.log(event);
-		console.log(event.data.message.screenX, iframe.offsetWidth, event.data.message.screenX - iframe.offsetWidth,event.data.message.screenY - iframe.offsetHeight)
-		iframe.style.top  = (event.data.message.screenX - iframe.offsetWidth ) + 'px';
-		iframe.style.left = (event.data.message.screenY - iframe.offsetHeight) + 'px';
 });
-		if (Toolbar.theme.draggable) {
-      iframe.draggable = "true";
-  		iframe.addEventListener('dragstart', dragStart);
-		}
-		//addEventListener('mousedown', dragAndDropStart);
-		//addEventListener('mouseup', dragAndDropEnd);
 		var tryInjection = function() {
-						//document.body.style.marginTop = '50px';
-						//document.body.style.height = (window.innerHeight - 50) + 'px';
-						if (document.getElementById('discoverbar')) {
-										//clearTimeout(timeout);
-										return;
-						}
-						//document.getElementsByTagName('body')[0].style.marginTop = '50px';
-						//try {
-						//				if (document.body.parentNode.firstChild)
-						//								return document.body.parentNode.insertBefore(iframe, document.body.parentNode.firstChild);
-						//} catch (e) {}
-						//if (document.body.firstChild)
-						//				document.body.insertBefore(iframe, document.body.firstChild);
-						//else
-						//				document.body.appendChild(iframe);
-						document.documentElement.appendChild(iframe);
+			if (!document.getElementById('discoverbar'))
+				document.documentElement.appendChild(iframe);
 		}
-		tryInjection();
-		//var timeout = setInterval(tryInjection, 100);
+		setInterval(tryInjection, 1000);
 }

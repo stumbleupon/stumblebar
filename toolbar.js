@@ -1,9 +1,18 @@
 Element.prototype.addClass = function(name) {
-	this.className += ' ' + name;
+	if (!this.hasClass(name))
+		this.className += ' ' + name;
 }
 
 Element.prototype.removeClass = function(name) {
-	this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ');
+	this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
+}
+
+Element.prototype.hasClass = function(name) {
+	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
+}
+
+Element.prototype.toggleClass = function(name) {
+	this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
 }
 
 var Toolbar = {
@@ -28,24 +37,37 @@ var Toolbar = {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
 		document.querySelector("#dislike").removeClass("enabled");
-		if (url.userRating.type >= 1)
-			document.querySelector("#like").addClass("enabled");
-		if (url.userRating.type <= -1)
-			document.querySelector("#dislike").addClass("enabled");
+		if (url.userRating) {
+			if (url.userRating.type >= 1)
+				document.querySelector("#like").addClass("enabled");
+			if (url.userRating.type <= -1)
+				document.querySelector("#dislike").addClass("enabled");
+		}
+	},
+
+	handleConfig: function(config) {
+		Toolbar.config = config;
+
+		console.log(config);
+		Toolbar.handleRedraw();
 	},
 
 	handleResponse: function(r) {
 		console.log('HANDLE', r);
-		if (r.url) {
+		if (r && r.url) {
 			Toolbar.handleUrl(r.url);
+		}
+		if (r && r.config) {
+			Toolbar.handleConfig(r.config);
 		}
 		return true;
 	},
-	dispatch: function(a) {
+	dispatch: function(a, data) {
 		return new Promise(function (resolve, reject) {
 			chrome.runtime.sendMessage({
 				action: a,
-				url: Toolbar.url || {}
+				url: Toolbar.url || {},
+				data: data || {}
 			}, resolve);
 		});
 	},
@@ -54,13 +76,34 @@ var Toolbar = {
 			Toolbar.mouse.state = null;
 			return;
 		}
-		if (!e.target.getAttribute('action'))
+		var action = e.target.getAttribute('action');
+		if (!action)
 			return;
-		console.log(e.target.getAttribute('action'));
-		Toolbar.dispatch(e.target.getAttribute('action'))
+		console.log(action);
+		Toolbar.dispatch(action)
 			.then(Toolbar.handleResponse);
+		if (action == 'extra') {
+			document.querySelector(".toolbar-social-container").toggleClass("hidden");
+		}
+		if (action == 'settings') {
+			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
+		}
+		if (action.indexOf('theme-') === 0) {
+			var classes = document.querySelector("#toolbar").classList;
+			for (var i = 0; i < classes.length; i++)
+				if (classes[i].indexOf('theme-') === 0)
+					document.querySelector("#toolbar").removeClass(classes[i]);
+			document.querySelector("#toolbar").addClass(action);
+		}
+		Toolbar.handleRedraw();
 	},
 	mouse: {},
+	config: {},
+	state: {
+		lastMouse: 0,
+		canMiniMode: false,
+		inMiniMode: false,
+	},
 	handleMouseDown: function(e) {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
@@ -70,19 +113,65 @@ var Toolbar = {
 			Toolbar.mouse.state = 'drag';
 		if (Toolbar.mouse.state == 'drag')
 			window.top.postMessage({ type: "drag", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+		Toolbar.state.lastMouse = Date.now();
+		Toolbar.state.canMiniMode = false;
+		if (Toolbar.state.inMiniMode)
+			Toolbar.handleNormalMode(e);
+	},
+	tryMiniMode: function(e) {
+		if (Toolbar.state.canMiniMode && !Toolbar.state.inMiniMode && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
+			Toolbar.handleMiniMode(e);
+		}
+	},
+	handleMiniMode: function(e) {
+		Toolbar.state.inMiniMode = true;
+		document.querySelector("#toolbar").addClass("mini-mode");
+		Toolbar.handleRedraw();
+	},
+	handleNormalMode: function(e) {
+		Toolbar.state.inMiniMode = false;
+		document.querySelector("#toolbar").removeClass("mini-mode");
+		Toolbar.handleRedraw();
 	},
 	handleMouseUp: function(e) {
-		Toolbar.mouse = { state: 'up' };
+		if (Toolbar.mouse.state == 'drag')
+			Toolbar.mouse.state = 'up';
+		else
+			Toolbar.mouse.state = null;
 		e.stopPropagation();
 		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
+	handleRedraw: function() {
+		window.top.postMessage({ type: "redraw", message: { toolbar: {
+			w: document.querySelector(".toolbar-section-container").offsetWidth,
+			h: document.querySelector(".toolbar-section-container").offsetHeight,
+			rpos: Toolbar.config.rpos
+		} } }, "*");
+	},
+	handleIframeEvent: function(e) {
+		if (e.data.action == 'mouse')
+			Toolbar.state.canMiniMode = true;
+	},
 	init: function() {
+		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar.handleResponse);
-		this.dispatch('urlChange');
-		document.addEventListener("mousedown", Toolbar.handleMouseDown)
-		document.addEventListener("mousemove", Toolbar.handleMouseMove)
-		document.addEventListener("mouseup",   Toolbar.handleMouseUp)
+		window.addEventListener("message", Toolbar.handleIframeEvent, false);
+
+		// Toolbar initialization
+		Toolbar.dispatch('init')
+			   .then(Toolbar.handleResponse);
+		Toolbar.dispatch('urlChange')
+			   .then(Toolbar.handleResponse);
+		window.setInterval(Toolbar.tryMiniMode, 1000);
+
+		// Drag-n-drop logic
+		document.addEventListener("mousedown", Toolbar.handleMouseDown);
+		document.addEventListener("mousemove", Toolbar.handleMouseMove);
+		document.addEventListener("mouseup",   Toolbar.handleMouseUp);
+
+		// Redraw
+		Toolbar.handleRedraw();
 		//Toolbar._events.forEach(function(entry) {
 		//	document.getElementById(entry.id).addEventListener(entry.ev, Toolbar[entry.cb])
 		//});

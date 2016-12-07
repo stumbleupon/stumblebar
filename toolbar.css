@@ -11,8 +11,13 @@ body {
   vertical-align: middle;
 }
 .toolbar {
-  vertical-align: middle;
-  text-align: left;
+	vertical-align: middle;
+	text-align: left;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.clickable {
+	cursor: pointer;
 }
 /*
 .toolbar-action {
@@ -32,58 +37,28 @@ body {
 	border-top: 1px solid #aaa;
 	width: 100%;
 }
-.toolbar-action-container {
+.toolbar-section {
 	padding: 10px 0;
-	font-size: 0;
+	display: block;
 	white-space: nowrap;
-	display: inline-block;
+	margin-left: 44px;
+}
+.toolbar-action-container {
+	font-size: 0;
+	display: block;
 }
 .toolbar-mode-container {
 	padding: 10px;
 	padding-left: 0px;
 }
-.theme-dark .toolbar-background-logo {
-	background-color: #666;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	opacity: 0.777;
+.toolbar-social-container {
 }
-.theme-dark .toolbar-background {
-	background-color: white;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: -1;
-	opacity: 0.777;
+.hidden {
+	display: none;
 }
-.theme-dark .toolbar-border-bottom {
-	border-bottom: 1px solid #ccc;
-}
-.theme-dark .toolbar-border-top {
-	border-top: 1px solid #ccc;
-}
-.theme-dark .toolbar-logo-container {
-	float: left;
-	width: auto;
+.toolbar-section-container {
 	display: inline-block;
-	position: relative;
-	height: 100%;
-	margin-right: 10px;
-}
-.theme-dark .toolbar-logo {
-	background-image: url("asset/Logo Light.png");
-	margin: 8px;
-	width: 17px;
-	height: 17px;
-	display: inline-block;
-	position: relative;
-	background-repeat: no-repeat;
-	background-position: center; 
+	white-space: nowrap;
 }
 .toolbar-action-container .toolbar-action {
 	width: 34px;
@@ -96,6 +71,12 @@ body {
 	cursor: pointer;
 	content: "";
 	display: inline-block;
+}
+.toolbar-logo-container .toolbar-settings-icon {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	margin: 8px;
 }
 .toolbar-action-container .action-dislike {
 	background-image: url("asset/Icon / Down.png");
@@ -162,3 +143,205 @@ body {
 	clear: both;
 	width: 100%;
 }
+.mini-mode .hide-in-mini-mode {
+	display: none !important;
+}
+.mini-mode .toolbar-border-top {
+	border: 0 !important;
+}
+
+
+
+
+
+/**
+ * Dark Sidebar
+ */
+.theme-dark-sidebar .toolbar-background-logo {
+	background-color: #666;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.777;
+}
+.theme-dark-sidebar .toolbar-background {
+	background-color: white;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	opacity: 0.777;
+}
+.theme-dark-sidebar .toolbar-border-bottom {
+	border-bottom: 1px solid #ccc;
+}
+.theme-dark-sidebar .toolbar-border-top {
+	border-top: 1px solid #ccc;
+}
+.theme-dark-sidebar .toolbar-logo-container {
+	/*
+	position: relative;
+	float: left;
+	*/
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: auto;
+	display: inline-block;
+	height: 100%;
+	margin-right: 10px;
+}
+.theme-dark-sidebar .toolbar-logo {
+	background-image: url("asset/Logo Light.png");
+	padding: 8px;
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.theme-dark-sidebar .toolbar-settings-icon {
+	background-image: url("asset/Settings.png");
+	width: 34px;
+	height: 34px;
+	margin: 0px !important;
+}
+
+
+
+
+/**
+ * All Light
+ */
+.theme-all-light .toolbar-background-logo {
+/*
+	background-color: white;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.777;
+*/
+}
+.theme-all-light .toolbar-background {
+	background-color: white;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	opacity: 0.777;
+}
+.theme-all-light .toolbar-border-bottom {
+	border-bottom: 1px solid #ccc;
+}
+.theme-all-light .toolbar-border-top {
+	border-top: 1px solid #ccc;
+}
+.theme-all-light .toolbar-logo-container {
+	/*
+	position: relative;
+	float: left;
+	*/
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: auto;
+	display: inline-block;
+	height: 100%;
+	margin-right: 10px;
+	border-right: 1px solid #ccc;
+}
+.theme-all-light .toolbar-logo {
+	background-image: url("asset/Logo Dark.png");
+	padding: 8px;
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: center; 
+	background-size: 18px 13px;
+}
+.theme-all-light .toolbar-settings-icon {
+	background-image: url("asset/Settings.png");
+	width: 34px;
+	height: 34px;
+	margin: 0px !important;
+	filter: invert(69%);
+}
+
+
+
+/**
+ * All Dark
+ */
+.theme-all-dark {
+	color: white;
+}
+.theme-all-dark .toolbar-background-logo {
+/*
+	background-color: #444;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.777;
+*/
+}
+.theme-all-dark .toolbar-background {
+	background-color: #111;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	opacity: 0.777;
+}
+.theme-all-dark .toolbar-border-bottom {
+	border-bottom: 1px solid #666;
+}
+.theme-all-dark .toolbar-border-top {
+	border-top: 1px solid #666;
+}
+.theme-all-dark .toolbar-logo-container {
+	/*
+	position: relative;
+	float: left;
+	*/
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: auto;
+	display: inline-block;
+	height: 100%;
+	margin-right: 10px;
+	border-right: 1px solid #666;
+}
+.theme-all-dark .toolbar-logo {
+	background-image: url("asset/Logo light.png");
+	padding: 8px;
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.theme-all-dark .toolbar-settings-icon {
+	background-image: url("asset/Settings.png");
+	width: 34px;
+	height: 34px;
+	margin: 0px !important;
+}
+
+
