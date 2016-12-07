@@ -50,16 +50,39 @@ var Toolbar = {
 		});
 	},
 	handleEvent: function(e) {
+		if (Toolbar.mouse.state == 'up') {
+			Toolbar.mouse.state = null;
+			return;
+		}
 		if (!e.target.getAttribute('action'))
 			return;
 		console.log(e.target.getAttribute('action'));
 		Toolbar.dispatch(e.target.getAttribute('action'))
 			.then(Toolbar.handleResponse);
 	},
+	mouse: {},
+	handleMouseDown: function(e) {
+		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
+		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+	},
+	handleMouseMove: function(e) {
+		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 4)
+			Toolbar.mouse.state = 'drag';
+		if (Toolbar.mouse.state == 'drag')
+			window.top.postMessage({ type: "drag", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+	},
+	handleMouseUp: function(e) {
+		Toolbar.mouse = { state: 'up' };
+		e.stopPropagation();
+		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+	},
 	init: function() {
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar.handleResponse);
 		this.dispatch('urlChange');
+		document.addEventListener("mousedown", Toolbar.handleMouseDown)
+		document.addEventListener("mousemove", Toolbar.handleMouseMove)
+		document.addEventListener("mouseup",   Toolbar.handleMouseUp)
 		//Toolbar._events.forEach(function(entry) {
 		//	document.getElementById(entry.id).addEventListener(entry.ev, Toolbar[entry.cb])
 		//});
