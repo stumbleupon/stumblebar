@@ -79,13 +79,13 @@ body {
 	margin: 8px;
 }
 .toolbar-action-container .action-dislike {
-	background-image: url("asset/Icon / Down.png");
+	background-image: url("asset/Icon/Down.png");
 }
 .toolbar-action-container .action-like {
-	background-image: url("asset/Icon / Like.png");
+	background-image: url("asset/Icon/Like.png");
 }
 .toolbar-action-container .action-share {
-	background-image: url("asset/Icon / Share.png");
+	background-image: url("asset/Icon/Share.png");
 }
 .toolbar-action-container .action-stumble {
 	width: auto;
