@@ -38,6 +38,7 @@ console.log(		  chrome.extension.onRequest);
     iframe.src = chrome.runtime.getURL(Toolbar.theme.url);
     iframe.style.cssText = Toolbar.theme.iframe;
 	iframe.allowTransparency = "true";
+	iframe.scrolling = 'no';
     iframe.id = Toolbar.id;
 
 	document.addEventListener("readystatechange", function() {
