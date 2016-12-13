@@ -5,7 +5,7 @@ var Toolbar = {
 };
 Toolbar.theme = {
   url: "toolbar.html",
-	iframe: 'position:fixed;bottom:69px;left:69px;display:block;' +
+	iframe: 'position:fixed;bottom:69px;left:69px;display:none;' +
         	'width:288px;height:90px;z-index:2147483647;border:0;' +
 			'overflow:hidden;box-shadow: 0 0 16px -4px #000; border-radius:4px; border: 1px solid #aaa;',
 	css:    '#discoverbar { transition: height .2s,width .2s; }',
@@ -156,12 +156,12 @@ function handleRepos(rpos, noMargin) {
 
 var lastEvent = null;
 window.addEventListener("message", function(event) {
-	if (!event.data || !event.data.type) {
+	if (!event.data || !event.data.type || event.origin != extensionOrigin || event.isTrusted !== true) {
 		return
 	}
-	if (lastEvent != event.data.type)
-		console.log(event.data.type, event.data);
-	lastEvent = event.data.type;
+	//if (lastEvent != event.data.type)
+	//	console.log(event.data.type, event.data);
+	//lastEvent = event.data.type;
 	if (event.data.type == 'drag') {
 		if (dpos.state == 'down') {
 			['top', 'left', 'right', 'bottom'].forEach(function(side) {
@@ -210,6 +210,7 @@ window.addEventListener("message", function(event) {
 		}
 		if (event.data.message.toolbar.rpos)
 			handleRepos(event.data.message.toolbar.rpos);
+		iframe.style.display = 'block';
 		return;
 	}
 });

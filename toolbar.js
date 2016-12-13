@@ -163,7 +163,7 @@ var Toolbar = {
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
 			w: document.querySelector(".toolbar-section-container").offsetWidth,
 			h: document.querySelector(".toolbar-section-container").offsetHeight,
-			rpos: Toolbar.config.rpos
+			rpos: Toolbar.config.rpos,
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
@@ -190,7 +190,7 @@ var Toolbar = {
 		document.addEventListener("mouseup",   Toolbar.handleMouseUp);
 
 		// Redraw
-		Toolbar.handleRedraw();
+		//Toolbar.handleRedraw();
 		//Toolbar._events.forEach(function(entry) {
 		//	document.getElementById(entry.id).addEventListener(entry.ev, Toolbar[entry.cb])
 		//});

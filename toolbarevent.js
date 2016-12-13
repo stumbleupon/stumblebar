@@ -185,7 +185,6 @@ ToolbarEvent.urlChange = function(request, sender) {
 
 ToolbarEvent.init = function(request, sender) {
 	request.config = { rpos: config.rpos };
-	request.all    = true;
 	return Promise.resolve(request);
 }
 
