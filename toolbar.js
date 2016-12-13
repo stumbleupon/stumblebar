@@ -56,7 +56,7 @@ var Toolbar = {
 		}
 		var message = "Be the first to like this!"
 		if (url.likes) {
-			message = "Liked by " + url.likes.numberFormat() + " people";
+			message = "Liked by " + String(url.likes).numberFormat() + " people";
 		}
 		document.querySelector("#social").innerHTML = message;
 	},
