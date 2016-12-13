@@ -1,11 +1,11 @@
-var f = function() {
+setTimeout(function() {
 var Toolbar = {
 	id: 'discoverbar',
-  theme: {},
+	theme: {},
 };
 Toolbar.theme = {
   url: "toolbar.html",
-	iframe: 'position:fixed;bottom:69px;left:69px;display:none;' +
+	iframe: 'position:fixed;bottom:0;left:0;display:none;' +
         	'width:288px;height:90px;z-index:2147483647;border:0;' +
 			'overflow:hidden;box-shadow: 0 0 16px -4px #000; border-radius:4px; border: 1px solid #aaa;',
 	css:    '#discoverbar { transition: height .2s,width .2s; }',
@@ -220,4 +220,4 @@ window.addEventListener("message", function(event) {
 		}
 		setInterval(tryInjection, 1000);
 }
-}();
+}, 0);
