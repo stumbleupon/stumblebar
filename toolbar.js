@@ -62,7 +62,17 @@ var Toolbar = {
 	},
 
 	handleConfig: function(config) {
-		Toolbar.config = config;
+		if (config.theme && config.theme != Toolbar.config.theme) {
+			var classes = document.querySelector("#toolbar").classList;
+			for (var i = 0; i < classes.length; i++)
+				if (classes[i].indexOf('theme-') === 0)
+					document.querySelector("#toolbar").removeClass(classes[i]);
+			document.querySelector("#toolbar").addClass('theme-' + config.theme);
+		}
+
+		for (var key in config) {
+			Toolbar.config[key] = config[key];
+		}
 
 		Toolbar.handleRedraw();
 	},
@@ -92,10 +102,11 @@ var Toolbar = {
 			return;
 		}
 		var action = e.target.getAttribute('action');
+		var value  = e.target.getAttribute('value');
 		if (!action)
 			return;
 		console.log(action);
-		Toolbar.dispatch(action)
+		Toolbar.dispatch(action, {value: value})
 			.then(Toolbar.handleResponse);
 		if (action == 'extra') {
 			document.querySelector(".toolbar-social-container").toggleClass("hidden");
@@ -106,13 +117,13 @@ var Toolbar = {
 		if (action == 'settings') {
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
-		if (action.indexOf('theme-') === 0) {
-			var classes = document.querySelector("#toolbar").classList;
-			for (var i = 0; i < classes.length; i++)
-				if (classes[i].indexOf('theme-') === 0)
-					document.querySelector("#toolbar").removeClass(classes[i]);
-			document.querySelector("#toolbar").addClass(action);
-		}
+		//if (action == 'theme') {
+		//	var classes = document.querySelector("#toolbar").classList;
+		//	for (var i = 0; i < classes.length; i++)
+		//		if (classes[i].indexOf('theme-') === 0)
+		//			document.querySelector("#toolbar").removeClass(classes[i]);
+		//	document.querySelector("#toolbar").addClass(action + '-' + value);
+		//}
 		Toolbar.handleRedraw();
 	},
 	mouse: {},

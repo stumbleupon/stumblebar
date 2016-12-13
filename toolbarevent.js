@@ -42,6 +42,16 @@ ToolbarEvent.discover = function(request, sender) {
 	});
 }
 
+ToolbarEvent.theme = function(request, sender) {
+	config.theme = request.data.value;
+	var response = {
+		all: true,
+		config: { theme: config.theme }
+	};
+	console.log(config);
+	return Promise.resolve(response);
+}
+
 ToolbarEvent.repos = function(request, sender) {
 	config.rpos = request.data.rpos;
 	var response = {
@@ -184,7 +194,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 }
 
 ToolbarEvent.init = function(request, sender) {
-	request.config = { rpos: config.rpos };
+	request.config = config;
 	return Promise.resolve(request);
 }
 
