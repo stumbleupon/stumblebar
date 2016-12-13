@@ -1,3 +1,4 @@
+var f = function() {
 var Toolbar = {
 	id: 'discoverbar',
   theme: {},
@@ -26,7 +27,14 @@ console.log(e);
 var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
 //if (!window.top.location.ancestorOrigins.contains(extensionOrigin)) {
 if ((!location.ancestorOrigins || !location.ancestorOrigins.contains(extensionOrigin)) && location.hostname != "www.stumbleupon.com") {
-    var document = window.top.document;
+	try {
+		var document = window.top.document;
+		if (window.document != document)
+			return false;
+	} catch (e) {
+		return false;
+		var document = window.document;
+	}
 		try {
 			console.log(chrome.extension.getBackgroundPage().frames)
 		} catch (e) {
@@ -100,7 +108,7 @@ var communicateMouseMove = debounce(function() {
 	sendToIframe({action: 'mouse', data: mpos })
 }, 1);
 
-window.top.addEventListener("mousemove", function(event) {
+window.addEventListener("mousemove", function(event) {
 	if (!(event instanceof MouseEvent) || !event.isTrusted)
 		return;
 	mpos.mouse.x = event.clientX;
@@ -147,7 +155,7 @@ function handleRepos(rpos, noMargin) {
 }
 
 var lastEvent = null;
-window.top.addEventListener("message", function(event) {
+window.addEventListener("message", function(event) {
 	if (!event.data || !event.data.type) {
 		return
 	}
@@ -211,3 +219,4 @@ window.top.addEventListener("message", function(event) {
 		}
 		setInterval(tryInjection, 1000);
 }
+}();
