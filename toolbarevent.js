@@ -44,9 +44,11 @@ ToolbarEvent.discover = function(request, sender) {
 
 ToolbarEvent.repos = function(request, sender) {
 	config.rpos = request.data.rpos;
-	request.all    = true;
-	request.config = { rpos: config.rpos };
-	return Promise.resolve(request);
+	var response = {
+		all: true,
+		config: { rpos: config.rpos }
+	};
+	return Promise.resolve(response);
 }
 
 ToolbarEvent.dislike = function(request, sender) {
