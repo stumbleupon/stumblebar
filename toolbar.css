@@ -82,6 +82,10 @@ body {
 .toolbar-action-container .action-dislike {
 	background-image: url("asset/Icon/Down.svg");
 }
+.toolbar-action-container .action-extra {
+	background-image: url("asset/DotDotDot.svg");
+content: "";
+}
 .toolbar-action-container .action-like {
 	background-image: url("asset/Icon/Like.svg");
 }
