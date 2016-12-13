@@ -100,6 +100,9 @@ var Toolbar = {
 		if (action == 'extra') {
 			document.querySelector(".toolbar-social-container").toggleClass("hidden");
 		}
+		if (action == 'expand-social') {
+			document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
+		}
 		if (action == 'settings') {
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}

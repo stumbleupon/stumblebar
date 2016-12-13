@@ -92,7 +92,8 @@ body {
 	background-image: url("asset/Expand.png");
 	width: 34px;
 	height: 34px;
-	transform: rotate(180deg);
+	transform: rotate(-180deg);
+	transition: transform .2s;
 }
 .toolbar-social-container .toolbar-expand-icon {
 	position: absolute;
