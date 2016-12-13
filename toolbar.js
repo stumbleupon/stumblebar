@@ -15,6 +15,17 @@ Element.prototype.toggleClass = function(name) {
 	this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
 }
 
+String.prototype.numberFormat = function() {
+	if (this < 1000)
+		return this;
+	else if (this < 10000)
+		return Math.floor(parseInt(this) / 1000) + '.' + Math.floor(parseInt(this) / 100)%10 + 'k';
+	else if (this < 1000000)
+		return Math.floor(parseInt(this) / 1000) + 'k';
+	else
+		return Math.floor(parseInt(this) / 1000000, 1) + '.' + Math.floor(parseInt(this) / 100000)%10 + 'm';
+}
+
 var Toolbar = {
 	event: function(e) {
 		/*
@@ -43,6 +54,11 @@ var Toolbar = {
 			if (url.userRating.type <= -1)
 				document.querySelector("#dislike").addClass("enabled");
 		}
+		var message = "Be the first to like this!"
+		if (url.likes) {
+			message = "Liked by " + url.likes.numberFormat() + " people";
+		}
+		document.querySelector("#social").innerHTML = message;
 	},
 
 	handleConfig: function(config) {

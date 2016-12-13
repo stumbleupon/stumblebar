@@ -42,6 +42,7 @@ body {
 	display: block;
 	white-space: nowrap;
 	margin-left: 44px;
+	position: relative;
 }
 .toolbar-action-container {
 	font-size: 0;
@@ -86,6 +87,20 @@ body {
 }
 .toolbar-action-container .action-share {
 	background-image: url("asset/Icon/Share.png");
+}
+.toolbar-expand-icon {
+	background-image: url("asset/Expand.png");
+	width: 34px;
+	height: 34px;
+	transform: rotate(180deg);
+}
+.toolbar-social-container .toolbar-expand-icon {
+	position: absolute;
+	right: 0;
+	top:   0;
+}
+.toolbar-social-container .toolbar-expand-icon.enabled {
+	transform: rotate(0deg);
 }
 .toolbar-action-container .action-stumble {
 	width: auto;
