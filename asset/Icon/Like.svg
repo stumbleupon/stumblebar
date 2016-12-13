@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>Icon / Like</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M8,24 L11.2,24 L11.2,14.4 L8,14.4 L8,24 Z M25.6,15.2 C25.6,14.32 24.88,13.6 24,13.6 L18.952,13.6 L19.712,9.944 L19.736,9.688 C19.736,9.36 19.6,9.056 19.384,8.84 L18.536,8 L13.272,13.272 C12.976,13.56 12.8,13.96 12.8,14.4 L12.8,22.4 C12.8,23.28 13.52,24 14.4,24 L21.6,24 C22.264,24 22.832,23.6 23.072,23.024 L25.488,17.384 C25.56,17.2 25.6,17.008 25.6,16.8 L25.6,15.272 L25.592,15.264 L25.6,15.2 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="17.6" height="16" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon-/-Like" transform="translate(-8.000000, -8.000000)">
+            <g>
+                <rect id="Rectangle" x="0" y="0" width="34" height="34" rx="17"></rect>
+                <use id="Shape" stroke="#E94A2F" mask="url(#mask-2)" stroke-width="2" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>Close</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Close">
+            <g>
+                <rect id="Rectangle" x="0" y="0" width="34" height="34"></rect>
+                <g id="Group" transform="translate(12.000000, 12.000000)" fill="#FFFFFF">
+                    <rect id="Rectangle-355" transform="translate(5.500000, 5.500000) rotate(-315.000000) translate(-5.500000, -5.500000) " x="-1" y="4.90909091" width="13" height="1.18181818"></rect>
+                    <rect id="Rectangle-354" transform="translate(5.500000, 5.500000) rotate(-315.000000) translate(-5.500000, -5.500000) " x="4.90909091" y="-1" width="1.18181818" height="13"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
