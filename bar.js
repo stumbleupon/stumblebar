@@ -109,7 +109,7 @@ var communicateMouseMove = debounce(function() {
 }, 1);
 
 window.addEventListener("mousemove", function(event) {
-	if (!(event instanceof MouseEvent) || !event.isTrusted)
+	if (!(event instanceof MouseEvent)/* || !event.isTrusted*/)
 		return;
 	mpos.mouse.x = event.clientX;
 	mpos.mouse.y = event.clientY;
@@ -156,7 +156,7 @@ function handleRepos(rpos, noMargin) {
 
 var lastEvent = null;
 window.addEventListener("message", function(event) {
-	if (!event.data || !event.data.type || event.origin != extensionOrigin || event.isTrusted !== true) {
+	if (!event.data || !event.data.type/* || event.origin != extensionOrigin/* || event.isTrusted !== true*/) {
 		return
 	}
 	//if (lastEvent != event.data.type)
