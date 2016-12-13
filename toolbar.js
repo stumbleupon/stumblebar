@@ -53,7 +53,7 @@ var Toolbar = {
 	},
 
 	handleResponse: function(r) {
-		console.log('HANDLE', r);
+		console.log('Toolbar.handleResponse', r);
 		if (r && r.url) {
 			Toolbar.handleUrl(r.url);
 		}
@@ -150,7 +150,8 @@ var Toolbar = {
 	},
 	handleIframeEvent: function(e) {
 		if (e.data.action == 'mouse')
-			Toolbar.state.canMiniMode = true;
+			return Toolbar.state.canMiniMode = true;
+		Toolbar.dispatch(e.data.action, e.data.data).then(Toolbar.handleResponse);
 	},
 	init: function() {
 		// Event and message handling

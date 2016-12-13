@@ -10,6 +10,17 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", response);
 			sendResponse(response);
+			if (request.from == 'bar') {
+console.log('sendExtension', response);
+				chrome.runtime.sendMessage(chrome.runtime.id, response);
+/*
+				chrome.tabs.query({}, function(tabs) {
+					tabs.forEach(function (tab) {
+						chrome.runtime.sendMessage(tab.id, response);
+					});
+				});
+*/
+			}
 		});
 	return true;
 }

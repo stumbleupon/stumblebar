@@ -88,9 +88,16 @@ function debounce(fn, delay) {
   };
 }
 
+function sendToIframe(msg) {
+	if (iframe.contentWindow) {
+		iframe.contentWindow.postMessage(msg, extensionOrigin);
+	} else {
+		//console.log('Missing iframe', iframe);
+	}
+}
+
 var communicateMouseMove = debounce(function() {
-	if (iframe.contentWindow)
-		iframe.contentWindow.postMessage({action: 'mouse', data: mpos }, extensionOrigin);
+	sendToIframe({action: 'mouse', data: mpos })
 }, 1);
 
 window.top.addEventListener("mousemove", function(event) {
@@ -139,10 +146,14 @@ function handleRepos(rpos, noMargin) {
 		iframe.style['margin-' + rpos.hside] = '-3px';
 }
 
+var lastEvent = null;
 window.top.addEventListener("message", function(event) {
 	if (!event.data || !event.data.type) {
 		return
 	}
+	if (lastEvent != event.data.type)
+		console.log(event.data.type, event.data);
+	lastEvent = event.data.type;
 	if (event.data.type == 'drag') {
 		if (dpos.state == 'down') {
 			['top', 'left', 'right', 'bottom'].forEach(function(side) {
@@ -178,8 +189,9 @@ window.top.addEventListener("message", function(event) {
 			rpos.hside = 'right';
 		}
 		handleRepos(rpos);
-		chrome.runtime.sendMessage({action: 'repos', data: { rpos: rpos } }, function(response) {
-		});
+		sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } });
+//		chrome.runtime.sendMessage({action: 'repos', from: 'bar', data: { rpos: rpos } }, function(response) {
+//		});
 		return;
 	}
 	if (event.data.type == 'redraw') {
