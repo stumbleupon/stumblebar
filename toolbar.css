@@ -80,16 +80,16 @@ body {
 	margin: 8px;
 }
 .toolbar-action-container .action-dislike {
-	background-image: url("asset/Icon/Down.png");
+	background-image: url("asset/Icon/Down.svg");
 }
 .toolbar-action-container .action-like {
-	background-image: url("asset/Icon/Like.png");
+	background-image: url("asset/Icon/Like.svg");
 }
 .toolbar-action-container .action-share {
-	background-image: url("asset/Icon/Share.png");
+	background-image: url("asset/Icon/Share.svg");
 }
 .toolbar-expand-icon {
-	background-image: url("asset/Expand.png");
+	background-image: url("asset/Expand.svg");
 	width: 34px;
 	height: 34px;
 	transform: rotate(-180deg);
@@ -212,7 +212,7 @@ body {
 	margin-right: 10px;
 }
 .theme-dark-sidebar .toolbar-logo {
-	background-image: url("asset/Logo Light.png");
+	background-image: url("asset/Logo Light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -222,7 +222,7 @@ body {
 	background-position: center; 
 }
 .theme-dark-sidebar .toolbar-settings-icon {
-	background-image: url("asset/Settings.png");
+	background-image: url("asset/Settings.svg");
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
@@ -276,7 +276,7 @@ body {
 	border-right: 1px solid #ccc;
 }
 .theme-all-light .toolbar-logo {
-	background-image: url("asset/Logo Dark.png");
+	background-image: url("asset/Logo Dark.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -287,7 +287,7 @@ body {
 	background-size: 18px 13px;
 }
 .theme-all-light .toolbar-settings-icon {
-	background-image: url("asset/Settings.png");
+	background-image: url("asset/Settings.svg");
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
@@ -344,7 +344,7 @@ body {
 	border-right: 1px solid #666;
 }
 .theme-all-dark .toolbar-logo {
-	background-image: url("asset/Logo light.png");
+	background-image: url("asset/Logo light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -354,7 +354,7 @@ body {
 	background-position: center; 
 }
 .theme-all-dark .toolbar-settings-icon {
-	background-image: url("asset/Settings.png");
+	background-image: url("asset/Settings.svg");
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
