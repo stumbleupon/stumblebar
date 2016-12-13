@@ -10,16 +10,13 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", response);
 			sendResponse(response);
-			if (request.from == 'bar') {
-console.log('sendExtension', response);
-				chrome.runtime.sendMessage(chrome.runtime.id, response);
-/*
+			if (response.all) {
+//				chrome.runtime.sendMessage(chrome.runtime.id, response);
 				chrome.tabs.query({}, function(tabs) {
 					tabs.forEach(function (tab) {
-						chrome.runtime.sendMessage(tab.id, response);
+						chrome.tabs.sendMessage(tab.id, response);
 					});
 				});
-*/
 			}
 		});
 	return true;
@@ -47,6 +44,7 @@ ToolbarEvent.discover = function(request, sender) {
 
 ToolbarEvent.repos = function(request, sender) {
 	config.rpos = request.data.rpos;
+	request.all    = true;
 	request.config = { rpos: config.rpos };
 	return Promise.resolve(request);
 }
@@ -185,6 +183,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 
 ToolbarEvent.init = function(request, sender) {
 	request.config = { rpos: config.rpos };
+	request.all    = true;
 	return Promise.resolve(request);
 }
 

@@ -48,7 +48,6 @@ var Toolbar = {
 	handleConfig: function(config) {
 		Toolbar.config = config;
 
-		console.log(config);
 		Toolbar.handleRedraw();
 	},
 
