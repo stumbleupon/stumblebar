@@ -28,9 +28,7 @@ body {
 }
 */
 .enabled {
-	-webkit-filter: invert(100%);
-	filter: invert(100%);
-	background-color: green !important;
+	background-color: yellow;
 }
 
 .toolbar-separator {
@@ -88,6 +86,13 @@ body {
 }
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
+	-webkit-filter: grayscale(100%) brightness(150%);
+    filter: grayscale(100%) brightness(150%);
+	
+}
+.toolbar-action-container .action-info.enabled {
+	-webkit-filter: none !important;
+    filter: none !important;
 }
 .toolbar-action-container .action-dislike {
 	background-image: url("asset/Icon/Down.svg");

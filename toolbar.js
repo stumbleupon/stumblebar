@@ -26,11 +26,17 @@ var Toolbar = {
 			if (url.userRating.type <= -1)
 				document.querySelector("#dislike").addClass("enabled");
 		}
+
 		var message = "Be the first to like this!"
 		if (url.likes) {
 			message = "Liked by " + String(url.likes).numberFormat() + " people";
 		}
 		document.querySelector("#social").innerHTML = message;
+
+		document.querySelector("#info").removeClass("enabled");
+		if (url.urlid) {
+			document.querySelector("#info").addClass("enabled");
+		}
 	},
 
 	handleConfig: function(config) {

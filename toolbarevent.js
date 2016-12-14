@@ -85,7 +85,8 @@ ToolbarEvent.dislike = function(request, sender) {
 }
 
 ToolbarEvent.info = function(request, sender) {
-	chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
+	if (Page.getUrlId(sender.tab.id))
+		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
 	Promise.resolve(request);
 }
 
