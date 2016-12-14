@@ -92,9 +92,11 @@ var Toolbar = {
 		if (action == 'expand' && value == 'extra') {
 			document.querySelector(".action-extra").toggleClass("enabled");
 			document.querySelector(".toolbar-container-extra").toggleClass("hidden");
+			document.querySelector(".toolbar-social-container").toggleClass("hidden");
 		}
 		if (action == 'expand' && value == 'social') {
-			document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
+			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
+			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
 		if (action == 'settings') {
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
