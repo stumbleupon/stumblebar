@@ -24,3 +24,39 @@ function error() {
 	console.log('ERROR', arguments, e.stack);
 }
 
+String.prototype.form = function(map) {
+	var newstr = this;
+	this.match(/:[-_a-zA-Z0-9]+/).forEach(function(key) {
+		newstr = newstr.replace(key, map[key.slice(1)]);
+	});
+	return newstr;
+}
+
+Element.prototype.addClass = function(name) {
+	if (!this.hasClass(name))
+		this.className += ' ' + name;
+}
+
+Element.prototype.removeClass = function(name) {
+	this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
+}
+
+Element.prototype.hasClass = function(name) {
+	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
+}
+
+Element.prototype.toggleClass = function(name) {
+	this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
+}
+
+String.prototype.numberFormat = function() {
+	if (this < 1000)
+		return this;
+	else if (this < 10000)
+		return Math.floor(parseInt(this) / 1000) + '.' + Math.floor(parseInt(this) / 100)%10 + 'k';
+	else if (this < 1000000)
+		return Math.floor(parseInt(this) / 1000) + 'k';
+	else
+		return Math.floor(parseInt(this) / 1000000, 1) + '.' + Math.floor(parseInt(this) / 100000)%10 + 'm';
+}
+

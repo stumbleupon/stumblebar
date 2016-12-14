@@ -43,12 +43,8 @@ config.endpoint = {
   unrate:  '/discovery/:urlid/rating',
   url:     '/url',
 }
-String.prototype.form = function(map) {
-	var newstr = this;
-	this.match(/:[-_a-zA-Z0-9]+/).forEach(function(key) {
-		newstr = newstr.replace(key, map[key.slice(1)]);
-	});
-	return newstr;
+config.url = {
+  info:    '/content/:urlid',
 }
 config.defaults = {
 	mode: 'all',

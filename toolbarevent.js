@@ -84,6 +84,10 @@ ToolbarEvent.dislike = function(request, sender) {
 	return Promise.resolve(request);
 }
 
+ToolbarEvent.info = function(request, sender) {
+	chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form(request.url) });
+}
+
 ToolbarEvent.unrate = function(request, sender) {
 	ToolbarEvent
 		.sanity()

@@ -1,31 +1,3 @@
-Element.prototype.addClass = function(name) {
-	if (!this.hasClass(name))
-		this.className += ' ' + name;
-}
-
-Element.prototype.removeClass = function(name) {
-	this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
-}
-
-Element.prototype.hasClass = function(name) {
-	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
-}
-
-Element.prototype.toggleClass = function(name) {
-	this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
-}
-
-String.prototype.numberFormat = function() {
-	if (this < 1000)
-		return this;
-	else if (this < 10000)
-		return Math.floor(parseInt(this) / 1000) + '.' + Math.floor(parseInt(this) / 100)%10 + 'k';
-	else if (this < 1000000)
-		return Math.floor(parseInt(this) / 1000) + 'k';
-	else
-		return Math.floor(parseInt(this) / 1000000, 1) + '.' + Math.floor(parseInt(this) / 100000)%10 + 'm';
-}
-
 var Toolbar = {
 	event: function(e) {
 		/*
@@ -108,10 +80,14 @@ var Toolbar = {
 		console.log(action);
 		Toolbar.dispatch(action, {value: value})
 			.then(Toolbar.handleResponse);
-		if (action == 'extra') {
-			document.querySelector(".toolbar-social-container").toggleClass("hidden");
+		//if (action == 'info') {
+		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
+		//}
+		if (action == 'expand' && value == 'extra') {
+			document.querySelector(".action-extra").toggleClass("enabled");
+			document.querySelector(".toolbar-container-extra").toggleClass("hidden");
 		}
-		if (action == 'expand-social') {
+		if (action == 'expand' && value == 'social') {
 			document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 		}
 		if (action == 'settings') {

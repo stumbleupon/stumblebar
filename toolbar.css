@@ -79,12 +79,25 @@ body {
 	left: 0;
 	margin: 8px;
 }
+.toolbar-action-container .action-list {
+	background-image: url("asset/Icon/List.svg");
+}
+.toolbar-action-container .action-inbox {
+	background-image: url("asset/Icon/Bookmark.svg");
+	transform: rotate(-180deg);
+}
+.toolbar-action-container .action-info {
+	background-image: url("asset/Icon/Info.svg");
+}
 .toolbar-action-container .action-dislike {
 	background-image: url("asset/Icon/Down.svg");
 }
 .toolbar-action-container .action-extra {
 	background-image: url("asset/DotDotDot.svg");
-content: "";
+}
+.toolbar-action-container .action-extra.enabled {
+	background-image: url("asset/Expand Horizontal.svg");
+	transform: rotate(-180deg);
 }
 .toolbar-action-container .action-like {
 	background-image: url("asset/Icon/Like.svg");

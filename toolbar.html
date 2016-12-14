@@ -24,15 +24,22 @@
 
 					<div class="toolbar-section toolbar-action-container toolbar-border-top">
 						<span class="toolbar-action action-stumble btn primary-background" action="stumble" id="stumble">Stumble</span>
-						<span class="toolbar-action action-like    hide-in-mini-mode" action="like"    id="like"></span>
-						<span class="toolbar-action action-share   hide-in-mini-mode" action="share"   id="share"></span>
-						<span class="toolbar-action action-dislike hide-in-mini-mode" action="dislike" id="dislike"></span>
-						<span class="toolbar-action action-extra   hide-in-mini-mode" action="extra"   id="extra"></span>
+						<span class="hide-in-mini-mode">
+							<span class="toolbar-action action-like   " action="like"    id="like"></span>
+							<span class="toolbar-action action-share  " action="share"   id="share"></span>
+							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
+							<span class="toolbar-container-extra hidden">
+								<span class="toolbar-action action-inbox" action="inbox" id="inbox"></span>
+								<span class="toolbar-action action-list " action="list"  id="list"></span>
+								<span class="toolbar-action action-info " action="info"  id="info"></span>
+							</span>
+							<span class="toolbar-action action-extra  " action="expand" value="extra" id="extra"></span>
+						</span>
 					</div>
 
 					<div class="toolbar-section toolbar-social-container toolbar-border-top hidden hide-in-mini-mode">
 						<span id="social"></span>
-						<span class="toolbar-expand-icon clickable" action="expand-social"></span>
+						<span class="toolbar-expand-icon clickable" action="expand" value="social"></span>
 					</div>
 
 					<div class="toolbar-settings-container hide-in-mini-mode hidden">
@@ -47,6 +54,7 @@
 			</div>
 		</div>
 
+		<script src="utils.js"></script>
 		<script src="toolbar.js"></script>
 	</body>
 </html>
