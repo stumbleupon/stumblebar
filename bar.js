@@ -148,11 +148,21 @@ function handleRepos(rpos, noMargin) {
 	});
 	iframe.style[rpos.vside] = rpos.v + '%';
 	iframe.style[rpos.hside] = rpos.h + '%';
-	if (rpos.v <= 1)
-		iframe.style['margin-' + rpos.vside] = '-3px';
-	if (rpos.h <= 1)
-		iframe.style['margin-' + rpos.hside] = '-3px';
+
+	handleTrySnap(rpos)
 }
+
+function handleTrySnap(rpos) {
+	if (rpos.v <= 1) {
+		iframe.style['margin-' + rpos.vside] = '-3px';
+		iframe.style[rpos.vside] = '0';
+	}
+	if (rpos.h <= 1) {
+		iframe.style['margin-' + rpos.hside] = '-3px';
+		iframe.style[rpos.hside] = '0';
+	}
+}
+
 
 var lastEvent = null;
 window.addEventListener("message", function(event) {
