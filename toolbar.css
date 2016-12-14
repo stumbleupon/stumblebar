@@ -27,8 +27,13 @@ body {
   display: block;
 }
 */
-.enabled {
+.toolbar-action .enabled {
 	background-color: yellow;
+}
+.action-theme.enabled {
+	background-color: yellow;
+	border-radius: 4px;
+	color: black;
 }
 
 .toolbar-separator {
@@ -45,6 +50,13 @@ body {
 .toolbar-action-container {
 	font-size: 0;
 	display: block;
+}
+.toolbar-entry-container {
+	padding: 10px;
+	padding-left: 0px;
+}
+.toolbar-section-contains-entries {
+	padding: 0px;
 }
 .toolbar-mode-container {
 	padding: 10px;
@@ -117,6 +129,32 @@ body {
 	transform: rotate(-180deg);
 	transition: transform .2s;
 }
+.toolbar-settings-icon, .mini-mode .toolbar-settings-icon {
+	background-image: url("asset/Settings.svg");
+	width: 34px;
+	height: 34px;
+	margin: 0px !important;
+	z-index: 1;
+}
+.toolbar:not(.mini-mode) .toolbar-settings-icon.enabled {
+	background-image: url("asset/Close.svg") !important;
+	background-color: #444;
+}
+
+
+.toolbar-settings-container {
+	background-color: #444;
+	margin-left: 0;
+	padding-left: 44px;
+	color: white;
+}
+.toolbar-settings-container ul {
+	margin-left: 1em;
+}
+.toolbar-settings-container ul li {
+	padding: .25em;
+}
+
 .toolbar-social-container .toolbar-expand-icon {
 	position: absolute;
 	right: 0;
@@ -242,12 +280,6 @@ body {
 	position: relative;
 	background-repeat: no-repeat;
 	background-position: center; 
-}
-.theme-dark-sidebar .toolbar-settings-icon {
-	background-image: url("asset/Settings.svg");
-	width: 34px;
-	height: 34px;
-	margin: 0px !important;
 }
 
 

@@ -29,7 +29,7 @@
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
 							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
 							<span class="toolbar-container-extra hidden">
-								<span class="toolbar-action action-inbox" action="inbox" id="inbox"></span>
+								<span class="toolbar-action action-inbox" action="expand" value="social" raction="inbox" id="inbox"></span>
 								<span class="toolbar-action action-list " action="list"  id="list"></span>
 								<span class="toolbar-action action-info " action="info"  id="info"></span>
 							</span>
@@ -42,10 +42,18 @@
 						<span class="toolbar-expand-icon clickable" action="expand" value="social"></span>
 					</div>
 
-					<div class="toolbar-settings-container hide-in-mini-mode hidden">
-						<span class="toolbar-action action-extra clickable" action="theme" value="dark-sidebar">dark-sidebar</span>
-						<span class="toolbar-action action-extra clickable" action="theme" value="all-light"   >all-light</span>
-						<span class="toolbar-action action-extra clickable" action="theme" value="all-dark"    >all-dark</span>
+					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden">
+						<div class="toolbar-entry-container">
+							Theme
+							<ul>
+								<li class="toolbar-action action-theme clickable" id="theme-dark-sidebar" action="theme" value="dark-sidebar">dark-sidebar</li>
+								<li class="toolbar-action action-theme clickable" id="theme-all-light"    action="theme" value="all-light"   >all-light</li>
+								<li class="toolbar-action action-theme clickable" id="theme-all-dark"     action="theme" value="all-dark"    >all-dark</li>
+							</ul>
+						</div>
+						<div class="toolbar-entry-container toolbar-border-top">
+							<div class="toolbar-action action-hide clickable" action="hide">Hide Extension</div> 
+						</div>
 					</div>
 
 					<div class="toolbar-section-footer"></div>

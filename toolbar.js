@@ -46,6 +46,10 @@ var Toolbar = {
 				if (classes[i].indexOf('theme-') === 0)
 					document.querySelector("#toolbar").removeClass(classes[i]);
 			document.querySelector("#toolbar").addClass('theme-' + config.theme);
+			document.querySelectorAll(".action-theme").forEach(function(elem) {
+				elem.removeClass('enabled');
+			});
+			document.querySelector("#theme-" + config.theme).addClass('enabled');
 		}
 
 		for (var key in config) {
@@ -79,8 +83,9 @@ var Toolbar = {
 			Toolbar.mouse.state = null;
 			return;
 		}
-		var action = e.target.getAttribute('action');
-		var value  = e.target.getAttribute('value');
+		var elem   = e.target;
+		var action = elem.getAttribute('action');
+		var value  = elem.getAttribute('value');
 		if (!action)
 			return;
 		console.log(action);
@@ -99,6 +104,7 @@ var Toolbar = {
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
 		if (action == 'settings') {
+			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
 		//if (action == 'theme') {
