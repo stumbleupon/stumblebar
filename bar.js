@@ -13,17 +13,6 @@ Toolbar.theme = {
 }
 
 
-var dragAndDropStart = function(e) {
-}
-var dragAndDropEnd = function(e) {
-}
-var dragAndDrop = function(e) {
-console.log(e);
-}
-var dragStart = function(e) {
-console.log(e);
-}
-
 var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
 //if (!window.top.location.ancestorOrigins.contains(extensionOrigin)) {
 if ((!location.ancestorOrigins || !location.ancestorOrigins.contains(extensionOrigin)) && location.hostname != "www.stumbleupon.com") {
@@ -60,8 +49,6 @@ console.log(		  chrome.extension.onRequest);
 	var mtop = 0, mleft = 0, mstate = false;
 	var dpos = {};
 	var mpos = { mouse: {} }
-	iframe.style.bottom = 'inherit';
-	iframe.style.top = itop + 'px';
 
 function throttle(fn, threshhold, scope) {
   threshhold || (threshhold = 250);
@@ -173,6 +160,8 @@ function handleTrySnap(rpos) {
 		iframe.style['margin-' + rpos.hside] = 'initial';
 	}
 }
+
+handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
 
 
 var lastEvent = null;
