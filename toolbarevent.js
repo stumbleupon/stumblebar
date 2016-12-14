@@ -62,7 +62,7 @@ ToolbarEvent.repos = function(request, sender) {
 }
 
 ToolbarEvent.dislike = function(request, sender) {
-	if (request.url.userRating.type == -1)
+	if ((request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
@@ -112,8 +112,8 @@ ToolbarEvent.unrate = function(request, sender) {
 
 
 ToolbarEvent.like = function(request, sender) {
-	//if (request.url.userRating.type == 1)
-	//	return ToolbarEvent.unrate(request, sender);
+	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
+		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
 		.sanity()
