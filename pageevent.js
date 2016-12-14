@@ -34,6 +34,16 @@ Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
+	if (url.urlid) {
+		Page.urlCache[url.urlid] = url;
+		Page.urlCache.push(url);
+		if (Page.urlCache.length >= 1e3) {
+			var oldUrl = Page.urlCache.splice(0, 1);
+			delete Page.urlCache[oldUrl.urlid]
+		}
+	}
+
+// We need url-by-url to handle page-reloads because we don't fetch the page info again
 	if (url.url) {
 		Page.urlCache[url.url] = url;
 		if (url.finalUrl)
