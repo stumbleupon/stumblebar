@@ -137,6 +137,14 @@ var Toolbar = {
 		if (Toolbar.state.inMiniMode)
 			Toolbar.handleNormalMode(e);
 	},
+	handleMouseUp: function(e) {
+		if (Toolbar.mouse.state == 'drag')
+			Toolbar.mouse.state = 'up';
+		else
+			Toolbar.mouse.state = null;
+		e.stopPropagation();
+		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+	},
 	tryMiniMode: function(e) {
 		if (Toolbar.state.canMiniMode && !Toolbar.state.inMiniMode && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
 			Toolbar.handleMiniMode(e);
@@ -151,14 +159,6 @@ var Toolbar = {
 		Toolbar.state.inMiniMode = false;
 		document.querySelector("#toolbar").removeClass("mini-mode");
 		Toolbar.handleRedraw();
-	},
-	handleMouseUp: function(e) {
-		if (Toolbar.mouse.state == 'drag')
-			Toolbar.mouse.state = 'up';
-		else
-			Toolbar.mouse.state = null;
-		e.stopPropagation();
-		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	handleRedraw: function() {
 		window.top.postMessage({ type: "redraw", message: { toolbar: {

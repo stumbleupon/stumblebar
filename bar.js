@@ -141,13 +141,18 @@ function updateIframePos() {
 	}
 }
 
+var oside = {
+	left:   'right',
+	right:  'left',
+	top:    'bottom',
+	bottom: 'top',
+}
+
 function handleRepos(rpos, noMargin) {
-	['top', 'left', 'right', 'bottom'].forEach(function(side) {
-		iframe.style[side] = 'initial';
-		iframe.style['margin-' + side] = 'initial';
-	});
 	iframe.style[rpos.vside] = rpos.v + '%';
 	iframe.style[rpos.hside] = rpos.h + '%';
+	iframe.style[oside[rpos.vside]] = 'initial';
+	iframe.style[oside[rpos.hside]] = 'initial';
 
 	handleTrySnap(rpos)
 }
@@ -155,11 +160,17 @@ function handleRepos(rpos, noMargin) {
 function handleTrySnap(rpos) {
 	if (rpos.v <= 1) {
 		iframe.style['margin-' + rpos.vside] = '-3px';
+		iframe.style['margin-' + oside[rpos.vside]] = 'initial';
 		iframe.style[rpos.vside] = '0';
+	} else {
+		iframe.style['margin-' + rpos.vside] = 'initial';
 	}
 	if (rpos.h <= 1) {
 		iframe.style['margin-' + rpos.hside] = '-3px';
+		iframe.style['margin-' + oside[rpos.hside]] = 'initial';
 		iframe.style[rpos.hside] = '0';
+	} else {
+		iframe.style['margin-' + rpos.hside] = 'initial';
 	}
 }
 
@@ -191,23 +202,25 @@ window.addEventListener("message", function(event) {
 		return;
 	}
 	if (event.data.type == 'up') {
+		if (dpos.state == 'drag')  {
+			var rpos = {
+				v: Math.max((iframe.offsetTop ) / window.innerHeight * 100, 0),
+				h: Math.max((iframe.offsetLeft) / window.innerWidth  * 100, 0),
+				vside: 'top',
+				hside: 'left',
+			}
+			if (rpos.v > 50) {
+				rpos.v = Math.max(100 - rpos.v - 100 * iframe.offsetHeight / window.innerHeight, 0);
+				rpos.vside = 'bottom';
+			}
+			if (rpos.h > 50) {
+				rpos.h = Math.max(100 - rpos.h - 100 * iframe.offsetWidth  / window.innerWidth , 0);
+				rpos.hside = 'right';
+			}
+			handleRepos(rpos);
+			sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } });
+		}
 		dpos.state = 'up';
-		var rpos = {
-			v: Math.max((iframe.offsetTop ) / window.innerHeight * 100, 0),
-			h: Math.max((iframe.offsetLeft) / window.innerWidth  * 100, 0),
-			vside: 'top',
-			hside: 'left',
-		}
-		if (rpos.v > 50) {
-			rpos.v = Math.max(100 - rpos.v - 100 * iframe.offsetHeight / window.innerHeight, 0);
-			rpos.vside = 'bottom';
-		}
-		if (rpos.h > 50) {
-			rpos.h = Math.max(100 - rpos.h - 100 * iframe.offsetWidth  / window.innerWidth , 0);
-			rpos.hside = 'right';
-		}
-		handleRepos(rpos);
-		sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } });
 //		chrome.runtime.sendMessage({action: 'repos', from: 'bar', data: { rpos: rpos } }, function(response) {
 //		});
 		return;
