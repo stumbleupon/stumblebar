@@ -52,6 +52,33 @@ ToolbarEvent.theme = function(request, sender) {
 	return Promise.resolve(response);
 }
 
+ToolbarEvent.toggleHidden = function(request, sender) {
+	config.hidden = !config.hidden;
+	var response = {
+		all: true,
+		config: { hidden: config.hidden }
+	};
+	return Promise.resolve(response);
+}
+
+ToolbarEvent.unhide = function(request, sender) {
+	config.hidden = false;
+	var response = {
+		all: true,
+		config: { hidden: config.hidden }
+	};
+	return Promise.resolve(response);
+}
+
+ToolbarEvent.hide = function(request, sender) {
+	config.hidden = true;
+	var response = {
+		all: true,
+		config: { hidden: config.hidden }
+	};
+	return Promise.resolve(response);
+}
+
 ToolbarEvent.repos = function(request, sender) {
 	config.rpos = request.data.rpos;
 	var response = {

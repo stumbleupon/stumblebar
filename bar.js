@@ -190,6 +190,9 @@ window.addEventListener("message", function(event) {
 		dpos.state = 'down';
 		return;
 	}
+	if (event.data.type == 'hide') {
+		iframe.style.display = 'none';
+	}
 	if (event.data.type == 'up') {
 		if (dpos.state == 'drag')  {
 			var rpos = {
@@ -222,7 +225,10 @@ window.addEventListener("message", function(event) {
 		}
 		if (event.data.message.toolbar.rpos)
 			handleRepos(event.data.message.toolbar.rpos);
-		iframe.style.display = 'block';
+		if (event.data.message.toolbar.hidden)
+			iframe.style.display = 'none';
+		else
+			iframe.style.display = 'block';
 		return;
 	}
 });

@@ -82,4 +82,5 @@ chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
 // update when the extension loads initially
 //updateTab();
 
+chrome.browserAction.onClicked.addListener(Page.handleIconClick);
 

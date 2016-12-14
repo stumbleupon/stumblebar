@@ -107,13 +107,8 @@ var Toolbar = {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
-		//if (action == 'theme') {
-		//	var classes = document.querySelector("#toolbar").classList;
-		//	for (var i = 0; i < classes.length; i++)
-		//		if (classes[i].indexOf('theme-') === 0)
-		//			document.querySelector("#toolbar").removeClass(classes[i]);
-		//	document.querySelector("#toolbar").addClass(action + '-' + value);
-		//}
+		if (action == 'hide') {
+		}
 		Toolbar.handleRedraw();
 	},
 	mouse: {},
@@ -165,6 +160,7 @@ var Toolbar = {
 			w: document.querySelector(".toolbar-section-container").offsetWidth,
 			h: document.querySelector(".toolbar-section-container").offsetHeight,
 			rpos: Toolbar.config.rpos,
+			hidden: Toolbar.config.hidden,
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
