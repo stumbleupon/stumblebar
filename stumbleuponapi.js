@@ -78,20 +78,21 @@ StumbleUponApi.prototype = {
 	},
 
 	getStumbles: function() {
+		var mode = null;
 		return this.cache.mget('mode', 'userid')
 			.then(function(map) {
+				mode = map.mode;
 				var post = this.api.prepPost("stumble", {userid: map.userid});
 				return this.api
-					.once(this.config.endpoint.stumble + map.mode, post, {method: 'POST'});
+					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
 			.then(function(results) {
 				if (!results || !results._success)
 					return Promise.reject(results);
-				debug("Buffer fill", results.guesses.values);
+				debug("Buffer fill", mode, results.guesses.values);
 				return this.cache.mset({
-					stumbles:	results.guesses.values || [],
+					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
 					numShares:	results.shares_pending || 0,
-					stumblePos: -1
 				});
 			}.bind(this));
 	},
@@ -105,17 +106,18 @@ StumbleUponApi.prototype = {
 		});
 	},
 
-	reportStumble: function(urlids) {
-		return this.cache.mget('mode', 'user')
+	reportStumble: function(urlids, mode) {
+		return this.cache.mget('stumble', 'user', 'mode')
 			.then(function (map) {
 				var post = this.api.prepPost("seen", {guess_urlids: urlids, userid: map.user.userid});
 				urlids.forEach(function(urlid) { this.seen[urlid] = true; }.bind(this));
 				debug("Report stumble", urlids.join(','));
-				return this.api.once(this.config.endpoint.stumble + map.mode, post, {method: 'POST'})
+				return this.api.once(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
 			}.bind(this));
 	},
 
 	nextUrl: function(peek, retry) {
+		console.log('NEXT URL', peek, retry);
 		return this.config._get('maxRetries')
 			.then(function(maxRetries) {
 				if (maxRetries < (retry || 0)) {
@@ -123,10 +125,10 @@ StumbleUponApi.prototype = {
 					return Promise.reject('Too many retries');
 				}
 			})
-			.then(this.cache.map('stumbles', 'stumblePos'))
+			.then(this.cache.map('stumble', 'mode'))
 			.then(function (map) {
-				var stumblePos = map.stumblePos, stumbles = map.stumbles;
-				if (stumblePos >= stumbles.length - 1) {
+				var stumblePos = map.stumble.pos, stumbles = map.stumble.list;
+				if (stumblePos >= stumbles.length - 1 || map.mode != map.stumble.mode) {
 					debug('Buffer refill from NextUrl', stumbles.length, stumblePos);
 					return this.getStumbles().then(function (r) {
 						return this.nextUrl(peek, (retry || 0) + 1);
@@ -134,16 +136,27 @@ StumbleUponApi.prototype = {
 				}
 	
 				++ stumblePos;
-				if (!peek)
-					this.cache.mset({stumblePos: stumblePos});
-				if (stumblePos >= stumbles.length - this.config.refillPos)
+				if (!peek) {
+					map.stumble.pos = stumblePos;
+					this.cache.mset({stumble: map.stumble});
+				}
+				if (stumblePos >= stumbles.length - this.config.refillPos) {
 					this.getStumbles();
-				if (!peek && this.seen[stumbles[stumblePos].urlid]) // TODO re-report seen
-					return this.nextUrl(peek, retry)
+				}
+				if (peek && this.seen[stumbles[stumblePos].urlid]) { // TODO re-report seen
+					debug("Already seen", stumbles[stumblePos].urlid);
+					this.reportStumble([stumbles[stumblePos].urlid]);
+					return this.nextUrl(peek, retry);
+				}
 				if (!peek)
 					debug("NextUrl", stumbles[stumblePos], stumblePos, stumbles);
 				return stumbles[stumblePos];
 			}.bind(this));
-	}
+	},
+
+	mode: function(mode) {
+		this.cache.mset({mode: mode});
+		return this;
+	},
 }
 

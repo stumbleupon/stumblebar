@@ -38,7 +38,7 @@ config.refillPos = 3;
 config.endpoint = {
   ping:    '/p',
   user:    '/user/?version=2',
-  stumble: '/stumble/',
+  stumble: '/stumble/:mode',
   rate:    '/discovery/rating',
   unrate:  '/discovery/:urlid/rating',
   url:     '/url',
@@ -46,10 +46,17 @@ config.endpoint = {
 config.url = {
   info:    '/content/:urlid',
 }
+config.modes = {
+	all:       { name: 'All Interests'   },
+	followers: { name: 'People I Follow' },
+	trending:  { name: 'Trending'        },
+	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
+	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
+}
 config.defaults = {
 	mode: 'all',
+	theme: '',
 	user: 0,
-	stumbles: [],
-	stumblePos: -1,
+	stumble: { list: [], pos: -1, mode: 'all' },
 }
 

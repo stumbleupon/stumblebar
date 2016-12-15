@@ -51,6 +51,11 @@ var Toolbar = {
 			});
 			document.querySelector("#theme-" + config.theme).addClass('enabled');
 		}
+		if (config.mode && config.mode != Toolbar.config.mode) {
+			document.querySelector(".toolbar-mode-selection").addClass("hidden");
+			document.querySelector(".toolbar-mode").removeClass("hidden");
+			document.querySelector("#mode").innerText = config.modes[config.mode].name;
+		}
 
 		for (var key in config) {
 			Toolbar.config[key] = config[key];

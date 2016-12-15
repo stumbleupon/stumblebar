@@ -42,49 +42,40 @@ ToolbarEvent.discover = function(request, sender) {
 	});
 }
 
+ToolbarEvent.mode = function(request, sender) {
+	config.mode = request.data.value || config.defaults.mode;
+	var response = { all: true, config: { mode: config.mode, modes: config.modes } };
+	ToolbarEvent.stumble(request, sender);
+	return Promise.resolve(response);
+}
+
 ToolbarEvent.theme = function(request, sender) {
 	config.theme = request.data.value;
-	var response = {
-		all: true,
-		config: { theme: config.theme }
-	};
-	console.log(config);
+	var response = { all: true, config: { theme: config.theme } };
 	return Promise.resolve(response);
 }
 
 ToolbarEvent.toggleHidden = function(request, sender) {
 	config.hidden = !config.hidden;
-	var response = {
-		all: true,
-		config: { hidden: config.hidden }
-	};
+	var response = { all: true, config: { hidden: config.hidden } };
 	return Promise.resolve(response);
 }
 
 ToolbarEvent.unhide = function(request, sender) {
 	config.hidden = false;
-	var response = {
-		all: true,
-		config: { hidden: config.hidden }
-	};
+	var response = { all: true, config: { hidden: config.hidden } };
 	return Promise.resolve(response);
 }
 
 ToolbarEvent.hide = function(request, sender) {
 	config.hidden = true;
-	var response = {
-		all: true,
-		config: { hidden: config.hidden }
-	};
+	var response = { all: true, config: { hidden: config.hidden } };
 	return Promise.resolve(response);
 }
 
 ToolbarEvent.repos = function(request, sender) {
 	config.rpos = request.data.rpos;
-	var response = {
-		all: true,
-		config: { rpos: config.rpos }
-	};
+	var response = { all: true, config: { rpos: config.rpos } };
 	return Promise.resolve(response);
 }
 
@@ -163,6 +154,7 @@ ToolbarEvent.like = function(request, sender) {
 
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.api
+		.mode(config.mode || config.defaults.mode)
 		.nextUrl()
 		.then(function(url) {
 			ToolbarEvent.api
@@ -171,6 +163,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			Page.note(sender.tab.id, url);
 			ToolbarEvent.api.reportStumble([url.urlid]);
 			request.url = url;
+			console.log(url);
 			chrome.tabs.update(sender.tab.id, { "url": url.url });
 			return request;
 		})
