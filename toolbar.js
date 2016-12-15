@@ -84,10 +84,13 @@ var Toolbar = {
 			return;
 		}
 		var elem   = e.target;
+		while (elem && !elem.getAttribute('action')) {
+			elem = elem.parentNode;
+		}
+		if (!elem)
+			return;
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
-		if (!action)
-			return;
 		console.log(action);
 		Toolbar.dispatch(action, {value: value})
 			.then(Toolbar.handleResponse);
@@ -98,6 +101,10 @@ var Toolbar = {
 			document.querySelector(".action-extra").toggleClass("enabled");
 			document.querySelector(".toolbar-container-extra").toggleClass("hidden");
 			document.querySelector(".toolbar-social-container").toggleClass("hidden");
+		}
+		if (action == 'expand' && value == 'mode') {
+			document.querySelector(".toolbar-mode-selection").toggleClass("hidden");
+			document.querySelector(".toolbar-mode").toggleClass("hidden");
 		}
 		if (action == 'expand' && value == 'social') {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
