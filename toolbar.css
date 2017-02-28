@@ -107,7 +107,7 @@ body {
 	background-image: url("asset/Icon/Bookmark.svg");
 	transform: rotate(-180deg);
 }
-.toolbar-action-container .action-inbox {
+.toolbar-action-container .action-inbox.enabled {
 	background-image: url("asset/Icon/Bookmark-enabled.svg");
 	transform: rotate(-180deg);
 }
