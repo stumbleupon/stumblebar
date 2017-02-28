@@ -191,6 +191,25 @@ body {
 	width: auto;
 	vertical-align: middle;
 	margin-right: 10px;
+	border-width: 1px;
+	border-style: solid;
+}
+.toolbar-action-container .action-stumble.enabled {
+	animation: stumble-pulse 3s infinite;
+}
+@keyframes stumble-pulse {
+	0% {
+		background-color: #E94136;
+	}
+	10% {
+		background-color: #A94A2F;
+	}
+	80% {
+		background-color: #FF4A2F;
+	}
+	100% {
+		background-color: #E94A2F;
+	}
 }
 
 .primary-background {
@@ -200,6 +219,9 @@ body {
 .primary-color {
 	color: #E94A2F;
 	background-color: inherit;
+}
+.primary-border {
+	border-color: #E94A2F;
 }
 .default-color {
 	color: black;

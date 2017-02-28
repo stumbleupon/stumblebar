@@ -20,6 +20,7 @@ var Toolbar = {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
 		document.querySelector("#dislike").removeClass("enabled");
+		document.querySelector("#stumble").removeClass("enabled");
 		if (url.userRating) {
 			if (url.userRating.type >= 1)
 				document.querySelector("#like").addClass("enabled");
@@ -102,6 +103,9 @@ var Toolbar = {
 		//if (action == 'info') {
 		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
 		//}
+		if (action == 'stumble') {
+			document.querySelector(".action-stumble").toggleClass("enabled");
+		}
 		if (action == 'expand' && value == 'extra') {
 			document.querySelector(".action-extra").toggleClass("enabled");
 			document.querySelector(".toolbar-container-extra").toggleClass("hidden");
