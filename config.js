@@ -12,10 +12,11 @@ var config = {
 config.baseUrl = 'www.stumbleupon.com'
 config.apiPath = '/api/v2_0'
 config.accessToken = 'su_accesstoken'
-config.defaultHeaders = new Map ([
-    ["X-Su-ConsumerKey",    "35774027dc2f2f64a280e63eafb018505c045655"],
-    ["X-Su-ClientId",       "448f3699-fbb8-a606-3f20-2d3e620c152c"    ],
-])
+config.accessTokenHeader = 'X-Su-AccessTokenKey';
+config.defaultHeaders = { 
+    "X-Su-ConsumerKey":    "35774027dc2f2f64a280e63eafb018505c045655",
+    "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
+};
 config.post = {
 	stumble: {
 		guesses: 10,

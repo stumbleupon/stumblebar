@@ -59,6 +59,7 @@
 			"config.js",
 			"cache.js",
 			"cookie.js",
+			"api_request.js",
 			"api.js",
 			"stumbleuponapi.js",
 			"toolbarevent.js",

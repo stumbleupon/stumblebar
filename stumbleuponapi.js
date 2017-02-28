@@ -26,15 +26,15 @@ StumbleUponApi.prototype = {
 
 				debug("Extracted auth token", accessToken.value);
 				this.cache.mset({accessToken: accessToken.value});
-				this.api.token(accessToken.value);
+				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
 				return accessToken.value;
 			}.bind(this));
 	},
 
 	ping: function() {
 		return this.api
-			.raw(this.config.endpoint.ping, null, {proto: 'http', noauth: true})
-			.then(this.api.unjson.bind(this))
+			.raw(this.config.endpoint.ping, null, {proto: 'http', headers: {[this.config.accessTokenHeader]: null}})
+			.then(JSON.parse)
 			.then(this.extractAccessToken.bind(this));
 	},
 
@@ -82,7 +82,7 @@ StumbleUponApi.prototype = {
 		return this.cache.mget('mode', 'userid')
 			.then(function(map) {
 				mode = map.mode;
-				var post = this.api.prepPost("stumble", {userid: map.userid});
+				var post = this._buildPost("stumble", {userid: map.userid});
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
@@ -98,7 +98,7 @@ StumbleUponApi.prototype = {
 	},
 
 	flush: function() {
-		this.api.token(null);
+		this.api.addHeaders({[this.config.accessTokenHeader]: null});
 		return this.cache.mset({
 			accessToken: null,
 			stumbles: [],
@@ -106,10 +106,21 @@ StumbleUponApi.prototype = {
 		});
 	},
 
+	_buildPost: function(type, remap) {
+		var post = {};
+		for (var key in this.config.post[type]) {
+			post[key] = this.config.post[type][key];
+		}
+		for (var key in remap) {
+			post[key] = remap[key];
+		}
+		return post;
+	},
+
 	reportStumble: function(urlids, mode) {
 		return this.cache.mget('stumble', 'user', 'mode')
 			.then(function (map) {
-				var post = this.api.prepPost("seen", {guess_urlids: urlids, userid: map.user.userid});
+				var post = this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid});
 				urlids.forEach(function(urlid) { this.seen[urlid] = true; }.bind(this));
 				debug("Report stumble", urlids.join(','));
 				return this.api.once(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
