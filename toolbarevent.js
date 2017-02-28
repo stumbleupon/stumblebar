@@ -154,7 +154,7 @@ ToolbarEvent.like = function(request, sender) {
 
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.api
-		.mode(config.mode || config.defaults.mode)
+		._mode(config.mode || config.defaults.mode)
 		.nextUrl()
 		.then(function(url) {
 			ToolbarEvent.api
@@ -176,7 +176,7 @@ ToolbarEvent.error = function(e) {
 }
 
 ToolbarEvent.loginPage = function() {
-	ToolbarEvent.api.flush();
+	ToolbarEvent.api._flush();
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.tabs.update(tabs[0].id, {
 			"url": 'https://' + config.baseUrl + '/login'
@@ -244,5 +244,5 @@ ToolbarEvent._init = function() {
 
 
 ToolbarEvent._init();
-ToolbarEvent.api.flush();
+ToolbarEvent.api._flush();
 

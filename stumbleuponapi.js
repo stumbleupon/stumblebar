@@ -15,27 +15,11 @@ function StumbleUponApi(config) {
 }
 
 StumbleUponApi.prototype = {
-	extractAccessToken: function(result) {
-		if (!result || !result._success)
-			return Promise.reject(result);
-
-		return this.cookie.get('su_accesstoken')
-			.then(function(accessToken) {
-				if (!accessToken || !accessToken.value)
-					return Promise.reject(accessToken);
-
-				debug("Extracted auth token", accessToken.value);
-				this.cache.mset({accessToken: accessToken.value});
-				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
-				return accessToken.value;
-			}.bind(this));
-	},
-
 	ping: function() {
 		return this.api
 			.raw(this.config.endpoint.ping, null, {proto: 'http', headers: {[this.config.accessTokenHeader]: null}})
 			.then(JSON.parse)
-			.then(this.extractAccessToken.bind(this));
+			.then(this._extractAccessToken.bind(this));
 	},
 
 	rate: function(urlid, score) {
@@ -97,26 +81,6 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
-	flush: function() {
-		this.api.addHeaders({[this.config.accessTokenHeader]: null});
-		return this.cache.mset({
-			accessToken: null,
-			stumbles: [],
-			stumblePos: -1,
-		});
-	},
-
-	_buildPost: function(type, remap) {
-		var post = {};
-		for (var key in this.config.post[type]) {
-			post[key] = this.config.post[type][key];
-		}
-		for (var key in remap) {
-			post[key] = remap[key];
-		}
-		return post;
-	},
-
 	reportStumble: function(urlids, mode) {
 		return this.cache.mget('stumble', 'user', 'mode')
 			.then(function (map) {
@@ -165,9 +129,46 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
-	mode: function(mode) {
+	_flush: function() {
+		this.api.addHeaders({[this.config.accessTokenHeader]: null});
+		return this.cache.mset({
+			accessToken: null,
+			stumbles: [],
+			stumblePos: -1,
+		});
+	},
+
+	_buildPost: function(type, remap) {
+		var post = {};
+		for (var key in this.config.post[type]) {
+			post[key] = this.config.post[type][key];
+		}
+		for (var key in remap) {
+			post[key] = remap[key];
+		}
+		return post;
+	},
+
+	_mode: function(mode) {
 		this.cache.mset({mode: mode});
 		return this;
 	},
+
+	_extractAccessToken: function(result) {
+		if (!result || !result._success)
+			return Promise.reject(result);
+
+		return this.cookie.get('su_accesstoken')
+			.then(function(accessToken) {
+				if (!accessToken || !accessToken.value)
+					return Promise.reject(accessToken);
+
+				debug("Extracted auth token", accessToken.value);
+				this.cache.mset({accessToken: accessToken.value});
+				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
+				return accessToken.value;
+			}.bind(this));
+	},
+
 }
 
