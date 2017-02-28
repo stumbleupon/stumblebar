@@ -34,7 +34,7 @@ body {
   display: block;
 }
 */
-.toolbar-action .enabled {
+.toolbar-action.enabled {
 	background-color: yellow;
 }
 .action-theme.enabled {
