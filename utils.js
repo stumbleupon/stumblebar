@@ -13,7 +13,7 @@ var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 function debug() {
 	var e = new Error;
-	console.log('DEBUG', arguments, e.stack);
+	console.log.apply(console.log, ['DEBUG'].concat(Array.prototype.slice.call(arguments)));
 }
 function warning() {
 	var e = new Error;
