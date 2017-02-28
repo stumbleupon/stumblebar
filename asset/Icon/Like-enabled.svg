@@ -13,7 +13,7 @@
         <g id="Icon-/-Like" transform="translate(-8.000000, -8.000000)">
             <g>
                 <rect id="Rectangle" x="0" y="0" width="34" height="34" rx="17"></rect>
-                <use id="Shape" stroke="#E94A2F" mask="url(#mask-2)" stroke-width="2" xlink:href="#path-1"></use>
+                <use id="Shape" fill="#E94A2F" stroke="#E94A2F" mask="url(#mask-2)" stroke-width="2" xlink:href="#path-1"></use>
             </g>
         </g>
     </g>

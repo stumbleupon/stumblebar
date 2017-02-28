@@ -35,7 +35,9 @@ body {
 }
 */
 .toolbar-action.enabled {
+	/*
 	background-color: yellow;
+	*/
 }
 .action-theme.enabled {
 	background-color: yellow;
@@ -105,6 +107,10 @@ body {
 	background-image: url("asset/Icon/Bookmark.svg");
 	transform: rotate(-180deg);
 }
+.toolbar-action-container .action-inbox {
+	background-image: url("asset/Icon/Bookmark-enabled.svg");
+	transform: rotate(-180deg);
+}
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
 	-webkit-filter: grayscale(100%) brightness(150%);
@@ -118,6 +124,9 @@ body {
 .toolbar-action-container .action-dislike {
 	background-image: url("asset/Icon/Down.svg");
 }
+.toolbar-action-container .action-dislike.enabled {
+	background-image: url("asset/Icon/Down-enabled.svg");
+}
 .toolbar-action-container .action-extra {
 	background-image: url("asset/DotDotDot.svg");
 }
@@ -128,8 +137,14 @@ body {
 .toolbar-action-container .action-like {
 	background-image: url("asset/Icon/Like.svg");
 }
+.toolbar-action-container .action-like.enabled {
+	background-image: url("asset/Icon/Like-enabled.svg");
+}
 .toolbar-action-container .action-share {
 	background-image: url("asset/Icon/Share.svg");
+}
+.toolbar-action-container .action-share.enabled {
+	background-image: url("asset/Icon/Share-enabled.svg");
 }
 .toolbar-expand-icon {
 	background-image: url("asset/Expand.svg");
