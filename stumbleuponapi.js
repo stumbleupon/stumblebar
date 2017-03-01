@@ -70,13 +70,13 @@ StumbleUponApi.prototype = {
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
+			.then(this._syncSharesPending.bind(this))
 			.then(function(results) {
 				if (!results || !results._success)
 					return Promise.reject(results);
 				debug("Buffer fill", mode, results.guesses.values);
 				return this.cache.mset({
 					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
-					numShares:	results.shares_pending || 0,
 				});
 			}.bind(this));
 	},
@@ -84,10 +84,30 @@ StumbleUponApi.prototype = {
 	reportStumble: function(urlids, mode) {
 		return this.cache.mget('stumble', 'user', 'mode')
 			.then(function (map) {
+				// FIXME double reporting/re-reporting
+				//for (var urlid in this.seen) {
+				//	if (this.seen[urlid].state == 'f')
+				//		urlids.push(urlid);
+				//}
+
+				var mode = mode || map.stumble.mode || map.mode;
 				var post = this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid});
-				urlids.forEach(function(urlid) { this.seen[urlid] = true; }.bind(this));
+				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode}; }.bind(this));
+
 				debug("Report stumble", urlids.join(','));
-				return this.api.once(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
+				return this.api
+					.once(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
+					.then(this._syncSharesPending.bind(this))
+					.then(function(res) {
+						if (res._success) {
+							urlids.forEach(function(urlid) { this.seen[urlid].state = 'r'; }.bind(this));
+						}
+						return res;
+					}.bind(this))
+					.catch(function(err) {
+						// Mark failed unreported so we can re-report later
+						urlids.forEach(function(urlid) { this.seen[urlid].state = 'f'; }.bind(this));
+					})
 			}.bind(this));
 	},
 
@@ -167,6 +187,14 @@ StumbleUponApi.prototype = {
 				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
 				return accessToken.value;
 			}.bind(this));
+	},
+
+	_syncSharesPending: function(res) {
+		if (res && res.shares_pending) {
+			this.cache.mset({ numShares: res.shares_pending });
+			this.config.numShares = res.shares_pending
+		}
+		return res;
 	},
 
 }
