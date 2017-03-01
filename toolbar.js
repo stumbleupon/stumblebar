@@ -58,6 +58,11 @@ var Toolbar = {
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
 		}
 
+		if (config.hasOwnProperty('numShares')) {
+			document.querySelector("#inbox .badge").innerText = config.numShares ? parseInt(config.numShares) : '';
+			document.querySelector("#inbox")[parseInt(config.numShares) ? 'addClass' : 'removeClass']('enabled');
+		}
+
 		for (var key in config) {
 			Toolbar.config[key] = config[key];
 		}

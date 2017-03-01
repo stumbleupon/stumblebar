@@ -74,9 +74,11 @@ ToolbarEvent.hide = function(request, sender) {
 }
 
 ToolbarEvent.repos = function(request, sender) {
-	config.rpos = request.data.rpos;
-	var response = { all: true, config: { rpos: config.rpos } };
-	return Promise.resolve(response);
+	return ToolbarEvent._buildResponse(true, { rpos: config.rpos = request.data.rpos });
+}
+
+ToolbarEvent._buildResponse = function(all, change) {
+	return Promise.resolve(Object.assign({all: all}, config, change));
 }
 
 ToolbarEvent.dislike = function(request, sender) {
@@ -164,8 +166,8 @@ ToolbarEvent.stumble = function(request, sender) {
 			ToolbarEvent.api.reportStumble([url.urlid]);
 			request.url = url;
 			console.log(url);
-			chrome.tabs.update(sender.tab.id, { "url": url.url });
-			return request;
+			chrome.tabs.update(sender.tab.id, { url: url.url });
+			return ToolbarEvent._buildResponse(false, request);
 		})
 		.catch(ToolbarEvent.error);
 }
