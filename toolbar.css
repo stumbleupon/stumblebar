@@ -89,9 +89,9 @@ body {
 	background-position: center; 
 	cursor: pointer;
 	content: "";
+	display: inline-block;
 }
 .toolbar-action {
-	display: inline-block;
 	position: relative;
 }
 .toolbar-logo-container .toolbar-settings-icon {
@@ -105,11 +105,9 @@ body {
 }
 .toolbar-action-container .action-inbox {
 	background-image: url("asset/Icon/Bookmark.svg");
-	transform: rotate(-180deg);
 }
 .toolbar-action-container .action-inbox.enabled {
 	background-image: url("asset/Icon/Bookmark-enabled.svg");
-	transform: rotate(-180deg);
 }
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
@@ -117,7 +115,7 @@ body {
     filter: grayscale(100%) brightness(150%);
 	
 }
-.toolbar-action-container .action-info.enabled {
+.toolbar-action-container .action-info.on {
 	-webkit-filter: none !important;
     filter: none !important;
 }
@@ -471,8 +469,31 @@ body {
 	display: inline-block !important;
 }
 
-.toolbar-container:not(.action-extra-expanded) .hide-until-action-extra-expanded:not(.enabled) {
+.toolbar-container:not(.action-extra-expanded) .show-when-action-extra-expanded:not(.enabled) {
 	display: none;
 }
 
+.toolbar-container.mode-expanded .hide-when-mode-expanded:not(.enabled) {
+	display: none;
+}
+.toolbar-container:not(.mode-expanded) .show-when-mode-expanded:not(.enabled) {
+	display: none;
+}
+
+.enabled .badge, .badge.enabled {
+	/*
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: white;
+	border: 1px solid #E94A2F;
+	*/
+	color: white;
+	text-shadow: 0px 0px 1px black;
+	vertical-align: middle;
+	text-align: center;
+	border-radius: 6px;
+	font-size: 8px;
+	display: block;
+}
 

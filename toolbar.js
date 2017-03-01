@@ -34,9 +34,9 @@ var Toolbar = {
 		}
 		document.querySelector("#social").innerHTML = message;
 
-		document.querySelector("#info").removeClass("enabled");
+		document.querySelector("#info").removeClass("on");
 		if (url.urlid) {
-			document.querySelector("#info").addClass("enabled");
+			document.querySelector("#info").addClass("on");
 		}
 	},
 
@@ -53,8 +53,8 @@ var Toolbar = {
 			document.querySelector("#theme-" + config.theme).addClass('enabled');
 		}
 		if (config.mode && config.mode != Toolbar.config.mode) {
-			document.querySelector(".toolbar-mode-selection").addClass("hidden");
-			document.querySelector(".toolbar-mode").removeClass("hidden");
+			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
+			//document.querySelector(".toolbar-mode").removeClass("hidden");
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
 		}
 
@@ -103,18 +103,15 @@ var Toolbar = {
 		//if (action == 'info') {
 		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
 		//}
-		if (action == 'stumble') {
+		if (action == 'stumble' || action == 'mode') {
 			document.querySelector(".action-stumble").toggleClass("enabled");
+			document.querySelector(".toolbar-container").removeClass("mode-expanded");
 		}
 		if (action == 'expand' && value == 'extra') {
 			document.querySelector(".toolbar-container").toggleClass("action-extra-expanded");
-			//document.querySelector(".action-extra").toggleClass("enabled");
-			//document.querySelector(".toolbar-extra").toggleClass("hidden");
-			//document.querySelector(".toolbar-social-container").toggleClass("hidden");
 		}
 		if (action == 'expand' && value == 'mode') {
-			document.querySelector(".toolbar-mode-selection").toggleClass("hidden");
-			document.querySelector(".toolbar-mode").toggleClass("hidden");
+			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
 		}
 		if (action == 'expand' && value == 'social') {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");

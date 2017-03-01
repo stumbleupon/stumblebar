@@ -18,14 +18,15 @@
 				<div class="toolbar-section-container">
 					<div class="toolbar-section-header"></div>
 
-					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode clickable clickable">
-						<div class="toolbar-mode toolbar-entry-container" action="expand" value="mode">
+					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode clickable">
+						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode">
 							<span class="toolbar-mode" id="mode">All Interests</span>
+							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode"></span>
 						</div>
-						<div class="toolbar-mode-selection primary-color hidden">
+						<div class="toolbar-mode-selection primary-color show-when-mode-expanded">
 							<div class="default-color toolbar-entry-container" action="expand" value="mode">
 								Select...
-								<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode"></span>
+								<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="expand" value="mode"></span>
 							</div>
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="all">All Interests</div>
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="following">People I Follow</div>
@@ -41,16 +42,18 @@
 							<span class="toolbar-action action-like   " action="like"    id="like"></span>
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
 							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
-							<span class="toolbar-action action-inbox  hide-until-action-extra-expanded" action="expand" value="social" raction="inbox" id="inbox"><span class="badge"></span></span>
-							<span class="toolbar-action action-list   hide-until-action-extra-expanded" action="list"  id="list"></span>
-							<span class="toolbar-action action-info   hide-until-action-extra-expanded" action="info"  id="info"></span>
+							<span class="toolbar-action action-inbox  show-when-action-extra-expanded enabled" action="expand" value="social" raction="inbox" id="inbox"><span class="badge">99</span></span>
+							<span class="toolbar-action action-list   show-when-action-extra-expanded" action="list"  id="list"></span>
+							<span class="toolbar-action action-info   show-when-action-extra-expanded" action="info"  id="info"></span>
 							<span class="toolbar-action action-extra  " action="expand" value="extra" id="extra"></span>
 						</span>
 					</div>
 
-					<div class="toolbar-section toolbar-social-container toolbar-border-top hide-until-action-extra-expanded hide-in-mini-mode">
+					<div class="toolbar-section toolbar-social-container toolbar-border-top show-when-action-extra-expanded hide-in-mini-mode">
 						<span id="social"></span>
+						<!--
 						<span class="toolbar-expand-icon clickable" action="expand" value="social"></span>
+						-->
 					</div>
 
 					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden">
