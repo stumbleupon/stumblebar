@@ -75,9 +75,6 @@ body {
 }
 .toolbar-social-container {
 }
-.hidden {
-	display: none;
-}
 .toolbar-section-container {
 	display: inline-block;
 	white-space: nowrap;
@@ -92,6 +89,8 @@ body {
 	background-position: center; 
 	cursor: pointer;
 	content: "";
+}
+.toolbar-action {
 	display: inline-block;
 }
 .toolbar-logo-container .toolbar-settings-icon {
@@ -461,6 +460,18 @@ body {
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
+}
+
+
+.hidden {
+	display: none !important;
+}
+.hidden .enabled {
+	display: inline-block !important;
+}
+
+.toolbar-container:not(.action-extra-expanded) .hide-until-action-extra-expanded:not(.enabled) {
+	display: none;
 }
 
 

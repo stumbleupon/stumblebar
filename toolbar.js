@@ -107,9 +107,10 @@ var Toolbar = {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 		}
 		if (action == 'expand' && value == 'extra') {
-			document.querySelector(".action-extra").toggleClass("enabled");
-			document.querySelector(".toolbar-container-extra").toggleClass("hidden");
-			document.querySelector(".toolbar-social-container").toggleClass("hidden");
+			document.querySelector(".toolbar-container").toggleClass("action-extra-expanded");
+			//document.querySelector(".action-extra").toggleClass("enabled");
+			//document.querySelector(".toolbar-extra").toggleClass("hidden");
+			//document.querySelector(".toolbar-social-container").toggleClass("hidden");
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-mode-selection").toggleClass("hidden");
