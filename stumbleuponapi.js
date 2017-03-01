@@ -43,7 +43,7 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
-	getUrlByUrl: function(url) {
+	getUrlByHref: function(url) {
 		return this.api.get(this.config.endpoint.url, { url: url })
 			.then(function (result) { return result.url; });
 	},

@@ -79,6 +79,8 @@ body {
 	display: inline-block;
 	white-space: nowrap;
 }
+.toolbar-section-sponsored {
+}
 .toolbar-action-container .toolbar-action {
 	width: 34px;
 	height: 34px;
@@ -495,5 +497,16 @@ body {
 	border-radius: 6px;
 	font-size: 8px;
 	display: block;
+}
+
+
+.toolbar-section-sponsored {
+	margin: 0 0 8px 24px;
+}
+.toolbar-section-sponsored A {
+	margin-left: 0.5em;
+	text-decoration: none;
+	color: #888;
+	font-size: 8px;
 }
 

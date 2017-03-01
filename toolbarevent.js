@@ -8,7 +8,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 		return false;
 	ToolbarEvent[request.action](request, sender)
 		.then(function(response) {
-			console.log("ToolbarEvent.sendResponse", response);
+			console.log("ToolbarEvent.sendResponse", request, response);
 			sendResponse(response);
 			if (response.all) {
 //				chrome.runtime.sendMessage(chrome.runtime.id, response);
@@ -74,11 +74,13 @@ ToolbarEvent.hide = function(request, sender) {
 }
 
 ToolbarEvent.repos = function(request, sender) {
-	return ToolbarEvent._buildResponse(true, { rpos: config.rpos = request.data.rpos });
+	config.rpos = request.data.rpos;
+	return ToolbarEvent._buildResponse({}, true);
 }
 
-ToolbarEvent._buildResponse = function(all, change) {
-	return Promise.resolve(Object.assign({all: all}, config, change));
+ToolbarEvent._buildResponse = function(change, all) {
+	debug('ToolbarEvent._buildResponse', change);
+	return Promise.resolve(Object.assign({all: all}, { config: config }, change));
 }
 
 ToolbarEvent.dislike = function(request, sender) {
@@ -167,7 +169,8 @@ ToolbarEvent.stumble = function(request, sender) {
 			request.url = url;
 			console.log(url);
 			chrome.tabs.update(sender.tab.id, { url: url.url });
-			return ToolbarEvent._buildResponse(false, request);
+			// Don't send URL now, wait for init call
+			return ToolbarEvent._buildResponse({});
 		})
 		.catch(ToolbarEvent.error);
 }
@@ -209,20 +212,34 @@ ToolbarEvent.preload = function(url) {
 }
 
 ToolbarEvent.getUrlFromPageCache = function(url) {
-	return Promise.resolve(Page.urlCache[url]);
+	console.log('GUFPC', Page.urlCache[url]);
+	return ToolbarEvent._buildResponse({url: Page.urlCache[url]});
 }
 
 ToolbarEvent.urlChange = function(request, sender) {
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
-		if (url)
-			Page.urlChange(url, tabs[0].id);
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
+			console.log(url);
+			if (url) {
+				Page.urlChange(url, tabs[0].id)
+					.then(function(url) {
+						resolve(ToolbarEvent._buildResponse({url: url}));
+					});
+			} else {
+				reject();
+			}
+		});
 	});
+	return p;
+	return ToolbarEvent._buildResponse({});
+	//return ToolbarEvent._buildResponse({url: Page.urlCache[request && request.url && request.url.url]});
 	return Promise.resolve(request);
 }
 
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id) });
 	return Promise.resolve(request);
 }
 

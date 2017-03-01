@@ -24,6 +24,9 @@ Page.handleIconClick = function(e) {
 	})
 }
 
+Page.lastUrl = function(tabid) {
+	return Page.tab[tabid] && Page.tab[tabid].url;
+}
 Page.getUrlId = function(tabid) {
 	return Page.tab[tabid] && Page.tab[tabid].url && Page.tab[tabid].url.urlid;
 }
@@ -39,6 +42,9 @@ Page.getUrl = function(tabid) {
 			resolve(tab.url);
 		});
 	});
+}
+Page.getUrlByHref = function(href) {
+	return Page.urlCache[href];
 }
 
 Page.urlCache = [];
@@ -78,10 +84,10 @@ Page.note = function(tabid, url) {
 }
 
 Page.urlChange = function(href, tabid) {
-	return ToolbarEvent
-		.getUrlFromPageCache(href)
+	return Promise
+		.resolve(Page.getUrlByHref(href))
 		.then(function(url) {
-			return url || ToolbarEvent.api.getUrlByUrl(href);
+			return url || ToolbarEvent.api.getUrlByHref(href);
 		})
 		.then(function(url) {
 			console.log(url);

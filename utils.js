@@ -13,7 +13,7 @@ var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 function debug() {
 	var e = new Error;
-	console.log.apply(console.log, ['DEBUG'].concat(Array.prototype.slice.call(arguments)));
+	console.log.apply(console.log, ['DEBUG'].concat(Array.prototype.slice.call(arguments), e.stack));
 }
 function warning() {
 	var e = new Error;
@@ -35,18 +35,23 @@ String.prototype.form = function(map) {
 Element.prototype.addClass = function(name) {
 	if (!this.hasClass(name))
 		this.className += ' ' + name;
+	return this.className;
 }
 
 Element.prototype.removeClass = function(name) {
-	this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
+	return this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
 }
 
 Element.prototype.hasClass = function(name) {
 	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
 }
 
+Element.prototype.changeClass = function(name, state) {
+	return state ? this.addClass(name) : this.removeClass(name);
+}
+
 Element.prototype.toggleClass = function(name) {
-	this.hasClass(name) ? this.removeClass(name) : this.addClass(name);
+	return this.changeClass(name, !this.hasClass(name));
 }
 
 String.prototype.numberFormat = function() {

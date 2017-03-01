@@ -38,6 +38,10 @@ var Toolbar = {
 		if (url.urlid) {
 			document.querySelector("#info").addClass("on");
 		}
+
+		if (url.hasOwnProperty('sponsored')) {
+			document.querySelector("#sponsored").changeClass("hidden", url.sponsored);
+		}
 	},
 
 	handleConfig: function(config) {
@@ -96,7 +100,7 @@ var Toolbar = {
 			return;
 		}
 		var elem   = e.target;
-		while (elem && !elem.getAttribute('action')) {
+		while (elem && elem.getAttribute && !elem.getAttribute('action')) {
 			elem = elem.parentNode;
 		}
 		if (!elem)
