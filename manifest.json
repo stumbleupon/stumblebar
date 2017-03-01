@@ -55,6 +55,7 @@
 
   "background": {
     "scripts": [
+			"polyfill.js",
 			"utils.js",
 			"config.js",
 			"cache.js",
