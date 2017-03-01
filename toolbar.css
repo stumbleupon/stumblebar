@@ -92,6 +92,7 @@ body {
 }
 .toolbar-action {
 	display: inline-block;
+	position: relative;
 }
 .toolbar-logo-container .toolbar-settings-icon {
 	position: absolute;
