@@ -13,8 +13,7 @@ Toolbar.theme = {
 }
 
 
-var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
-//if (!window.top.location.ancestorOrigins.contains(extensionOrigin)) {
+var extensionOrigin = chrome.extension.getURL('').slice(0, -1);
 if ((!location.ancestorOrigins || !location.ancestorOrigins.contains(extensionOrigin)) && location.hostname != "www.stumbleupon.com") {
 	try {
 		var document = window.top.document;
