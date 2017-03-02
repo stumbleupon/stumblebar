@@ -43,34 +43,29 @@ ToolbarEvent.discover = function(request, sender) {
 }
 
 ToolbarEvent.mode = function(request, sender) {
-	config.mode = request.data.value || config.defaults.mode;
-	var response = { all: true, config: { mode: config.mode, modes: config.modes } };
+	ToolbarEvent.api.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
 	ToolbarEvent.stumble(request, sender);
-	return Promise.resolve(response);
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 ToolbarEvent.theme = function(request, sender) {
-	config.theme = request.data.value;
-	var response = { all: true, config: { theme: config.theme } };
-	return Promise.resolve(response);
+	ToolbarEvent.api.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 ToolbarEvent.toggleHidden = function(request, sender) {
-	config.hidden = !config.hidden;
-	var response = { all: true, config: { hidden: config.hidden } };
-	return Promise.resolve(response);
+	ToolbarEvent.api.cache.mset({ hidden: config.hidden = !config.hidden });
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 ToolbarEvent.unhide = function(request, sender) {
-	config.hidden = false;
-	var response = { all: true, config: { hidden: config.hidden } };
-	return Promise.resolve(response);
+	ToolbarEvent.api.cache.mset({ hidden: config.hidden = false });
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 ToolbarEvent.hide = function(request, sender) {
-	config.hidden = true;
-	var response = { all: true, config: { hidden: config.hidden } };
-	return Promise.resolve(response);
+	ToolbarEvent.api.cache.mset({ hidden: config.hidden = true });
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 ToolbarEvent.repos = function(request, sender) {
