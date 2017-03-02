@@ -46,6 +46,9 @@ Page.getUrl = function(tabid) {
 Page.getUrlByHref = function(href) {
 	return Page.urlCache[href];
 }
+Page.getUrlByUrlid = function(urlid) {
+	return Page.urlCache[urlid];
+}
 
 Page.urlCache = [];
 
@@ -84,6 +87,20 @@ Page.note = function(tabid, url) {
 }
 
 Page.urlChange = function(href, tabid) {
+	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
+	if (webtbPath) {
+		var urlid = webtbPath[config.webtbPathNames.urlid];
+		if (urlid) {
+			return Promise.resolve(Page.getUrlByUrlid(urlid) || ToolbarEvent.api.getUrlByUrlid(urlid))
+				.then(function(url) {
+					chrome.tabs.update(tabid, { url: url.url });
+					ToolbarEvent.unhide();
+					return ToolbarEvent._buildResponse({ url: url, hidden: false })
+				})
+				.catch(ToolbarEvent.error);
+			;
+		}
+	}
 	return Promise
 		.resolve(Page.getUrlByHref(href))
 		.then(function(url) {
