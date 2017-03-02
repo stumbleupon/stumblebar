@@ -9,8 +9,13 @@ function Cache(defaults) {
 
 Cache.prototype = {
 	mget: function() {
+		// Lazy mget w/array
+		if (arguments.length == 1 && arguments[0] instanceof Array)
+			return this.mget.apply(this, arguments[0]);
+
 		var reqs = [];
 		var keys = [];
+
 		next: for (var i = 0; i < arguments.length; i++) {
 			v = arguments[i];
 			if (typeof(v) == "string") {
@@ -31,13 +36,13 @@ Cache.prototype = {
 			reqs.push(null);
 		}
 		return Promise.all(reqs)
-									.then(function(r) {
-										var retval = {};
-										r.forEach(function(v, k) {
-											retval[keys[k]] = v;
-										})
-										return retval;
-									});
+		    .then(function(r) {
+				var retval = {};
+				r.forEach(function(v, k) {
+					retval[keys[k]] = v;
+				})
+				return retval;
+		    });
 	},
 	get: function(key, fallback) {
 		return new Promise(function (resolve, reject) {
@@ -54,17 +59,17 @@ Cache.prototype = {
 					resolve(null);
 			}.bind(this));
 		}.bind(this));
-  },
+	},
 
 	mset: function(map) {
 		return new Promise(function (resolve, reject) {
 			return chrome.storage.local.set(map, resolve);
 		});
-  },
+	},
 
 	set: function(key, value) {
 		return this.mset({key: value});
-  },
+	},
 
 	init: function(kvpairs) {
 		this.defaults = kvpairs
