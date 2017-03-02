@@ -103,7 +103,7 @@ var Toolbar = {
 		while (elem && elem.getAttribute && !elem.getAttribute('action')) {
 			elem = elem.parentNode;
 		}
-		if (!elem)
+		if (!elem || !elem.getAttribute)
 			return;
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
