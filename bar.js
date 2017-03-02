@@ -83,11 +83,17 @@ function debounce(fn, delay) {
   };
 }
 
-function sendToIframe(msg) {
+function sendToIframe(msg, bg) {
 	if (iframe.contentWindow) {
 		iframe.contentWindow.postMessage(msg, extensionOrigin);
 	} else {
 		//console.log('Missing iframe', iframe);
+	}
+	if (bg) {
+		try {
+		chrome.runtime.sendMessage(msg, function(response) {
+		});
+		} catch (e){}
 	}
 }
 
@@ -210,7 +216,7 @@ window.addEventListener("message", function(event) {
 				rpos.hside = 'right';
 			}
 			handleRepos(rpos);
-			sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } });
+			sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } }, true);
 		}
 		dpos.state = 'up';
 //		chrome.runtime.sendMessage({action: 'repos', from: 'bar', data: { rpos: rpos } }, function(response) {
