@@ -1,13 +1,13 @@
 var config = {
-  _get: function (key) {
-		return new Promise(function(resolve, reject) {
-			if (!key in this) {
-				console.log('Missing key '+key+' in config');
-				reject(this[key]);
-			}
-		  resolve(this[key]);
-		}.bind(this));
-  }
+//  _get: function (key) {
+//		return new Promise(function(resolve, reject) {
+//			if (!key in this) {
+//				console.log('Missing key '+key+' in config');
+//				reject(this[key]);
+//			}
+//		  resolve(this[key]);
+//		}.bind(this));
+//  }
 }
 config.baseUrl = 'www.stumbleupon.com'
 config.apiPath = '/api/v2_0'
