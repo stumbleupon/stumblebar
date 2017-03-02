@@ -177,7 +177,7 @@ body {
 .toolbar-settings-container {
 	background-color: #444;
 	margin-left: 0;
-	padding-left: 44px;
+	padding-left: 44px !important;
 	color: white;
 }
 .toolbar-settings-container ul {
