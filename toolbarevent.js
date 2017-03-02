@@ -74,7 +74,7 @@ ToolbarEvent.hide = function(request, sender) {
 }
 
 ToolbarEvent.repos = function(request, sender) {
-	config.rpos = request.data.rpos;
+	ToolbarEvent.api.cache.mset({ rpos: config.rpos = request.data.rpos });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -244,6 +244,11 @@ ToolbarEvent.init = function(request, sender) {
 }
 
 ToolbarEvent._init = function() {
+	ToolbarEvent.api.cache.mget(config.persist)
+		 .then(function (map) {
+			 Object.assign(config, map);
+		 });
+
 	ToolbarEvent.ping();
 
 	ToolbarEvent._prerender  = document.createElement('link');

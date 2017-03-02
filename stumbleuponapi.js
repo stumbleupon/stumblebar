@@ -112,7 +112,7 @@ StumbleUponApi.prototype = {
 	},
 
 	nextUrl: function(peek, retry) {
-		return this.config._get('maxRetries')
+		return Promise.resolve(this.config.maxRetries)
 			.then(function(maxRetries) {
 				if (maxRetries < (retry || 0)) {
 					debug("Too many retries");
