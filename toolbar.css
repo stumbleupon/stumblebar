@@ -509,10 +509,12 @@ body {
 
 
 .toolbar-section-sponsored {
-	margin: 0 0 8px 24px;
+	margin: 0 0 8px 0;
+	text-align: center;
+	width: 94px;
 }
 .toolbar-section-sponsored A {
-	margin-left: 0.5em;
+	margin-left: 0;
 	text-decoration: none;
 	color: #888;
 	font-size: 8px;
