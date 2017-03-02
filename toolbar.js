@@ -138,8 +138,8 @@ var Toolbar = {
 	mouse: {},
 	config: {},
 	state: {
-		lastMouse: 0,
-		canMiniMode: false,
+		lastMouse: Date.now(),
+		canMiniMode: true,
 		inMiniMode: false,
 	},
 	handleMouseDown: function(e) {
