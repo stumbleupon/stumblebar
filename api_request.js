@@ -26,6 +26,8 @@ ApiRequest.serializePostData = function(obj, prefix) {
 
 
 ApiRequest.prototype = {
+	qs: '',
+
     /**
      * Add query parameters to url
      *
@@ -45,6 +47,7 @@ ApiRequest.prototype = {
 		opts = opts || {};
 
 		this.headers = Object.assign({}, this.headers, opts.headers);
+		this.post    = Object.assign({}, this.post,    opts.post);
 
 		this.method  = opts.method  || this.method  || 'GET';
 		this.proto   = opts.proto   || this.proto   || 'https';

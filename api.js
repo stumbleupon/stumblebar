@@ -14,10 +14,10 @@ Api.prototype = {
 	 */
 	raw: function(path, data, opts) {
 		return new Promise(function(resolve, reject) {
-			var opts = new ApiRequest({path: path})
+			var req = new ApiRequest({path: path})
+					   .using({method: (((typeof data == 'undefined') || data === null) ? 'GET' : 'POST')})
 					   .using(this.opts)
-					   .using(opts)
-					   .using({method: (((typeof data == 'undefined') || data === null) ? 'GET' : 'POST')});
+					   .using(opts);
 
 			httpRequest = new XMLHttpRequest();
 
@@ -36,15 +36,15 @@ Api.prototype = {
 			data = data || null;
 			if (typeof data == 'object')
 				data = ApiRequest.serializePostData(data);
-			if (data && opts.method == 'GET')
-				opts.addQueryParams(data);
+			if (data && req.method == 'GET')
+				req.addQueryParams(data);
 
-			httpRequest.open(opts.method, opts.buildUrl(), true);
+			httpRequest.open(req.method, req.buildUrl(), true);
 
-			for (var name in opts.headers)
-				httpRequest.setRequestHeader(name, opts.headers[name]);
+			for (var name in req.headers)
+				httpRequest.setRequestHeader(name, req.headers[name]);
 
-			if (data && opts.method != 'GET')
+			if (data && req.method != 'GET')
 				httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
 			try {
@@ -86,7 +86,7 @@ Api.prototype = {
 	 * @return {Promise} Promise response for get
 	 */
 	req: function(path, data, opts) {
-		return this.raw((this.opts.apiPrefix || opts.apiPrefix) + path, data, opts)
+		return this.raw(((opts || {}).apiPrefix || this.opts.apiPrefix) + path, data, opts)
 			.then(function(response) {
 				return JSON.parse(response);
 			}.bind(this));
