@@ -15,7 +15,7 @@
 
 
 	var extensionOrigin = chrome.extension.getURL('').slice(0, -1);
-	if ((!location.ancestorOrigins || !location.ancestorOrigins.contains(extensionOrigin)) && location.hostname != "www.stumbleupon.com") {
+	if ((!location.ancestorOrigins || !location.ancestorOrigins.contains(extensionOrigin)) && (location.hostname != "www.stumbleupon.com" && !location.pathname.match(/^\/su\/[^\/]+/))) {
 		try {
 			var document = window.top.document;
 			if (window.document != document)
