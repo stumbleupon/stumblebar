@@ -188,8 +188,10 @@ var Toolbar = {
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
-		if (e.data.action == 'mouse')
-			return Toolbar.state.canMiniMode = true;
+		if (e.data.action == 'mouse') {
+			Toolbar.state.canMiniMode = true;
+			return;
+		}
 		Toolbar.dispatch(e.data.action, e.data.data).then(Toolbar.handleResponse);
 	},
 	init: function() {
