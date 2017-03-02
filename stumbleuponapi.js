@@ -130,7 +130,7 @@ StumbleUponApi.prototype = {
 				}
 	
 				++ stumblePos;
-				if (!peek) {
+				if (!peek || this.seen[stumbles[stumblePos].urlid]) {
 					map.stumble.pos = stumblePos;
 					this.cache.mset({stumble: map.stumble});
 				}
