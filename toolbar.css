@@ -1,4 +1,9 @@
+HTML {
+	border-radius: 4px;
+}
+
 body {
+	border-radius: 4px;
   font-family: Helvetica Neue, Helvetica, Arial, Sans-Serif;
 /*
   background-color: #eee;
@@ -15,6 +20,9 @@ body {
 	text-align: left;
 	overflow: hidden;
 	white-space: nowrap;
+}
+.toolbar-background {
+	border-radius: 4px;
 }
 .clickable {
 	cursor: pointer;
