@@ -97,7 +97,7 @@ function sendToIframe(msg, bg) {
 }
 
 var communicateMouseMove = debounce(function() {
-	sendToIframe({action: 'mouse', data: mpos })
+	sendToIframe({action: 'mouse', data: mpos });
 }, 1);
 
 window.addEventListener("mousemove", function(event) {
@@ -171,7 +171,7 @@ handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
 
 var lastEvent = null;
 window.addEventListener("message", function(event) {
-	if (!event.data || !event.data.type/* || event.origin != extensionOrigin/* || event.isTrusted !== true*/) {
+	if (!event.data || !event.data.type || event.origin != extensionOrigin/* || event.isTrusted !== true*/) {
 		return
 	}
 	//if (lastEvent != event.data.type)
