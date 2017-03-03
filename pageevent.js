@@ -91,15 +91,15 @@ Page.urlChange = function(href, tabid) {
 	if (webtbPath) {
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
+			// Stop current page from loading
+			chrome.tabs.executeScript(tabid, {
+				code: "window.stop();",
+			});
+
 			return Promise.resolve(Page.getUrlByUrlid(urlid) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
 					chrome.tabs.update(tabid, { url: url.url });
 					ToolbarEvent.unhide();
-
-					// Stop current page from loading
-					chrome.tabs.executeScript(tabid, {
-						code: "window.stop();",
-					});
 
 					return ToolbarEvent._buildResponse({ url: url, hidden: false })
 				})
