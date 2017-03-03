@@ -112,38 +112,47 @@ StumbleUponApi.prototype = {
 	},
 
 	nextUrl: function(peek, retry) {
+		peek = peek || 0;
+		retry = retry || 0;
 		return Promise.resolve(this.config.maxRetries)
 			.then(function(maxRetries) {
-				if (maxRetries < (retry || 0)) {
+				if (maxRetries < retry) {
 					debug("Too many retries");
 					return Promise.reject('Too many retries');
 				}
 			})
 			.then(this.cache.map('stumble', 'mode'))
 			.then(function (map) {
-				var stumblePos = map.stumble.pos, stumbles = map.stumble.list;
-				if (stumblePos >= stumbles.length - 1 || map.mode != map.stumble.mode) {
-					debug('Buffer refill from NextUrl', stumbles.length, stumblePos);
+				var stumblePos = map.stumble.pos || 0, stumbles = map.stumble.list;
+				if ((stumblePos + peek) >= stumbles.length - 1 || map.mode != map.stumble.mode) {
+					debug('Buffer refill from NextUrl', stumbles.length, stumblePos + peek);
 					return this.getStumbles().then(function (r) {
-						return this.nextUrl(peek, (retry || 0) + 1);
+						return this.nextUrl(peek ? 1 : 0, retry + 1);
 					}.bind(this));
 				}
 	
-				++ stumblePos;
-				if (!peek || this.seen[stumbles[stumblePos].urlid]) {
+				// If we're not peeking, move the stumble pointer forward
+				stumblePos += peek || 1;
+				if (!peek) {
 					map.stumble.pos = stumblePos;
 					this.cache.mset({stumble: map.stumble});
 				}
+
+				// If we've seen this before, rereport and move onto the next url
+				if (this.seen[stumbles[stumblePos].urlid]) {
+					debug("Already seen", stumbles[stumblePos].urlid);
+					this.reportStumble([stumbles[stumblePos].urlid]);
+					return this.nextUrl(peek ? peek + 1 : 0, retry);
+				}
+
+				// If we're nearing the end of the buffer, grab more stumbles
 				if (stumblePos >= stumbles.length - this.config.refillPos) {
 					this.getStumbles();
 				}
-				if (peek && this.seen[stumbles[stumblePos].urlid]) { // TODO re-report seen
-					debug("Already seen", stumbles[stumblePos].urlid);
-					this.reportStumble([stumbles[stumblePos].urlid]);
-					return this.nextUrl(peek, retry);
-				}
+
 				if (!peek)
 					debug("NextUrl", stumbles[stumblePos], stumblePos, stumbles);
+
 				return stumbles[stumblePos];
 			}.bind(this));
 	},
