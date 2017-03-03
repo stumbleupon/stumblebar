@@ -113,6 +113,12 @@ var Toolbar = {
 		//if (action == 'info') {
 		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
 		//}
+		if (action == "su") {
+			if (value == "settings")
+				chrome.tabs.create({ url: 'https://www.stumbleupon.com/settings' });
+			if (value == "profile")
+				chrome.tabs.create({ url: 'https://www.stumbleupon.com/stumbler' });
+		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");

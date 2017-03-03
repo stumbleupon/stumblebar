@@ -76,6 +76,12 @@ body {
 	padding: 10px;
 	padding-left: 0px;
 }
+.toolbar-entry-list-item {
+	padding-top: 10px;
+}
+.toolbar-entry-list-item:first-of-type {
+	padding-top: 0px;
+}
 .toolbar-section-contains-entries {
 	padding: 0px !important;
 	margin-top: 0px;
