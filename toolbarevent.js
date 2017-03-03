@@ -107,6 +107,11 @@ ToolbarEvent.info = function(request, sender) {
 	Promise.resolve(request);
 }
 
+ToolbarEvent.updateConfig = function(request, sender) {
+	Object.assign(config, request.data);
+	return ToolbarEvent._buildResponse({}, true);
+}
+
 ToolbarEvent.unrate = function(request, sender) {
 	ToolbarEvent
 		.sanity()
