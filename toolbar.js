@@ -82,7 +82,8 @@ var Toolbar = {
 		if (r && r.config) {
 			Toolbar.handleConfig(r.config);
 		}
-		Toolbar.handleRedraw();
+		if (r.from != 'bar')
+			Toolbar.handleRedraw();
 		return true;
 	},
 	dispatch: function(a, data) {
