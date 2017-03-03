@@ -23,6 +23,10 @@ body {
 }
 .toolbar-background {
 	border-radius: 4px;
+	position: absolute;
+	left: -1000px; top: -1000px; right: -1000px; bottom: -1000px;
+	left: 0; top: 0; right: 0; bottom: 0;
+	z-index: -1;
 }
 .clickable {
 	cursor: pointer;
@@ -301,12 +305,6 @@ body {
 }
 .theme-dark-sidebar .toolbar-background {
 	background-color: white;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: -1;
 	opacity: 0.777;
 }
 .theme-dark-sidebar .toolbar-border-bottom {
@@ -358,12 +356,6 @@ body {
 }
 .theme-all-light .toolbar-background {
 	background-color: white;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: -1;
 	opacity: 0.777;
 }
 .theme-all-light .toolbar-border-bottom {
@@ -426,12 +418,6 @@ body {
 }
 .theme-all-dark .toolbar-background {
 	background-color: #111;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: -1;
 	opacity: 0.777;
 }
 .theme-all-dark .toolbar-border-bottom {
