@@ -172,7 +172,6 @@
 
 		var lastEvent = null;
 		window.addEventListener("message", function(event) {
-			console.log(event);
 			if (!event.data || !event.data.type || event.origin != extensionOrigin/* || event.isTrusted !== true*/) {
 				return
 			}
