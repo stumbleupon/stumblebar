@@ -157,7 +157,7 @@ ToolbarEvent.stumble = function(request, sender) {
 		.nextUrl()
 		.then(function(url) {
 			ToolbarEvent.api
-				.nextUrl(true)
+				.nextUrl(1)
 				.then(ToolbarEvent.preload);
 			Page.note(sender.tab.id, url);
 			ToolbarEvent.api.reportStumble([url.urlid]);
@@ -192,7 +192,7 @@ ToolbarEvent.ping = function() {
 		.then(ToolbarEvent.api.getUser.bind(ToolbarEvent.api))
 		.then(function(user) {
 			debug('Login success for user', user.username);
-			ToolbarEvent.api.nextUrl(true)
+			ToolbarEvent.api.nextUrl(1)
 				.then(ToolbarEvent.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
 		})
