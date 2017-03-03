@@ -402,7 +402,7 @@ body {
 /**
  * All Dark
  */
-.theme-all-dark {
+.theme-all-dark, .theme-all-dark .default-color {
 	color: white;
 }
 .theme-all-dark .toolbar-background-logo {
