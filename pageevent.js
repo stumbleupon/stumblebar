@@ -95,6 +95,12 @@ Page.urlChange = function(href, tabid) {
 				.then(function(url) {
 					chrome.tabs.update(tabid, { url: url.url });
 					ToolbarEvent.unhide();
+
+					// Stop current page from loading
+					chrome.tabs.executeScript(tabid, {
+						code: "window.stop();",
+					});
+
 					return ToolbarEvent._buildResponse({ url: url, hidden: false })
 				})
 				.catch(ToolbarEvent.error);
