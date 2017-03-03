@@ -186,6 +186,10 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 	handleRedraw: function() {
+		if (Toolbar.config.rpos) {
+			document.querySelector('#toolbar').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top');
+			document.querySelector('#toolbar').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
+		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
 			w: document.querySelector(".toolbar-section-container").offsetWidth,
 			h: document.querySelector(".toolbar-section-container").offsetHeight,
