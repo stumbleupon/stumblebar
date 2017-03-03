@@ -38,6 +38,11 @@ body {
 	-ms-user-select: none;
 	user-select: none;
 }
+
+.stop-flashing {
+	-webkit-backface-visibility: hidden; -webkit-perspective: 1000; -webkit-transform:translate3d(0,0,0); -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
 /*
 .toolbar-action {
   cursor: pointer;
