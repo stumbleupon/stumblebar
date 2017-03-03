@@ -39,6 +39,11 @@ config.post = {
 }
 config.maxRetries = 3;
 config.refillPos = 3;
+config.suPages = {
+	profile:   'https://www.stumbleupon.com/stumbler',
+	settings:  'https://www.stumbleupon.com/settings',
+	sponsored: 'https://www.stumbleupon.com/sponsored-page',
+}
 config.endpoint = {
   ping:    '/p',
   user:    '/user/?version=2',

@@ -527,6 +527,7 @@ body {
 }
 
 
+/*
 .toolbar-section-sponsored {
 	margin: 0 0 8px 0;
 	text-align: center;
@@ -537,6 +538,12 @@ body {
 	text-decoration: none;
 	color: #888;
 	font-size: 8px;
+}
+*/
+.sponsored-text {
+	color: inherit !important;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .right-handed .reverse-when-right-handed {
