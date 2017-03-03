@@ -251,11 +251,13 @@
 				discoverbar = document.getElementById('discoverbar');
 			}
 			if (discoverbar && discoverbar.nextSibling) {
-				var lastNode = discoverbar.nextSibling
-				while (lastNode.nextSibling) {
-					lastNode = lastNode.nextSibling;
-				}
-				document.documentElement.insertBefore(lastNode, iframe);
+				//var lastNode = discoverbar.nextSibling
+				//while (lastNode.nextSibling) {
+				//	lastNode = lastNode.nextSibling;
+				//}
+				//console.log(lastNode);
+				document.getElementsByTagName('html')[0].insertBefore(discoverbar, null);
+				//document.documentElement.insertBefore(null, discoverbar);
 			}
 		}
 		tryInjection();

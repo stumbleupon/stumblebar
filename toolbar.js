@@ -82,7 +82,7 @@ var Toolbar = {
 		if (r && r.config) {
 			Toolbar.handleConfig(r.config);
 		}
-		if (r.from != 'bar')
+		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
 	},
