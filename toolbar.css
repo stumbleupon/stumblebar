@@ -519,10 +519,10 @@ body {
 }
 
 
-.right-handed .toolbar-action-container {
+.right-handed .reverse-when-right-handed {
 	flex-direction: row-reverse;
 }
-.top-handed .toolbar-section-container {
+.top-handed .reverse-when-top-handed {
 	flex-direction: column-reverse;
 }
 .top-handed .toolbar-border-top {
