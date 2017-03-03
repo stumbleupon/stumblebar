@@ -242,8 +242,18 @@
 
 		//document.addEventListener("readystatechange", function() {
 		var tryInjection = function() {
-			if (!document.getElementById('discoverbar'))
+			var discoverbar = document.getElementById('discoverbar');
+			if (!discoverbar) {
 				document.documentElement.appendChild(iframe);
+				discoverbar = document.getElementById('discoverbar');
+			}
+			if (discoverbar && discoverbar.nextSibling) {
+				var lastNode = discoverbar.nextSibling
+				while (lastNode.nextSibling) {
+					lastNode = lastNode.nextSibling;
+				}
+				document.documentElement.insertBefore(lastNode, iframe);
+			}
 		}
 		tryInjection();
 		setInterval(tryInjection, 1000);
