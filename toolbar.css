@@ -180,7 +180,6 @@ body {
 }
 .toolbar:not(.mini-mode) .toolbar-settings-icon.enabled {
 	background-image: url("asset/Close.svg") !important;
-	background-color: #444;
 }
 
 
@@ -400,7 +399,7 @@ body {
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
-	filter: invert(69%);
+	background-color: transparent;
 }
 
 
