@@ -63,10 +63,10 @@ StumbleUponApi.prototype = {
 
 	getStumbles: function() {
 		var mode = null;
-		return this.cache.mget('mode', 'userid')
+		return this.cache.mget('mode', 'user')
 			.then(function(map) {
 				mode = map.mode;
-				var post = this._buildPost("stumble", {userid: map.userid});
+				var post = this._buildPost("stumble", {userid: map.user.userid});
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
