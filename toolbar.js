@@ -143,7 +143,7 @@ var Toolbar = {
 	config: {},
 	state: {
 		lastMouse: Date.now(),
-		canMiniMode: true,
+		canMiniMode: false,
 		inMiniMode: false,
 	},
 	handleMouseDown: function(e) {
@@ -169,7 +169,7 @@ var Toolbar = {
 		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	tryMiniMode: function(e) {
-		if (Toolbar.state.canMiniMode && !Toolbar.state.inMiniMode && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
+		if (Toolbar.state.canMiniMode && !Toolbar.state.inMiniMode && Toolbar.state.lastMouse && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
 			Toolbar.handleMiniMode(e);
 		}
 	},
