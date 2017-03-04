@@ -17,7 +17,7 @@ function StumbleUponApi(config) {
 StumbleUponApi.prototype = {
 	ping: function() {
 		return this.api
-			.raw(this.config.endpoint.ping, null, {proto: 'http', headers: {[this.config.accessTokenHeader]: null}})
+			.raw(this.config.endpoint.ping, null, {proto: 'https', headers: {[this.config.accessTokenHeader]: null}})
 			.then(JSON.parse)
 			.then(this._extractAccessToken.bind(this));
 	},
