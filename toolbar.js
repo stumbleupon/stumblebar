@@ -151,7 +151,9 @@ var Toolbar = {
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	handleMouseMove: function(e) {
-		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 4)
+		if (!e.button && !e.buttons)
+			Toolbar.mouse.state = 'up';
+		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 8)
 			Toolbar.mouse.state = 'drag';
 		if (Toolbar.mouse.state == 'drag')
 			window.top.postMessage({ type: "drag", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
