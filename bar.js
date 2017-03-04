@@ -172,6 +172,15 @@
 
 		handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
 
+		chrome.runtime.onMessage.addListener(
+			function(request, sender, sendResponse) {
+				console.log(request);
+				if (request.type == "ping")
+					sendResponse({type: "pong"});
+				return true;
+			}
+		);
+
 
 		var lastEvent = null;
 		window.addEventListener("message", function(event) {

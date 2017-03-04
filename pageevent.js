@@ -11,16 +11,24 @@ Page.handleIconClick = function(e) {
 	//chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 	//	chrome.tabs.sendMessage(tabs[0].id, , function() {});
 	//});
+	console.log(e);
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		ToolbarEvent.handleRequest(
-			{
-				action: 'toggleHidden',
-				url: {},
-				data: {}
-			},
-			{ tab: tabs[0] },
-			function() {}
-		);
+		chrome.tabs.sendMessage(tabs[0].id, {type: "ping"}, function(response) {
+			// Handle pages that we can't inject
+			if (!response || !response.type == 'pong') {
+				ToolbarEvent.loginPage();
+				return false;
+			}
+			ToolbarEvent.handleRequest(
+				{
+					action: 'toggleHidden',
+					url: {},
+					data: {}
+				},
+				{ tab: tabs[0] },
+				function() {}
+			);
+		});
 	})
 }
 
