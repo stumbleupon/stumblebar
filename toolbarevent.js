@@ -3,21 +3,13 @@ ToolbarEvent = {};
 ToolbarEvent.api = new StumbleUponApi(config);
 
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
-	//console.log("ToolbarEvent.handleRequest", request);
+	console.log("ToolbarEvent.handleRequest", request);
 	if (!ToolbarEvent[request.action])
 		return false;
 	ToolbarEvent[request.action](request, sender)
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", request, response);
 			sendResponse(response);
-			if (response.all) {
-//				chrome.runtime.sendMessage(chrome.runtime.id, response);
-				chrome.tabs.query({}, function(tabs) {
-					tabs.forEach(function (tab) {
-						chrome.tabs.sendMessage(tab.id, response);
-					});
-				});
-			}
 		});
 	return true;
 }
@@ -75,7 +67,16 @@ ToolbarEvent.repos = function(request, sender) {
 }
 
 ToolbarEvent._buildResponse = function(change, all) {
-	return Promise.resolve(Object.assign({all: all}, { config: config }, change));
+	var response = Object.assign({all: all}, { config: config }, change);
+	if (response.all) {
+//				chrome.runtime.sendMessage(chrome.runtime.id, response);
+		chrome.tabs.query({}, function(tabs) {
+			tabs.forEach(function (tab) {
+				chrome.tabs.sendMessage(tab.id, response);
+			});
+		});
+	}
+	return Promise.resolve(response);
 }
 
 ToolbarEvent.dislike = function(request, sender) {
