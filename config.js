@@ -40,6 +40,7 @@ config.post = {
 }
 config.maxRetries = 3;
 config.refillPos = 3;
+config.miniModeTimeout = 500;
 config.suPages = {
 	profile:   ':baseProt://:baseUrl/stumbler',
 	settings:  ':baseProt://:baseUrl/settings',
