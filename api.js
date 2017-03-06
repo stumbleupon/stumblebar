@@ -101,9 +101,17 @@ Api.prototype = {
 	 * @return {Promise} Promise response for get
 	 */
 	once: function(path, data, opts) {
+		if (this.requests[path]) {
+			console.log('INFLIGHT', path);
+			return Promise.reject({});
+		}
 		if (!this.requests[path]) {
 			this.requests[path] = this.req(path, data, opts)
 				.then(function(results) {
+					if (this.requests[path])
+						delete this.requests[path];
+					return results;
+				}.bind(this), function(results) {
 					if (this.requests[path])
 						delete this.requests[path];
 					return results;
