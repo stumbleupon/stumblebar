@@ -9,7 +9,7 @@ var config = {
 //		}.bind(this));
 //  }
 }
-config.persist = ['rpos', 'mode', 'theme', 'hidden'];
+config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
 config.baseUrl = 'www.stumbleupon.com'
 config.apiPath = '/api/v2_0'
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';

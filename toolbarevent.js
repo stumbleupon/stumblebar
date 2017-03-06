@@ -3,7 +3,7 @@ ToolbarEvent = {};
 ToolbarEvent.api = new StumbleUponApi(config);
 
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
-	console.log("ToolbarEvent.handleRequest", request);
+	//console.log("ToolbarEvent.handleRequest", request);
 	if (!ToolbarEvent[request.action])
 		return false;
 	ToolbarEvent[request.action](request, sender)
@@ -25,6 +25,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 ToolbarEvent.sanity = function() {
 	return ToolbarEvent.api.cache.get('user')
 		.then(function(user) {
+			console.log('SANITY', user);
 			if (!user.userid)
 				return ToolbarEvent.ping();
 			return user;
@@ -74,7 +75,6 @@ ToolbarEvent.repos = function(request, sender) {
 }
 
 ToolbarEvent._buildResponse = function(change, all) {
-	debug('ToolbarEvent._buildResponse', change);
 	return Promise.resolve(Object.assign({all: all}, { config: config }, change));
 }
 
@@ -180,23 +180,29 @@ ToolbarEvent.error = function(e) {
 	//ToolbarEvent.loginPage();
 }
 
+ToolbarEvent.signin =
 ToolbarEvent.loginPage = function() {
 	ToolbarEvent.api._flush();
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		chrome.tabs.update(tabs[0].id, {
-			"url": 'https://' + config.baseUrl + '/login'
+			"url": config.suPages.signin.form(config)
 		});
 	});
 }
+
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
+	ToolbarEvent.api.cache.mset({ authed: config.authed = false });
+	return ToolbarEvent._buildResponse({}, true);
 }
+
 ToolbarEvent.ping = function() {
 	return ToolbarEvent.api
 		.ping()
 		.then(ToolbarEvent.api.getUser.bind(ToolbarEvent.api))
 		.then(function(user) {
 			debug('Login success for user', user.username);
+			ToolbarEvent.api.cache.mset({ authed: config.authed = true });
 			ToolbarEvent.api.nextUrl(1)
 				.then(ToolbarEvent.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});

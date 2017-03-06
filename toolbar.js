@@ -67,6 +67,13 @@ var Toolbar = {
 			document.querySelector("#inbox")[parseInt(config.numShares) ? 'addClass' : 'removeClass']('enabled');
 		}
 
+		if (config.hasOwnProperty('authed')) {
+			document.querySelector("#stumble").changeClass('hidden', !config.authed);
+			document.querySelector("#signin") .changeClass('hidden', config.authed);
+			if (!config.authed)
+				Toolbar.handleMiniMode();
+		}
+
 		for (var key in config) {
 			Toolbar.config[key] = config[key];
 		}
@@ -115,7 +122,7 @@ var Toolbar = {
 		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
 		//}
 		if (action == "su") {
-			chrome.tabs.create({ url: Toolbar.config.suPages[value] });
+			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
 		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector(".action-stumble").toggleClass("enabled");
@@ -142,9 +149,9 @@ var Toolbar = {
 	mouse: {},
 	config: {},
 	state: {
-		lastMouse: Date.now(),
-		canMiniMode: false,
-		inMiniMode: false,
+		lastMouse:     Date.now(),
+		canMiniMode:   false,
+		inMiniMode:    false,
 	},
 	handleMouseDown: function(e) {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
@@ -176,11 +183,13 @@ var Toolbar = {
 		}
 	},
 	handleMiniMode: function(e) {
-		Toolbar.state.inMiniMode = true;
+		Toolbar.state.inMiniMode = true || !Toolbar.config.authed;
 		document.querySelector("#toolbar").addClass("mini-mode");
 		Toolbar.handleRedraw();
 	},
 	handleNormalMode: function(e) {
+		if (!Toolbar.config.authed)
+			return false;
 		Toolbar.state.inMiniMode = false;
 		document.querySelector("#toolbar").removeClass("mini-mode");
 		Toolbar.handleRedraw();

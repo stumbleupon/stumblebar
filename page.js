@@ -97,6 +97,7 @@ Page.note = function(tabid, url) {
 Page.urlChange = function(href, tabid) {
 	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
 	if (webtbPath) {
+		ToolbarEvent.sanity();
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
 			// Stop current page from loading
@@ -115,16 +116,23 @@ Page.urlChange = function(href, tabid) {
 			;
 		}
 	}
+
+	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/'));
+	if (suPath && !config.authed) {
+		ToolbarEvent.sanity();
+		debug('SUPATH SANITY CHECK');
+	}
+
 	return Promise
 		.resolve(Page.getUrlByHref(href))
 		.then(function(url) {
 			return url || ToolbarEvent.api.getUrlByHref(href);
 		})
 		.then(function(url) {
-			console.log(url);
+			//console.log(url);
 			Page.note(tabid, url);
 			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
-			debug('Notify Url Change', tabid, url);
+			//debug('Notify Url Change', tabid, url);
 			if (url.urlid)
 				ToolbarEvent.api.reportStumble([url.urlid]);
 		})
@@ -136,7 +144,7 @@ Page.urlChange = function(href, tabid) {
 }
 
 Page.handleTabUpdate = function(tabid, info, tab) {
-	console.log('update', tabid, info, tab);
+//	console.log('update', tabid, info, tab);
 
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
