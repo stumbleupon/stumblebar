@@ -54,20 +54,20 @@
   },
 
   "background": {
-    "scripts": [
-			"polyfill.js",
-			"utils.js",
-			"config.js",
-			"cache.js",
-			"cookie.js",
-			"api_request.js",
-			"api.js",
-			"stumbleuponapi.js",
-			"toolbarevent.js",
-			"page.js",
-			"background.js"
-		]
-		//"page": "background.html"
+	  "persistent": true,
+	  "scripts": [
+		  "polyfill.js",
+		  "utils.js",
+		  "config.js",
+		  "cache.js",
+		  "cookie.js",
+		  "api_request.js",
+		  "api.js",
+		  "stumbleuponapi.js",
+		  "toolbarevent.js",
+		  "page.js",
+		  "background.js"
+	  ]
   }
 
 }
