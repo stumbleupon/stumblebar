@@ -107,9 +107,12 @@
 		window.addEventListener("mousemove", function(event) {
 			if (!(event instanceof MouseEvent)/* || !event.isTrusted*/)
 				return;
+
 			mpos.mouse.x = event.clientX;
 			mpos.mouse.y = event.clientY;
 			mpos.from    = 'window';
+			mpos.iframe  = { y: iframe.offsetTop, x: iframe.offsetLeft }
+
 			updateIframePos();
 			communicateMouseMove();
 		});
@@ -120,12 +123,16 @@
 				if (mpos.from == 'iframe') {
 					mpos.iframe = {
 						x: (dpos.iframe.x + (mpos.internal.screen.x - dpos.internal.screen.x)),
-						y: (dpos.iframe.y + (mpos.internal.screen.y - dpos.internal.screen.y))
+						y: (dpos.iframe.y + (mpos.internal.screen.y - dpos.internal.screen.y)),
+						w: iframe.offsetWidth,
+						h: iframe.offsetHeight
 					}
 				} else {
 					mpos.iframe = {
 						x: (mpos.mouse.x - dpos.internal.client.x),
-						y: (mpos.mouse.y - dpos.internal.client.y)
+						y: (mpos.mouse.y - dpos.internal.client.y),
+						w: iframe.offsetWidth,
+						h: iframe.offsetHeight
 					};
 				}
 				iframe.style.left = Math.min(window.innerWidth  - iframe.offsetWidth , Math.max(0, mpos.iframe.x)) + 'px';

@@ -200,15 +200,19 @@ var Toolbar = {
 			document.querySelector('#toolbar').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
 		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
-			w: document.querySelector(".toolbar-section-container").offsetWidth,
-			h: document.querySelector(".toolbar-section-container").offsetHeight,
+			w: Toolbar.state.w = document.querySelector(".toolbar-section-container").offsetWidth,
+			h: Toolbar.state.h = document.querySelector(".toolbar-section-container").offsetHeight,
 			rpos: Toolbar.config.rpos,
 			hidden: Toolbar.config.hidden,
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
 		if (e.data.action == 'mouse') {
-			Toolbar.state.canMiniMode = true;
+			var data = e.data.data;
+			Toolbar.state.canMiniMode = !data || !data.iframe || !( // We can do mini mode if the mouse isn't hovering over the frame
+				   data.iframe.x < data.mouse.x && data.iframe.x + Toolbar.state.w > data.mouse.x
+				&& data.iframe.y < data.mouse.y && data.iframe.y + Toolbar.state.h > data.mouse.y
+			);
 			return;
 		}
 		Toolbar.dispatch(e.data.action, e.data.data).then(Toolbar.handleResponse);
