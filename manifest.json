@@ -64,7 +64,7 @@
 			"api.js",
 			"stumbleuponapi.js",
 			"toolbarevent.js",
-			"pageevent.js",
+			"page.js",
 			"background.js"
 		]
 		//"page": "background.html"
