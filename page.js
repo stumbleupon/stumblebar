@@ -97,7 +97,7 @@ Page.note = function(tabid, url) {
 Page.urlChange = function(href, tabid) {
 	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
 	if (webtbPath) {
-		ToolbarEvent.sanity();
+		ToolbarEvent._sanity();
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
 			// Stop current page from loading
@@ -119,7 +119,7 @@ Page.urlChange = function(href, tabid) {
 
 	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/'));
 	if (suPath && !config.authed) {
-		ToolbarEvent.sanity();
+		ToolbarEvent._sanity();
 		debug('SUPATH SANITY CHECK');
 	}
 

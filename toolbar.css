@@ -217,7 +217,7 @@ body {
 .toolbar-expand-icon.enabled {
 	transform: rotate(0deg);
 }
-.toolbar-action-container .action-stumble {
+.toolbar-action-container .action-stumble, .toolbar-action-container .action-signin {
 	width: auto;
 	vertical-align: middle;
 	margin-right: 10px;

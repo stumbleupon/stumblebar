@@ -14,10 +14,10 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	return true;
 }
 
-ToolbarEvent.sanity = function() {
+ToolbarEvent._sanity = function() {
 	return ToolbarEvent.api.cache.get('user')
 		.then(function(user) {
-			console.log('SANITY', user);
+			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
 			if (!user.userid)
 				return ToolbarEvent.ping();
 			return user;
@@ -84,7 +84,7 @@ ToolbarEvent.dislike = function(request, sender) {
 		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
-		.sanity()
+		._sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
@@ -115,7 +115,7 @@ ToolbarEvent.updateConfig = function(request, sender) {
 
 ToolbarEvent.unrate = function(request, sender) {
 	ToolbarEvent
-		.sanity()
+		._sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
@@ -139,7 +139,7 @@ ToolbarEvent.like = function(request, sender) {
 		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
-		.sanity()
+		._sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			return urlid || ToolbarEvent.discover(request, sender)
@@ -181,6 +181,34 @@ ToolbarEvent.error = function(e) {
 	//ToolbarEvent.loginPage();
 }
 
+ToolbarEvent.signout = function() {
+	ToolbarEvent.api._flush();
+
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.create({
+			"url": config.suPages.signout.form(config),
+			active: false
+		}, function(tab) {
+			chrome.tabs.onUpdated.addListener(function(tabId , info) {
+				if (info.status == "complete" && tabId == tab.id) {
+					setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
+				}
+			});
+		});
+	});
+
+//	var signoutFrame = document.createElement('iframe');
+//	signoutFrame.addEventListener("load", function() {
+//		debug('Background logout');
+//		//document.body.removeChild(signoutFrame);
+//	});
+//	signoutFrame.setAttribute('src', config.suPages.signout.form(config));
+//	console.log(config.suPages.signout.form(config));
+//	document.body.appendChild(signoutFrame);
+
+	return ToolbarEvent.needsLogin();
+}
+
 ToolbarEvent.signin =
 ToolbarEvent.loginPage = function() {
 	ToolbarEvent.api._flush();
@@ -189,6 +217,7 @@ ToolbarEvent.loginPage = function() {
 			"url": config.suPages.signin.form(config)
 		});
 	});
+	return ToolbarEvent._buildResponse({});
 }
 
 ToolbarEvent.needsLogin = function() {

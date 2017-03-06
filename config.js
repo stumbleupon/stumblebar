@@ -11,6 +11,7 @@ var config = {
 }
 config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
 config.baseUrl = 'www.stumbleupon.com'
+config.baseProt = 'https'
 config.apiPath = '/api/v2_0'
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
@@ -40,9 +41,11 @@ config.post = {
 config.maxRetries = 3;
 config.refillPos = 3;
 config.suPages = {
-	profile:   'https://www.stumbleupon.com/stumbler',
-	settings:  'https://www.stumbleupon.com/settings',
-	sponsored: 'https://www.stumbleupon.com/sponsored-page',
+	profile:   ':baseProt://:baseUrl/stumbler',
+	settings:  ':baseProt://:baseUrl/settings',
+	sponsored: ':baseProt://:baseUrl/sponsored-page',
+	signout:   ':baseProt://:baseUrl/logout',
+	signin:    ':baseProt://:baseUrl/login',
 }
 config.endpoint = {
   ping:    '/p',
