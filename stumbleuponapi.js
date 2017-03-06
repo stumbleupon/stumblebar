@@ -107,7 +107,7 @@ StumbleUponApi.prototype = {
 					.catch(function(err) {
 						// Mark failed unreported so we can re-report later
 						urlids.forEach(function(urlid) { this.seen[urlid].state = 'f'; }.bind(this));
-					})
+					}.bind(this))
 			}.bind(this));
 	},
 
