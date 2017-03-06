@@ -11,9 +11,14 @@ AssertError.prototype.constructor = AssertError;
 var assert = assert || function (val, message) { if (!val) throw AssertError(message); }
 var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
+var TRACE = {};
+
 function debug() {
 	var e = new Error;
-	console.log.apply(console.log, ['DEBUG'].concat(Array.prototype.slice.call(arguments), e.stack));
+	var messages = ['DEBUG'].concat(Array.prototype.slice.call(arguments));
+	if (arguments.length && arguments[arguments.length - 1] === TRACE)
+		messages[messages.length - 1] = e.stack;
+	console.log.apply(console.log, messages);
 }
 function warning() {
 	var e = new Error;
