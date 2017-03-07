@@ -11,7 +11,7 @@ var config = {
 }
 config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
 config.baseUrl = 'www.stumbleupon.com'
-config.baseProt = 'https'
+config.baseProto = 'https'
 config.apiPath = '/api/v2_0'
 
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
@@ -24,6 +24,7 @@ config.accessTokenHeader = 'X-Su-AccessTokenKey';
 config.defaultHeaders = { 
     "X-Su-ConsumerKey":    "35774027dc2f2f64a280e63eafb018505c045655",
     "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
+    "X-Su-Version"    :    "Discoverbar 1.0"                         ,
 };
 config.post = {
 	stumble: {
@@ -46,11 +47,11 @@ config.maxRetries = 3;
 config.refillPos = 3;
 config.miniModeTimeout = 500;
 config.suPages = {
-	profile:   ':baseProt://:baseUrl/stumbler',
-	settings:  ':baseProt://:baseUrl/settings',
-	sponsored: ':baseProt://:baseUrl/sponsored-page',
-	signout:   ':baseProt://:baseUrl/logout',
-	signin:    ':baseProt://:baseUrl/login',
+	profile:   ':baseProto://:baseUrl/stumbler',
+	settings:  ':baseProto://:baseUrl/settings',
+	sponsored: ':baseProto://:baseUrl/sponsored-page',
+	signout:   ':baseProto://:baseUrl/logout',
+	signin:    ':baseProto://:baseUrl/login',
 }
 config.endpoint = {
   ping:       '/p',
@@ -80,7 +81,7 @@ config.defaults = {
 
 config.conversationsAPI = {
 	baseUrl:  'svc.stumbleupon.com',
-	baseProt: 'https',
+	baseProto:'http',
 	apiPath:  '/convo',
 	endpoint: {
 	  auth:         '/auth/token',

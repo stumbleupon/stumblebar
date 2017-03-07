@@ -1,6 +1,6 @@
 function Api(config) {
 	this.requests = {};
-	this.opts = { baseUrl: config.baseUrl, apiPrefix: config.apiPath, headers: config.defaultHeaders, post: config.post };
+	this.opts = { baseUrl: config.baseUrl, proto: config.baseProto, apiPrefix: config.apiPath, headers: config.defaultHeaders, post: config.post };
 }
 
 Api.prototype = {

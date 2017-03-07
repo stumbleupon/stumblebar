@@ -1,21 +1,4 @@
 var Toolbar = {
-	event: function(e) {
-		/*
-		console.log(e);
-		//chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		//console.log(tabs[0])
-		//  chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-		//    console.log(response);
-		//  });
-		//});
-		//  chrome.tabs.getSelected(null, function(tab) {
-		chrome.runtime.sendMessage({greeting: "stumble"}, function(response) {
-			console.log('moop',response);
-		});
-		//  });
-		*/
-	},
-
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
@@ -48,7 +31,6 @@ var Toolbar = {
 		document.querySelector(".toolbar-container").changeClass("convo-expanded", state.convo);
 		document.querySelector('.convo-loading').changeClass('hidden', state.convo);
 		if (state.convo) {
-			document.querySelector('#convo-container').innerText = JSON.stringify(state);
 			Toolbar.dispatch('loadConvo', { value: state.convo });
 		}
 	},
@@ -56,7 +38,27 @@ var Toolbar = {
 	handleConvo: function(convo) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
-		document.querySelector('#convo-container').innerText = JSON.stringify(convo);
+
+		convo.events.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-convo-entry").cloneNode('deep');
+
+			//entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
+			entryNode.removeClass('stub');
+			//entryNode.querySelector('.convo-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
+			//entryNode.querySelector('.convo-entry-title').innerText   = entry.conversationDetails.title;
+			convo.participants.forEach(function(person) {
+				if (person.id == entry.createdBy)
+					entryNode.querySelector('.convo-entry-user').innerText    = person.name || person.email;
+			});
+			entryNode.querySelector('.convo-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.createdAt)).getTime()) / 86400000) + ' days ago';
+			entryNode.querySelector('.convo-entry-snippet').innerText = entry.message;
+			entryNode.id = entry.id;
+
+			document.querySelector('#convo-container').appendChild(entryNode);
+		});
+		document.querySelector('#convo-id').value = convo.id;
+
+		document.querySelector('.convo-loading').addClass('hidden');
 	},
 
 	handleConfig: function(config) {
@@ -155,6 +157,13 @@ var Toolbar = {
 			return;
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
+		if (elem.getAttribute('values')) {
+			value = {};
+			elem.getAttribute('values').split(',').forEach(function(name) {
+				parts = name.split('=');
+				value[parts[0]] = document.querySelector('#' + (parts[1] || parts[0])).value;
+			});
+		}
 
 		Toolbar.handleImmediateAction(action, value, elem);
 		Toolbar.dispatch(action, {value: value});

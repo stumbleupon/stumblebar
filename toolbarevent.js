@@ -190,17 +190,24 @@ ToolbarEvent.error = function(e) {
 	//ToolbarEvent.loginPage();
 }
 
+ToolbarEvent.replyConvo = function(request, sender) {
+	var convo = ToolbarEvent.api.getConversation(request.data.value.id);
+	return Promise.resolve(convo.comment(request.data.value.comment))
+		.then(function(comment) {
+			return ToolbarEvent._buildResponse({ comment: comment });
+		});
+}
+
 ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages())
 		.then(function(convo) {
-			Toolbar._buildResponse({ convo: convo });
+			return ToolbarEvent._buildResponse({ convo: convo });
 		});
 }
 
 ToolbarEvent.openConvo = function(request, sender) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		console.log(tabs[0].id, request.data.value);
 		chrome.tabs.update(tabs[0].id, {
 			"url": request.data.value
 		});
