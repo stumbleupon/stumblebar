@@ -166,3 +166,19 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 Page.handleTabSwitch = function(e) {
 	//console.log('switch', e);
 }
+
+
+Page.init = function() {
+	// listen to tab URL changes
+	chrome.tabs.onUpdated.addListener(Page.handleTabUpdate);
+
+	// listen to tab switching
+	chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
+
+	// update when the extension loads initially
+	//updateTab();
+
+	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
+}
+
+Page.init();
