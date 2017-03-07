@@ -62,7 +62,7 @@ StumbleUponApi.prototype = {
 	},
 
 	getConversation: function(id) {
-		var convo = new Conversation(this.config.conversation, id);
+		var convo = new Conversation(this.config.conversationsAPI, id);
 		convo.api.addHeaders(this.api.getHeaders());
 		return convo;
 	},

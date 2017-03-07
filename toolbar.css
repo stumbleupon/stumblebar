@@ -506,6 +506,10 @@ body {
 	display: none;
 }
 
+.toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container.mode-expanded .hide-when-mode-expanded:not(.enabled) {
 	display: none;
 }
@@ -577,7 +581,7 @@ body {
 }
 
 
-.inbox-container {
+.inbox-container, .convo-container {
 	max-height: 140px;
 	display: block;
 	overflow: auto;

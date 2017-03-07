@@ -1,6 +1,6 @@
 function Conversation(config, id) {
 	this.config = config;
-	this.cache = new Cache(config.defaults);
+	//this.cache = new Cache(config.defaults);
 	this.api = new Api(config);
 	this.id = id;
 }

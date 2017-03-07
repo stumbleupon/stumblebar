@@ -160,8 +160,8 @@ ToolbarEvent.like = function(request, sender) {
 ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations()
-		.then(function(convos) {
-			return ToolbarEvent._buildResponse({ convos: convos });
+		.then(function(inbox) {
+			return ToolbarEvent._buildResponse({ inbox: inbox });
 		})
 		.catch(ToolbarEvent.error);
 }
@@ -190,13 +190,22 @@ ToolbarEvent.error = function(e) {
 	//ToolbarEvent.loginPage();
 }
 
-ToolbarEvent.convo = function(request, sender) {
+ToolbarEvent.loadConvo = function(request, sender) {
+	var convo = ToolbarEvent.api.getConversation(request.data.value)
+	return Promise.resolve(convo.messages())
+		.then(function(convo) {
+			Toolbar._buildResponse({ convo: convo });
+		});
+}
+
+ToolbarEvent.openConvo = function(request, sender) {
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		console.log(tabs[0].id, request.data.value);
 		chrome.tabs.update(tabs[0].id, {
 			"url": request.data.value
 		});
 	});
+
 	return ToolbarEvent._buildResponse({});
 }
 

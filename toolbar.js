@@ -44,6 +44,21 @@ var Toolbar = {
 		}
 	},
 
+	handleState: function(state) {
+		document.querySelector(".toolbar-container").changeClass("convo-expanded", state.convo);
+		document.querySelector('.convo-loading').changeClass('hidden', state.convo);
+		if (state.convo) {
+			document.querySelector('#convo-container').innerText = JSON.stringify(state);
+			Toolbar.dispatch('loadConvo', { value: state.convo });
+		}
+	},
+
+	handleConvo: function(convo) {
+		document.querySelector(".toolbar-container").addClass("convo-expanded");
+		document.querySelector('.convo-loading').removeClass('hidden');
+		document.querySelector('#convo-container').innerText = JSON.stringify(convo);
+	},
+
 	handleConfig: function(config) {
 		if (config.theme && config.theme != Toolbar.config.theme) {
 			var classes = document.querySelector("#toolbar").classList;
@@ -101,21 +116,23 @@ var Toolbar = {
 		document.querySelector('.inbox-loading').addClass('hidden');
 	},
 
-	handleResponse: function(r) {
+	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
-		if (r && r.url) {
+		if (r && r.url)
 			Toolbar.handleUrl(r.url);
-		}
-		if (r && r.config) {
+		if (r && r.config)
 			Toolbar.handleConfig(r.config);
-		}
-		if (r && r.convos) {
-			Toolbar.handleInbox(r.convos);
-		}
+		if (r && r.state)
+			Toolbar.handleState(r.state);
+		if (r && r.inbox)
+			Toolbar.handleInbox(r.inbox);
+		if (r && r.convo)
+			Toolbar.handleConvo(r.convo);
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
 	},
+
 	dispatch: function(a, data) {
 		return new Promise(function (resolve, reject) {
 			chrome.runtime.sendMessage({
@@ -123,7 +140,7 @@ var Toolbar = {
 				url: Toolbar.url || {},
 				data: data || {}
 			}, resolve);
-		});
+		}).then(Toolbar._handleResponse);
 	},
 	handleEvent: function(e) {
 		if (Toolbar.mouse.state == 'up') {
@@ -140,8 +157,7 @@ var Toolbar = {
 		var value  = elem.getAttribute('value');
 
 		Toolbar.handleImmediateAction(action, value, elem);
-		Toolbar.dispatch(action, {value: value})
-			.then(Toolbar.handleResponse);
+		Toolbar.dispatch(action, {value: value});
 		Toolbar.handleRedraw();
 	},
 
@@ -243,19 +259,17 @@ var Toolbar = {
 			);
 			return;
 		}
-		Toolbar.dispatch(e.data.action, e.data.data).then(Toolbar.handleResponse);
+		Toolbar.dispatch(e.data.action, e.data.data);
 	},
 	init: function() {
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
-		chrome.runtime.onMessage.addListener(Toolbar.handleResponse);
+		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);
 		window.addEventListener("message", Toolbar.handleIframeEvent, false);
 
 		// Toolbar initialization
-		Toolbar.dispatch('init')
-			   .then(Toolbar.handleResponse);
-		Toolbar.dispatch('urlChange')
-			   .then(Toolbar.handleResponse);
+		Toolbar.dispatch('init');
+		Toolbar.dispatch('urlChange');
 		window.setInterval(Toolbar.tryMiniMode, 1000);
 
 		// Drag-n-drop logic

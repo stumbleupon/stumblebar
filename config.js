@@ -13,17 +13,6 @@ config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
 config.baseUrl = 'www.stumbleupon.com'
 config.baseProt = 'https'
 config.apiPath = '/api/v2_0'
-config.conversationsAPI = {
-	baseUrl:  'svc.stumbleupon.com',
-	baseProt: 'https',
-	apiPath:  '/convo',
-	endpoint: {
-	  auth:         '/auth/token',
-	  participants: '/participants',
-	  messages:     '/conversations/:id',
-	  comment:      '/conversations/:id/comments',
-	}
-}
 
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
@@ -88,4 +77,19 @@ config.defaults = {
 	user: 0,
 	stumble: { list: [], pos: -1, mode: 'all' },
 }
+
+config.conversationsAPI = {
+	baseUrl:  'svc.stumbleupon.com',
+	baseProt: 'https',
+	apiPath:  '/convo',
+	endpoint: {
+	  auth:         '/auth/token',
+	  participants: '/participants',
+	  messages:     '/conversations/:id',
+	  comment:      '/conversations/:id/comments',
+	},
+	defaultHeaders: config.defaultHeaders,
+	defaults: {}
+}
+
 
