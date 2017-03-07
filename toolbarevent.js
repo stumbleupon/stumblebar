@@ -4,9 +4,10 @@ ToolbarEvent.api = new StumbleUponApi(config);
 
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
-	if (!ToolbarEvent[request.action])
+	var action = request.action && request.action.replace(/-[a-z]/, function(x){return x[1].toUpperCase();});
+	if (!action || !ToolbarEvent[action])
 		return false;
-	ToolbarEvent[request.action](request, sender)
+	ToolbarEvent[action](request, sender)
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", request, response);
 			sendResponse(response);
