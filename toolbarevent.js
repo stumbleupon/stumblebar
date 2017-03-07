@@ -157,6 +157,17 @@ ToolbarEvent.like = function(request, sender) {
 	return Promise.resolve(request);
 }
 
+ToolbarEvent.inbox = function(request, sender) {
+	return ToolbarEvent
+		.api.getConversations()
+		.then(function(convos) {
+	console.log(convos);	
+			chrome.tabs.update(sender.tab.id, { convos: convos });
+			return ToolbarEvent._buildResponse({ convos: convos });
+		})
+		.catch(ToolbarEvent.error);
+}
+
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.api
 		._mode(config.mode || config.defaults.mode)
