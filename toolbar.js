@@ -32,7 +32,7 @@ var Toolbar = {
 		if (url.likes) {
 			message = "Liked by " + String(url.likes).numberFormat() + " people";
 		}
-		document.querySelector("#social").innerHTML = message;
+		document.querySelector("#inline-info-body").innerHTML = message;
 
 		document.querySelector("#info").removeClass("on");
 		if (url.urlid) {
@@ -130,8 +130,8 @@ var Toolbar = {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
 		}
-		if (action == 'expand' && value == 'extra') {
-			document.querySelector(".toolbar-container").toggleClass("action-extra-expanded");
+		if (action == 'expand' && value == 'inline-info') {
+			document.querySelector(".toolbar-container").toggleClass("inline-info-expanded");
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
