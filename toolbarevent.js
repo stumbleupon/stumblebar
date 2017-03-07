@@ -192,14 +192,15 @@ ToolbarEvent.error = function(e) {
 }
 
 ToolbarEvent.replyConvo = function(request, sender) {
-	var convo = ToolbarEvent.api.getConversation(request.data.value.id);
-	return Promise.resolve(convo.comment(request.data.value.comment))
+	var convo = ToolbarEvent.api.getConversation(request.data.id);
+	return Promise.resolve(convo.comment(request.data.comment))
 		.then(function(comment) {
 			return ToolbarEvent._buildResponse({ comment: comment });
 		});
 }
 
 ToolbarEvent.loadConvo = function(request, sender) {
+	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages())
 		.then(function(convo) {
@@ -208,11 +209,23 @@ ToolbarEvent.loadConvo = function(request, sender) {
 }
 
 ToolbarEvent.openConvo = function(request, sender) {
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.update(tabs[0].id, {
-			"url": request.data.value
+	if (request.data.urlid && request.data.id) {
+		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
+			.then(function(url) {
+				Page.state[sender.tab.id] = { convo: request.data.id };
+				chrome.tabs.update(sender.tab.id, {
+					"url": url.url
+				});
+				return ToolbarEvent._buildResponse({ });
+			}).catch(function() {
+				request.data.urlid = null;
+				return ToolbarEvent.openConvo(request, sender);
+			});
+	} else if (request.data.url) {
+		chrome.tabs.update(sender.tab.id, {
+			"url": request.data.url
 		});
-	});
+	}
 
 	return ToolbarEvent._buildResponse({});
 }
@@ -220,16 +233,14 @@ ToolbarEvent.openConvo = function(request, sender) {
 ToolbarEvent.signout = function() {
 	ToolbarEvent.api._flush();
 
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.create({
-			"url": config.suPages.signout.form(config),
-			active: false
-		}, function(tab) {
-			chrome.tabs.onUpdated.addListener(function(tabId , info) {
-				if (info.status == "complete" && tabId == tab.id) {
-					setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
-				}
-			});
+	chrome.tabs.create({
+		"url": config.suPages.signout.form(config),
+		active: false
+	}, function(tab) {
+		chrome.tabs.onUpdated.addListener(function(tabId , info) {
+			if (info.status == "complete" && tabId == tab.id) {
+				setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
+			}
 		});
 	});
 
@@ -246,10 +257,10 @@ ToolbarEvent.signout = function() {
 }
 
 ToolbarEvent.signin =
-ToolbarEvent.loginPage = function() {
+ToolbarEvent.loginPage = function(request, sender) {
 	ToolbarEvent.api._flush();
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.update(tabs[0].id, {
+		chrome.tabs.update((sender && sender.tab.id) || tabs[0].id, {
 			"url": config.suPages.signin.form(config)
 		});
 	});

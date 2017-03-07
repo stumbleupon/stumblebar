@@ -56,6 +56,7 @@ var Toolbar = {
 
 			document.querySelector('#convo-container').appendChild(entryNode);
 		});
+		console.log(convo);
 		document.querySelector('#convo-id').value = convo.id;
 
 		document.querySelector('.convo-loading').addClass('hidden');
@@ -102,15 +103,18 @@ var Toolbar = {
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
 
-			entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
+			entryNode.setAttribute('convourl', entry.conversationDetails.originator.conversationUrl);
+			entryNode.id = entry.conversationDetails.id;
+			entryNode.setAttribute('values', 'urlid,id,url=convourl');
+			if (entry.urlId)
+				entryNode.setAttribute('urlid',  entry.urlId);
 			entryNode.removeClass('stub');
 			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
 			if (entry.conversationDetails.participants)
-				entryNode.querySelector('.inbox-entry-user').innerText    = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
+				entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
 			entryNode.querySelector('.inbox-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.occurred)).getTime()) / 86400000) + ' days ago';
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
-			entryNode.id = entry.id;
 
 			document.querySelector('#inbox-container').appendChild(entryNode);
 		});
@@ -156,17 +160,26 @@ var Toolbar = {
 		if (!elem || !elem.getAttribute)
 			return;
 		var action = elem.getAttribute('action');
-		var value  = elem.getAttribute('value');
+		var value  = {value : elem.getAttribute('value')};
 		if (elem.getAttribute('values')) {
 			value = {};
 			elem.getAttribute('values').split(',').forEach(function(name) {
 				parts = name.split('=');
-				value[parts[0]] = document.querySelector('#' + (parts[1] || parts[0])).value;
+				target = parts[1] || parts[0];
+				var attr = target;
+				var source = elem;
+				if (target[0] == '#') {
+					source = document.querySelector(target.split('.')[0]);
+					attr = target.split('.')[1] || 'value';
+					console.log(source, target, attr);
+				}
+				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
+			console.log(value);
 		}
 
-		Toolbar.handleImmediateAction(action, value, elem);
-		Toolbar.dispatch(action, {value: value});
+		Toolbar.handleImmediateAction(action, value.value || value, elem);
+		Toolbar.dispatch(action, value);
 		Toolbar.handleRedraw();
 	},
 
@@ -197,6 +210,9 @@ var Toolbar = {
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
 		if (action == 'hide') {
+		}
+		if (action == 'reply-convo') {
+			document.querySelector("#convo-reply").value = '';
 		}
 	},
 	mouse: {},
