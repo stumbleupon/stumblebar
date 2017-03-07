@@ -116,13 +116,13 @@ var Toolbar = {
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
 
-		Toolbar.handleImmediateAction(action, value);
+		Toolbar.handleImmediateAction(action, value, elem);
 		Toolbar.dispatch(action, {value: value})
 			.then(Toolbar.handleResponse);
 		Toolbar.handleRedraw();
 	},
 
-	handleImmediateAction: function(action, value) {
+	handleImmediateAction: function(action, value, elem) {
 		if (action == "su") {
 			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
 		}
