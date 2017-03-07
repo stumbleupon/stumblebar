@@ -27,8 +27,8 @@ config.conversationsAPI = {
 
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
-config.convoPath = '/convo/([^/]+)'
-config.webtbPathNames = { path: 0, convoid: 1 }
+config.convoPath = '/convo/([^/]+)(/([^/]+))?';
+config.convoPathNames = { path: 0, convoid: 1, stateId: 3 }
 
 config.accessToken = 'su_accesstoken'
 config.accessTokenHeader = 'X-Su-AccessTokenKey';
