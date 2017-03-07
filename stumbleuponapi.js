@@ -49,7 +49,7 @@ StumbleUponApi.prototype = {
 	},
 
 	getConversations: function(start, limit) {
-		return this.getNotifications(start, limit, 'conversations')
+		return this.getNotifications(start, limit, 'conversation')
 	},
 	getNotifications: function(start, limit, scope) {
 		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
