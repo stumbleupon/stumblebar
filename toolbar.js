@@ -115,12 +115,14 @@ var Toolbar = {
 			return;
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
-		console.log(action);
+
+		Toolbar.handleImmediateAction(action, value);
 		Toolbar.dispatch(action, {value: value})
 			.then(Toolbar.handleResponse);
-		//if (action == 'info') {
-		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
-		//}
+		Toolbar.handleRedraw();
+	},
+
+	handleImmediateAction: function(action, value) {
 		if (action == "su") {
 			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
 		}
@@ -144,7 +146,6 @@ var Toolbar = {
 		}
 		if (action == 'hide') {
 		}
-		Toolbar.handleRedraw();
 	},
 	mouse: {},
 	config: {},
