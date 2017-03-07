@@ -48,6 +48,11 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
+	getConversations: function() {
+		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
+		return this.api.get(this.config.endpoint.conversations, { start: 0, limit: 25, scope: 'conversation' })
+	},
+
 	getUser: function() {
 		return this.api.req(this.config.endpoint.user)
 			.then(function(result) {

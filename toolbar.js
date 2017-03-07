@@ -64,7 +64,7 @@ var Toolbar = {
 
 		if (config.hasOwnProperty('numShares')) {
 			document.querySelector("#inbox .badge").innerText = config.numShares ? parseInt(config.numShares) : '';
-			document.querySelector("#inbox")[parseInt(config.numShares) ? 'addClass' : 'removeClass']('enabled');
+			document.querySelector("#inbox").changeClass('enabled', parseInt(config.numShares));
 		}
 
 		if (config.hasOwnProperty('authed')) {

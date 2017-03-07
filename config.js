@@ -55,6 +55,7 @@ config.endpoint = {
   rate:    '/discovery/rating',
   unrate:  '/discovery/:urlid/rating',
   url:     '/url',
+  conversations: '/activities?start=:start&limit=:limit&scope=:scope'
 }
 config.url = {
   info:    '/content/:urlid',
