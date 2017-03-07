@@ -133,6 +133,9 @@ var Toolbar = {
 		if (action == 'expand' && value == 'inline-info') {
 			document.querySelector(".toolbar-container").toggleClass("inline-info-expanded");
 		}
+		if (action == 'expand' && value == 'inbox') {
+			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
+		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
 		}

@@ -474,7 +474,7 @@ body {
 	border-right: 1px solid #666;
 }
 .theme-all-dark .toolbar-logo {
-	background-image: url("asset/Logo light.svg");
+	background-image: url("asset/Logo Light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -499,6 +499,10 @@ body {
 }
 
 .toolbar-container:not(.inline-info-expanded) .show-when-inline-info-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
 }
 
@@ -555,5 +559,20 @@ body {
 .top-handed .toolbar-border-top:not(.toolbar-entry-container) {
 	border-top: 0px;
 	border-bottom: 1px;
+}
+
+
+@-webkit-keyframes rotation {
+	from { -webkit-transform: rotate(0deg);   }
+	to   { -webkit-transform: rotate(359deg); }
+}
+.spinner {
+	background-image: url("asset/Logo Light.svg");
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	background-position: center;
+
+	-webkit-animation: rotation 2s infinite linear;
 }
 
