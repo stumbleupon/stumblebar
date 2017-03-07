@@ -2,6 +2,7 @@ function Page() {
 }
 
 Page.tab = [];
+Page.state = {};
 
 Page.handleEvent = function(e) {
 	console.log('event', e);
@@ -32,6 +33,9 @@ Page.handleIconClick = function(e) {
 	})
 }
 
+Page.lastState = function(tabid) {
+	return Page.state[tabid] || {};
+}
 Page.lastUrl = function(tabid) {
 	return Page.tab[tabid] && Page.tab[tabid].url;
 }
@@ -121,6 +125,11 @@ Page.urlChange = function(href, tabid) {
 	if (suPath && !config.authed) {
 		ToolbarEvent._sanity();
 		debug('SUPATH SANITY CHECK');
+	}
+
+	convoPath = href.match(new RegExp("https?://" + config.baseUrl + config.convoPath));
+	if (convoPath) {
+		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
 	}
 
 	return Promise

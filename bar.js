@@ -40,6 +40,12 @@
 		iframe.allowTransparency = "true";
 		iframe.scrolling = 'no';
 		iframe.id = Toolbar.id;
+		var bodyflow = null;
+
+		//iframe.addEventListener("wheel",      function(e) { console.log(e); e.stopPropagation(); });
+		//iframe.addEventListener("mousewheel", function(e) { console.log(e); e.stopPropagation(); });
+		//iframe.addEventListener("mouseover",  function(e) { bodyflow = bodyflow || document.body.style.overflow; document.body.style.overflow = 'hidden'; });
+		//iframe.addEventListener("mouseout",   function(e) { if (bodyflow) document.body.style.overflow = bodyflow; bodyflow = null; });
 
 		//document.addEventListener("readystatechange", function() {
 		//var node = document.createElement('style');

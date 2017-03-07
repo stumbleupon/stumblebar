@@ -48,14 +48,23 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
-	getConversations: function() {
+	getConversations: function(start, limit) {
+		return this.getNotifications(start, limit, 'conversations')
+	},
+	getNotifications: function(start, limit, scope) {
 		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
-		return this.api.get(this.config.endpoint.conversations, { start: 0, limit: 25, scope: 'conversation' })
+		return this.api.get(this.config.endpoint.activities, { start: start || 0, limit: limit || 25, scope: scope || 'conversation' })
 			.then(function(convos) {
 				if (!convos._success)
 					return Promise.reject(convos);
 				return convos.activities.values
 			})
+	},
+
+	getConversation: function(id) {
+		var convo = new Conversation(this.config.conversation, id);
+		convo.api.addHeaders(this.api.getHeaders());
+		return convo;
 	},
 
 	getUser: function() {

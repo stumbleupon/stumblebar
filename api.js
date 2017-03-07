@@ -66,6 +66,10 @@ Api.prototype = {
 		return this
 	},
 
+	getHeaders: function() {
+		return this.opts.headers;
+	},
+
 	/**
 	 * Make an API GET request
 	 *

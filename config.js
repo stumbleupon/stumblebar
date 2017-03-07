@@ -13,8 +13,23 @@ config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
 config.baseUrl = 'www.stumbleupon.com'
 config.baseProt = 'https'
 config.apiPath = '/api/v2_0'
+config.conversationsAPI = {
+	baseUrl:  'svc.stumbleupon.com',
+	baseProt: 'https',
+	apiPath:  '/convo',
+	endpoint: {
+	  auth:         '/auth/token',
+	  participants: '/participants',
+	  messages:     '/conversations/:id',
+	  comment:      '/conversations/:id/comments',
+	}
+}
+
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
+config.convoPath = '/convo/([^/]+)'
+config.webtbPathNames = { path: 0, convoid: 1 }
+
 config.accessToken = 'su_accesstoken'
 config.accessTokenHeader = 'X-Su-AccessTokenKey';
 config.defaultHeaders = { 
@@ -49,13 +64,13 @@ config.suPages = {
 	signin:    ':baseProt://:baseUrl/login',
 }
 config.endpoint = {
-  ping:    '/p',
-  user:    '/user/?version=2',
-  stumble: '/stumble/:mode',
-  rate:    '/discovery/rating',
-  unrate:  '/discovery/:urlid/rating',
-  url:     '/url',
-  conversations: '/activities'
+  ping:       '/p',
+  user:       '/user/?version=2',
+  stumble:    '/stumble/:mode',
+  rate:       '/discovery/rating',
+  unrate:     '/discovery/:urlid/rating',
+  url:        '/url',
+  activities: '/activities',
 }
 config.url = {
   info:    '/content/:urlid',

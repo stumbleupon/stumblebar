@@ -294,8 +294,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id) });
-	return Promise.resolve(request);
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
 }
 
 ToolbarEvent._init = function() {
