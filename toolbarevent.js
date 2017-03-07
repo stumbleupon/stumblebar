@@ -176,6 +176,7 @@ ToolbarEvent.stumble = function(request, sender) {
 				.nextUrl(1)
 				.then(ToolbarEvent.preload);
 			Page.note(sender.tab.id, url);
+			Page.state[sender.tab.id] = { stumble: url }
 			ToolbarEvent.api.reportStumble([url.urlid]);
 			request.url = url;
 			console.log(url);
@@ -197,6 +198,10 @@ ToolbarEvent.replyConvo = function(request, sender) {
 		.then(function(comment) {
 			return ToolbarEvent._buildResponse({ comment: comment });
 		});
+}
+
+ToolbarEvent.stateChange = function(request, sender) {
+	Page.state[sender.tab.id] = request.data;
 }
 
 ToolbarEvent.loadConvo = function(request, sender) {
