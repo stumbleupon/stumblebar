@@ -161,8 +161,6 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations()
 		.then(function(convos) {
-	console.log(convos);	
-			chrome.tabs.update(sender.tab.id, { convos: convos });
 			return ToolbarEvent._buildResponse({ convos: convos });
 		})
 		.catch(ToolbarEvent.error);
@@ -190,6 +188,16 @@ ToolbarEvent.stumble = function(request, sender) {
 ToolbarEvent.error = function(e) {
 	console.log(e)
 	//ToolbarEvent.loginPage();
+}
+
+ToolbarEvent.convo = function(request, sender) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		console.log(tabs[0].id, request.data.value);
+		chrome.tabs.update(tabs[0].id, {
+			"url": request.data.value
+		});
+	});
+	return ToolbarEvent._buildResponse({});
 }
 
 ToolbarEvent.signout = function() {

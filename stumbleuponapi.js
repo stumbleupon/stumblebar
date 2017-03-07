@@ -51,6 +51,11 @@ StumbleUponApi.prototype = {
 	getConversations: function() {
 		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
 		return this.api.get(this.config.endpoint.conversations, { start: 0, limit: 25, scope: 'conversation' })
+			.then(function(convos) {
+				if (!convos._success)
+					return Promise.reject(convos);
+				return convos.activities.values
+			})
 	},
 
 	getUser: function() {

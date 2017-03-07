@@ -576,3 +576,29 @@ body {
 	-webkit-animation: rotation 2s infinite linear;
 }
 
+
+.inbox-container {
+	max-height: 140px;
+	display: block;
+	overflow: auto;
+}
+
+.inbox-container SPAN {
+	margin: 2px 0px;
+	border: 1px solid yellow;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.inbox-container .inbox-entry-title {
+	width: 120px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.inbox-container .inbox-entry-image {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background-size: cover;
+}

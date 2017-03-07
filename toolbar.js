@@ -81,6 +81,26 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
+	handleInbox: function(inbox) {
+		inbox.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
+
+			entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
+			entryNode.removeClass('stub');
+			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
+			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
+			if (entry.conversationDetails.participants)
+				entryNode.querySelector('.inbox-entry-user').innerText    = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
+			entryNode.querySelector('.inbox-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.occurred)).getTime()) / 86400000) + ' days ago';
+			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
+			entryNode.id = entry.id;
+
+			document.querySelector('#inbox-container').appendChild(entryNode);
+		});
+
+		document.querySelector('.inbox-loading').addClass('hidden');
+	},
+
 	handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
 		if (r && r.url) {
@@ -88,6 +108,9 @@ var Toolbar = {
 		}
 		if (r && r.config) {
 			Toolbar.handleConfig(r.config);
+		}
+		if (r && r.convos) {
+			Toolbar.handleInbox(r.convos);
 		}
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
@@ -135,6 +158,7 @@ var Toolbar = {
 		}
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
+			document.querySelector('.inbox-loading').removeClass('hidden');
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
