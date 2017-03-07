@@ -1,6 +1,6 @@
 function Api(config) {
 	this.requests = {};
-	this.opts = { baseUrl: config.baseUrl, apiPrefix: config.apiPath, headers: config.defaultHeaders, post: config.post };
+	this.opts = { baseUrl: config.baseUrl, proto: config.baseProto, apiPrefix: config.apiPath, headers: config.defaultHeaders, post: config.post };
 }
 
 Api.prototype = {
@@ -64,6 +64,10 @@ Api.prototype = {
 	addHeaders: function(headers) {
 		this.opts.headers = Object.assign(this.opts.headers, headers);
 		return this
+	},
+
+	getHeaders: function() {
+		return this.opts.headers;
 	},
 
 	/**

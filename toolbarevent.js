@@ -157,6 +157,15 @@ ToolbarEvent.like = function(request, sender) {
 	return Promise.resolve(request);
 }
 
+ToolbarEvent.inbox = function(request, sender) {
+	return ToolbarEvent
+		.api.getConversations()
+		.then(function(inbox) {
+			return ToolbarEvent._buildResponse({ inbox: inbox });
+		})
+		.catch(ToolbarEvent.error);
+}
+
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.api
 		._mode(config.mode || config.defaults.mode)
@@ -179,6 +188,32 @@ ToolbarEvent.stumble = function(request, sender) {
 ToolbarEvent.error = function(e) {
 	console.log(e)
 	//ToolbarEvent.loginPage();
+}
+
+ToolbarEvent.replyConvo = function(request, sender) {
+	var convo = ToolbarEvent.api.getConversation(request.data.value.id);
+	return Promise.resolve(convo.comment(request.data.value.comment))
+		.then(function(comment) {
+			return ToolbarEvent._buildResponse({ comment: comment });
+		});
+}
+
+ToolbarEvent.loadConvo = function(request, sender) {
+	var convo = ToolbarEvent.api.getConversation(request.data.value)
+	return Promise.resolve(convo.messages())
+		.then(function(convo) {
+			return ToolbarEvent._buildResponse({ convo: convo });
+		});
+}
+
+ToolbarEvent.openConvo = function(request, sender) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.update(tabs[0].id, {
+			"url": request.data.value
+		});
+	});
+
+	return ToolbarEvent._buildResponse({});
 }
 
 ToolbarEvent.signout = function() {
@@ -275,8 +310,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id) });
-	return Promise.resolve(request);
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
 }
 
 ToolbarEvent._init = function() {

@@ -1,21 +1,4 @@
 var Toolbar = {
-	event: function(e) {
-		/*
-		console.log(e);
-		//chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		//console.log(tabs[0])
-		//  chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-		//    console.log(response);
-		//  });
-		//});
-		//  chrome.tabs.getSelected(null, function(tab) {
-		chrome.runtime.sendMessage({greeting: "stumble"}, function(response) {
-			console.log('moop',response);
-		});
-		//  });
-		*/
-	},
-
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
@@ -32,7 +15,7 @@ var Toolbar = {
 		if (url.likes) {
 			message = "Liked by " + String(url.likes).numberFormat() + " people";
 		}
-		document.querySelector("#social").innerHTML = message;
+		document.querySelector("#inline-info-body").innerHTML = message;
 
 		document.querySelector("#info").removeClass("on");
 		if (url.urlid) {
@@ -42,6 +25,40 @@ var Toolbar = {
 		if (url.hasOwnProperty('sponsored')) {
 			document.querySelector("#sponsored").changeClass("hidden", !url.sponsored);
 		}
+	},
+
+	handleState: function(state) {
+		document.querySelector(".toolbar-container").changeClass("convo-expanded", state.convo);
+		document.querySelector('.convo-loading').changeClass('hidden', state.convo);
+		if (state.convo) {
+			Toolbar.dispatch('loadConvo', { value: state.convo });
+		}
+	},
+
+	handleConvo: function(convo) {
+		document.querySelector(".toolbar-container").addClass("convo-expanded");
+		document.querySelector('.convo-loading').removeClass('hidden');
+
+		convo.events.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-convo-entry").cloneNode('deep');
+
+			//entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
+			entryNode.removeClass('stub');
+			//entryNode.querySelector('.convo-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
+			//entryNode.querySelector('.convo-entry-title').innerText   = entry.conversationDetails.title;
+			convo.participants.forEach(function(person) {
+				if (person.id == entry.createdBy)
+					entryNode.querySelector('.convo-entry-user').innerText    = person.name || person.email;
+			});
+			entryNode.querySelector('.convo-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.createdAt)).getTime()) / 86400000) + ' days ago';
+			entryNode.querySelector('.convo-entry-snippet').innerText = entry.message;
+			entryNode.id = entry.id;
+
+			document.querySelector('#convo-container').appendChild(entryNode);
+		});
+		document.querySelector('#convo-id').value = convo.id;
+
+		document.querySelector('.convo-loading').addClass('hidden');
 	},
 
 	handleConfig: function(config) {
@@ -64,7 +81,7 @@ var Toolbar = {
 
 		if (config.hasOwnProperty('numShares')) {
 			document.querySelector("#inbox .badge").innerText = config.numShares ? parseInt(config.numShares) : '';
-			document.querySelector("#inbox")[parseInt(config.numShares) ? 'addClass' : 'removeClass']('enabled');
+			document.querySelector("#inbox").changeClass('enabled', parseInt(config.numShares));
 		}
 
 		if (config.hasOwnProperty('authed')) {
@@ -81,18 +98,43 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleResponse: function(r) {
+	handleInbox: function(inbox) {
+		inbox.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
+
+			entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
+			entryNode.removeClass('stub');
+			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
+			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
+			if (entry.conversationDetails.participants)
+				entryNode.querySelector('.inbox-entry-user').innerText    = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
+			entryNode.querySelector('.inbox-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.occurred)).getTime()) / 86400000) + ' days ago';
+			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
+			entryNode.id = entry.id;
+
+			document.querySelector('#inbox-container').appendChild(entryNode);
+		});
+
+		document.querySelector('.inbox-loading').addClass('hidden');
+	},
+
+	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
-		if (r && r.url) {
+		if (r && r.url)
 			Toolbar.handleUrl(r.url);
-		}
-		if (r && r.config) {
+		if (r && r.config)
 			Toolbar.handleConfig(r.config);
-		}
+		if (r && r.state)
+			Toolbar.handleState(r.state);
+		if (r && r.inbox)
+			Toolbar.handleInbox(r.inbox);
+		if (r && r.convo)
+			Toolbar.handleConvo(r.convo);
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
 	},
+
 	dispatch: function(a, data) {
 		return new Promise(function (resolve, reject) {
 			chrome.runtime.sendMessage({
@@ -100,7 +142,7 @@ var Toolbar = {
 				url: Toolbar.url || {},
 				data: data || {}
 			}, resolve);
-		});
+		}).then(Toolbar._handleResponse);
 	},
 	handleEvent: function(e) {
 		if (Toolbar.mouse.state == 'up') {
@@ -115,12 +157,20 @@ var Toolbar = {
 			return;
 		var action = elem.getAttribute('action');
 		var value  = elem.getAttribute('value');
-		console.log(action);
-		Toolbar.dispatch(action, {value: value})
-			.then(Toolbar.handleResponse);
-		//if (action == 'info') {
-		//	chrome.tabs.create({ url: Toolbar.config.url.info.form(Toolbar.url) });
-		//}
+		if (elem.getAttribute('values')) {
+			value = {};
+			elem.getAttribute('values').split(',').forEach(function(name) {
+				parts = name.split('=');
+				value[parts[0]] = document.querySelector('#' + (parts[1] || parts[0])).value;
+			});
+		}
+
+		Toolbar.handleImmediateAction(action, value, elem);
+		Toolbar.dispatch(action, {value: value});
+		Toolbar.handleRedraw();
+	},
+
+	handleImmediateAction: function(action, value, elem) {
 		if (action == "su") {
 			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
 		}
@@ -128,8 +178,12 @@ var Toolbar = {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
 		}
-		if (action == 'expand' && value == 'extra') {
-			document.querySelector(".toolbar-container").toggleClass("action-extra-expanded");
+		if (action == 'expand' && value == 'inline-info') {
+			document.querySelector(".toolbar-container").toggleClass("inline-info-expanded");
+		}
+		if (action == 'inbox') {
+			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
+			document.querySelector('.inbox-loading').removeClass('hidden');
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
@@ -144,7 +198,6 @@ var Toolbar = {
 		}
 		if (action == 'hide') {
 		}
-		Toolbar.handleRedraw();
 	},
 	mouse: {},
 	config: {},
@@ -215,19 +268,17 @@ var Toolbar = {
 			);
 			return;
 		}
-		Toolbar.dispatch(e.data.action, e.data.data).then(Toolbar.handleResponse);
+		Toolbar.dispatch(e.data.action, e.data.data);
 	},
 	init: function() {
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
-		chrome.runtime.onMessage.addListener(Toolbar.handleResponse);
+		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);
 		window.addEventListener("message", Toolbar.handleIframeEvent, false);
 
 		// Toolbar initialization
-		Toolbar.dispatch('init')
-			   .then(Toolbar.handleResponse);
-		Toolbar.dispatch('urlChange')
-			   .then(Toolbar.handleResponse);
+		Toolbar.dispatch('init');
+		Toolbar.dispatch('urlChange');
 		window.setInterval(Toolbar.tryMiniMode, 1000);
 
 		// Drag-n-drop logic

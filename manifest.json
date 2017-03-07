@@ -63,10 +63,10 @@
 		  "cookie.js",
 		  "api_request.js",
 		  "api.js",
+		  "conversation.js",
 		  "stumbleuponapi.js",
 		  "toolbarevent.js",
-		  "page.js",
-		  "background.js"
+		  "page.js"
 	  ]
   }
 

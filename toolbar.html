@@ -43,22 +43,59 @@
 							<span class="toolbar-action action-like   " action="like"    id="like"></span>
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
 							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
-							<span class="toolbar-action action-inbox  show-when-action-extra-expanded" action="expand" value="social" raction="inbox" id="inbox"><span class="badge"></span></span>
-							<span class="toolbar-action action-list   show-when-action-extra-expanded" action="list"  id="list"></span>
-							<span class="toolbar-action action-info   show-when-action-extra-expanded" action="info"  id="info"></span>
-							<span class="toolbar-action action-extra  " action="expand" value="extra" id="extra"></span>
+							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" action="inbox" raction="inbox" id="inbox"><span class="badge"></span></span>
+							<span class="toolbar-action action-list   show-when-inline-info-expanded" action="list"  id="list"></span>
+							<span class="toolbar-action action-info   show-when-inline-info-expanded" action="info"  id="info"></span>
+							<span class="toolbar-action action-inline-info  " action="expand" value="inline-info" id="inline-info"></span>
 						</span>
 					</div>
 
-					<div class="toolbar-section toolbar-social-container toolbar-border-top show-when-action-extra-expanded hide-in-mini-mode">
+					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode">
 						<span class="toolbar-section-sponsored hidden" id="sponsored">
 							<a class="sponsored-text" action="su" value="sponsored">Sponsored</a>
 							-
 						</span>
-						<span id="social"></span>
-						<!--
-						<span class="toolbar-expand-icon clickable" action="expand" value="social"></span>
-						-->
+						<span id="inline-info-body"></span>
+					</div>
+
+					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode">
+						<div class="inbox-loading">
+							<span class="spinner"></span> Loading...
+						</div>
+
+						<div class="inbox-entry clickable stub" action="openConvo" value="" id="stub-inbox-entry">
+							<span class="inbox-entry-image"></span>
+							<span class="inbox-entry-title"></span>
+							<span class="inbox-entry-user"></span>
+							<span class="inbox-entry-date"></span>
+							<span class="inbox-entry-snippet"></span>
+						</div>
+
+						<span class="inbox-container" id="inbox-container">
+						</span>
+					</div>
+
+					<div class="toolbar-section toolbar-convo-container toolbar-border-top show-when-convo-expanded hide-in-mini-mode">
+						<div class="convo-loading">
+							<span class="spinner"></span> Loading...
+						</div>
+
+						<div class="convo-entry clickable stub" raction="openConvo" value="" id="stub-convo-entry">
+							<span class="convo-entry-image"></span>
+							<span class="convo-entry-title"></span>
+							<span class="convo-entry-user"></span>
+							<span class="convo-entry-date"></span>
+							<span class="convo-entry-snippet"></span>
+						</div>
+
+						<span class="convo-container" id="convo-container">
+						</span>
+
+						<div class="convo-response-container">
+							<input type="hidden" id="convo-id">
+							<input type="text" id="convo-reply">
+							<span action="replyConvo" values="id=convo-id,comment=convo-reply">Send</span>
+						</div>
 					</div>
 
 					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden">

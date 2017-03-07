@@ -157,10 +157,10 @@ body {
 .toolbar-action-container .action-dislike.enabled {
 	background-image: url("asset/Icon/Down-enabled.svg");
 }
-.toolbar-action-container .action-extra {
+.toolbar-action-container .action-inline-info {
 	background-image: url("asset/DotDotDot.svg");
 }
-.toolbar-action-container .action-extra.enabled {
+.toolbar-action-container .action-inline-info.enabled {
 	background-image: url("asset/Expand Horizontal.svg");
 	transform: rotate(-180deg);
 }
@@ -209,7 +209,7 @@ body {
 	padding: .25em;
 }
 
-.toolbar-social-container .toolbar-expand-icon, .toolbar-icon-right {
+.toolbar-inline-info-container .toolbar-expand-icon, .toolbar-icon-right {
 	position: absolute;
 	right: 0;
 	top:   0;
@@ -474,7 +474,7 @@ body {
 	border-right: 1px solid #666;
 }
 .theme-all-dark .toolbar-logo {
-	background-image: url("asset/Logo light.svg");
+	background-image: url("asset/Logo Light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -498,7 +498,15 @@ body {
 	display: inline-block !important;
 }
 
-.toolbar-container:not(.action-extra-expanded) .show-when-action-extra-expanded:not(.enabled) {
+.toolbar-container:not(.inline-info-expanded) .show-when-inline-info-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
 	display: none;
 }
 
@@ -557,3 +565,44 @@ body {
 	border-bottom: 1px;
 }
 
+
+@-webkit-keyframes rotation {
+	from { -webkit-transform: rotate(0deg);   }
+	to   { -webkit-transform: rotate(359deg); }
+}
+.spinner {
+	background-image: url("asset/Logo Light.svg");
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	background-position: center;
+
+	-webkit-animation: rotation 2s infinite linear;
+}
+
+
+.inbox-container, .convo-container {
+	max-height: 140px;
+	display: block;
+	overflow: auto;
+}
+
+.inbox-container SPAN {
+	margin: 2px 0px;
+	border: 1px solid yellow;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.inbox-container .inbox-entry-title {
+	width: 120px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.inbox-container .inbox-entry-image {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background-size: cover;
+}
