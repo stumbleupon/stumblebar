@@ -193,6 +193,7 @@ ToolbarEvent.stumble = function(request, sender) {
 ToolbarEvent.error = function(e) {
 	console.log(e)
 	//ToolbarEvent.loginPage();
+	return Promise.reject(e);
 }
 
 ToolbarEvent.replyConvo = function(request, sender) {

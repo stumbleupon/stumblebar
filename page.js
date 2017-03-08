@@ -13,24 +13,37 @@ Page.handleIconClick = function(e) {
 	//	chrome.tabs.sendMessage(tabs[0].id, , function() {});
 	//});
 	console.log(e);
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, {type: "ping"}, function(response) {
-			// Handle pages that we can't inject
-			if (!response || !response.type == 'pong') {
-				ToolbarEvent.loginPage();
-				return false;
-			}
-			ToolbarEvent.handleRequest(
-				{
-					action: 'toggleHidden',
-					url: {},
-					data: {}
-				},
-				{ tab: tabs[0] },
-				function() {}
-			);
+	Page.ping()
+		.then(function(res) {
+			return ToolbarEvent.handleRequest(
+					{
+						action: 'toggleHidden',
+						url: {},
+						data: {}
+					},
+					{ tab: res.tab },
+					function() {}
+				);
+		})
+		.catch(function(res) {
+			ToolbarEvent.stumble({}, res)
+				.catch(ToolbarEvent.loginPage);
 		});
-	})
+}
+
+Page.ping = function(tabid) {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping"}, function(response) {
+				console.log(response);
+				// Handle pages that we can't inject
+				if (!response || response.type != 'pong')
+					reject({tab: {id: tabid || tabs[0].id}, response});
+				else
+					resolve({tab: {id: tabid || tabs[0].id}, response});
+			});
+		});
+	});
 }
 
 Page.lastState = function(tabid) {
