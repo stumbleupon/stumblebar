@@ -142,8 +142,8 @@ Page.urlChange = function(href, tabid) {
 			Page.note(tabid, url);
 			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 			//debug('Notify Url Change', tabid, url);
-			if (url.urlid)
-				ToolbarEvent.api.reportStumble([url.urlid]);
+			//if (url.urlid)
+			//	ToolbarEvent.api.reportStumble([url.urlid]);
 		})
 		.catch(function(error) {
 			Page.note(tabid, { url: href });
