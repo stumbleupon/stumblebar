@@ -76,22 +76,22 @@ function reldate(date, use) {
 function reltime(time, use) {
 	var nicetime = [];
 	if (time < 60)
-		nicetime = { num: parseInt(time),            sm: "s", md: 'sec', lg: 'second'};
+		nicetime = { num: parseInt(time),            s: "s", m: 'sec', l: 'second'};
 	else if (time < 3600)
-		nicetime = { num: Math.floor(time/60),       sm: "m", md: 'min', lg: 'minute'};
+		nicetime = { num: Math.floor(time/60),       s: "m", m: 'min', l: 'minute'};
 	else if (time < 86400)
-		nicetime = { num: Math.floor(time/3600),     sm: "h", md: 'hr',  lg: 'hour'  };
+		nicetime = { num: Math.floor(time/3600),     s: "h", m: 'hr',  l: 'hour'  };
 	else if (time < 31536000)
-		nicetime = { num: Math.floor(time/86400),    sm: "d", md: "day", lg: "day"   };
+		nicetime = { num: Math.floor(time/86400),    s: "d", m: "day", l: "day"   };
 	else
-		nicetime = { num: Math.floor(time/31536000), sm: "y", md: "yr",  lg: "year"  };
+		nicetime = { num: Math.floor(time/31536000), s: "y", m: "yr",  l: "year"  };
 
 	if (nicetime.num !== 1) {
 		nicetime.md += 's';
 		nicetime.lg += 's';
 	}
 
-	nicetime.text = nicetime.num + ' ' + nicetime[use || 'md'];
+	nicetime.text = nicetime.num + (use == 's' ? '' : ' ') + nicetime[use || 'm'];
 
 	return nicetime;
 }

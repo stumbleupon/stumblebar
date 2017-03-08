@@ -213,9 +213,9 @@ ToolbarEvent.stateChange = function(request, sender) {
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
-	return Promise.resolve(convo.messages())
+	return Promise.resolve(convo.messages(request.data.since))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({ convo: convo });
+			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
 		});
 }
 

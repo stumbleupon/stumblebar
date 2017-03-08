@@ -43,12 +43,10 @@ var Toolbar = {
 			document.querySelector('#convo-container').innerHTML = '';
 
 		convo.events.forEach(function(entry) {
-			var entryNode = document.querySelector("#stub-convo-entry").cloneNode('deep');
+			var entryNode = document.querySelector('#' + convo.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
 
-			//entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
 			entryNode.removeClass('stub');
-			//entryNode.querySelector('.convo-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
-			//entryNode.querySelector('.convo-entry-title').innerText   = entry.conversationDetails.title;
+
 			(convo.participants || []).forEach(function(person) {
 				if (person.id == entry.createdBy)
 					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
@@ -56,22 +54,46 @@ var Toolbar = {
 			if (!convo.participants)
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
 
-			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 'md').text + ' ago';
+			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
+			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
 			entryNode.id = entry.id;
 
-			document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
+			if (!entryNode.parentNode) {
+				document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
+			}
 		});
-		document.querySelector('#convo-id').value = convo.id;
 
-		document.querySelector('#convo-reply').addEventListener("keyup", function(e) {
-			if (e.keyCode == 13)
-				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+		document.querySelectorAll('#convo-container .convo-entry-date').forEach(function(elem) {
+			elem.innerText = reldate(elem.value, 's').text;
 		});
+
+		Toolbar.state.listenConvoBackoff = 15000;
+
+		if (convo.id && !position) {
+			document.querySelector('#convo-id').value = convo.id;
+
+			document.querySelector('#convo-reply').addEventListener("keyup", function(e) {
+				if (e.keyCode == 13)
+					Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+			});
+
+			Toolbar.listenConvoHelper();
+		}
 
 		document.querySelector('.convo-loading').addClass('hidden');
 
 		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+	},
+
+	listenConvoHelper: function() {
+			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
+		Toolbar.state.listenConvoTimeout = setTimeout(function() {
+			console.log('RECHECK');
+			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, since: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
+			Toolbar.state.listenConvoBackoff = 6 * (Toolbar.state.listenConvoBackoff || 15000);
+			Toolbar.listenConvoHelper();
+		}, Toolbar.state.listenConvoBackoff);
 	},
 
 	handleConfig: function(config) {
@@ -131,7 +153,7 @@ var Toolbar = {
 				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
 			//else if (entry.conversationDetails.participants)
 			//	entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
-			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 'md').text + ' ago';
+			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 's').text;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
 			document.querySelector('#inbox-container').appendChild(entryNode);
@@ -191,11 +213,9 @@ var Toolbar = {
 				if (target[0] == '#') {
 					source = document.querySelector(target.split('.')[0]);
 					attr = target.split('.')[1] || 'value';
-					console.log(source, target, attr);
 				}
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
-			console.log(value);
 		}
 
 		Toolbar.handleImmediateAction(action, value.value || value, elem);
