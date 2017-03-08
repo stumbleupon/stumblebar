@@ -103,7 +103,8 @@ Page.urlChange = function(href, tabid) {
 	if (webtbPath) {
 		ToolbarEvent._sanity();
 		var urlid = webtbPath[config.webtbPathNames.urlid];
-		if (urlid) {
+		// Only rewrite on convo, let /su handle itself otherwise
+		if (urlid && Page.state[tabid] && Page.state[tabid].convo) {
 			// Stop current page from loading
 			chrome.tabs.executeScript(tabid, {
 				code: "window.stop();",
@@ -130,6 +131,7 @@ Page.urlChange = function(href, tabid) {
 	convoPath = href.match(new RegExp("https?://" + config.baseUrl + config.convoPath));
 	if (convoPath) {
 		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
+		console.log('CONVO ON ' + tabid);
 	}
 
 	return Promise

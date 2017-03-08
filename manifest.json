@@ -65,8 +65,8 @@
 		  "api.js",
 		  "conversation.js",
 		  "stumbleuponapi.js",
-		  "toolbarevent.js",
-		  "page.js"
+		  "page.js",
+		  "toolbarevent.js"
 	  ]
   }
 
