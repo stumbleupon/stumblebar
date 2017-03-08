@@ -115,7 +115,7 @@ StumbleUponApi.prototype = {
 
 				debug("Report stumble", urlids.join(','));
 				return this.api
-					.once(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
+					.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
 					.then(this._syncSharesPending.bind(this))
 					.then(function(res) {
 						if (res._success) {
