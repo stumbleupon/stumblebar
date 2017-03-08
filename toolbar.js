@@ -35,9 +35,12 @@ var Toolbar = {
 		}
 	},
 
-	handleConvo: function(convo) {
+	handleConvo: function(convo, position) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
+
+		if (!position)
+			document.querySelector('#convo-container').innerHTML = '';
 
 		convo.events.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-convo-entry").cloneNode('deep');
@@ -46,17 +49,19 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 			//entryNode.querySelector('.convo-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			//entryNode.querySelector('.convo-entry-title').innerText   = entry.conversationDetails.title;
-			convo.participants.forEach(function(person) {
+			(convo.participants || []).forEach(function(person) {
 				if (person.id == entry.createdBy)
-					entryNode.querySelector('.convo-entry-user').innerText    = person.name || person.email;
+					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
 			});
-			entryNode.querySelector('.convo-entry-date').innerText    = reldate(entry.createdAt, 'md').text + ' ago';
+			if (!convo.participants)
+				entryNode.querySelector('.convo-entry-user').innerText = 'You';
+
+			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 'md').text + ' ago';
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
 			entryNode.id = entry.id;
 
-			document.querySelector('#convo-container').appendChild(entryNode);
+			document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
 		});
-		console.log(convo);
 		document.querySelector('#convo-id').value = convo.id;
 
 		document.querySelector('#convo-reply').addEventListener("keyup", function(e) {
@@ -65,6 +70,8 @@ var Toolbar = {
 		});
 
 		document.querySelector('.convo-loading').addClass('hidden');
+
+		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
 	},
 
 	handleConfig: function(config) {
@@ -105,6 +112,8 @@ var Toolbar = {
 	},
 
 	handleInbox: function(inbox, r) {
+		document.querySelector('#inbox-container').innerHTML = '';
+
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
 
@@ -142,7 +151,9 @@ var Toolbar = {
 		if (r && r.inbox)
 			Toolbar.handleInbox(r.inbox, r);
 		if (r && r.convo)
-			Toolbar.handleConvo(r.convo);
+			Toolbar.handleConvo(r.convo, r.position);
+		if (r && r.comment)
+			Toolbar.handleConvo({events:[r.comment]}, 'append');
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
