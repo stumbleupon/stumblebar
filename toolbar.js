@@ -318,10 +318,12 @@ var Toolbar = {
 	handleIframeEvent: function(e) {
 		if (e.data.action == 'mouse') {
 			var data = e.data.data;
-			Toolbar.state.canMiniMode = !data || !data.iframe || !( // We can do mini mode if the mouse isn't hovering over the frame
-				   data.iframe.x < data.mouse.x && data.iframe.x + Toolbar.state.w > data.mouse.x
-				&& data.iframe.y < data.mouse.y && data.iframe.y + Toolbar.state.h > data.mouse.y
+			var hover = data && data.iframe && ( // We can do mini mode if the mouse isn't hovering over the frame
+				   data.iframe.x >= data.mouse.x && data.iframe.x + Toolbar.state.w <= data.mouse.x
+				&& data.iframe.y >= data.mouse.y && data.iframe.y + Toolbar.state.h <= data.mouse.y
 			);
+			Toolbar.state.canMiniMode = !hover;
+			//window.top.postMessage({ type: "hover", hover: hover }, '*');
 			return;
 		}
 		Toolbar.dispatch(e.data.action, e.data.data);
