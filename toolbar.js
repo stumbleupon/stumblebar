@@ -48,11 +48,16 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 
 			(convo.participants || []).forEach(function(person) {
-				if (person.id == entry.createdBy)
+				if (person.id == entry.createdBy) {
 					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
+					if (person.id == Toolbar.config.authed)
+						entryNode.addClass('.convo-me');
+				}
 			});
-			if (!convo.participants)
+			if (!convo.participants) {
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
+				entryNode.addClass('.convo-me');
+			}
 
 			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
 			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
@@ -267,6 +272,7 @@ var Toolbar = {
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	handleMouseMove: function(e) {
+		//window.top.postMessage({ type: "hover", hover: true }, '*');
 		if (!e.button && !e.buttons)
 			Toolbar.mouse.state = 'up';
 		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 8)
