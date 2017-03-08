@@ -2,7 +2,7 @@ function Page() {
 }
 
 Page.tab = [];
-Page.state = {};
+Page.state = [];
 
 Page.handleEvent = function(e) {
 	console.log('event', e);
@@ -176,6 +176,12 @@ Page.handleTabSwitch = function(e) {
 	//console.log('switch', e);
 }
 
+Page.handleTabClose = function(tabid) {
+	if (Page.state[tabid])
+		delete Page.state[tabid];
+	if (Page.tab[tabid])
+		delete Page.tab[tabid];
+}
 
 Page.init = function() {
 	// listen to tab URL changes
@@ -183,6 +189,8 @@ Page.init = function() {
 
 	// listen to tab switching
 	chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
+
+	chrome.tabs.onRemoved.addListener(Page.handleTabClose);
 
 	// update when the extension loads initially
 	//updateTab();
