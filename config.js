@@ -61,6 +61,7 @@ config.endpoint = {
   unrate:     '/discovery/:urlid/rating',
   url:        '/url',
   activities: '/activities',
+  contacts: '/connection/:userid/mutual',
 }
 config.url = {
   info:    '/content/:urlid',

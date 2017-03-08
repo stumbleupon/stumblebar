@@ -33,6 +33,11 @@ var Toolbar = {
 		if (state.convo) {
 			Toolbar.dispatch('loadConvo', { value: state.convo });
 		}
+    },
+
+    handleContacts: function(contacts) {
+		this.shareContactList = this.shareContactList || new ContactList(contacts.values);
+		this.updateShare();
 	},
 
 	handleConvo: function(convo) {
@@ -132,8 +137,10 @@ var Toolbar = {
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
 			Toolbar.handleInbox(r.inbox);
-		if (r && r.convo)
-			Toolbar.handleConvo(r.convo);
+        if (r && r.contacts)
+            Toolbar.handleContacts(r.contacts);
+        if (r && r.convo)
+            Toolbar.handleConvo(r.convo);
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -205,6 +212,15 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
+        if (action == 'share') {
+            elem.toggleClass("enabled");
+            document.querySelector(".toolbar-share-container").toggleClass("hidden");
+        }
+        if (action == 'share-add-contact') {
+			// make the contact a participant
+			this.addParticipant(value, elem);
+            elem.toggleClass("enabled");
+        }
 		if (action == 'settings') {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
@@ -221,6 +237,20 @@ var Toolbar = {
 		lastMouse:     Date.now(),
 		canMiniMode:   false,
 		inMiniMode:    false,
+	},
+	addParticipant: function toolbarAddParticipant(value, sourceEl) {
+		var id = sourceEl.getAttribute('value');
+		console.log('adding participant', id);
+		this.shareContactList.get(id).setParticipant(true);
+		this.updateShare();
+	},
+	updateShare: function updateShare() {
+        var attributeMap = [
+            {attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+            {attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+        ];
+        this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {isParticipant: false});
+        this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
 	},
 	handleMouseDown: function(e) {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };

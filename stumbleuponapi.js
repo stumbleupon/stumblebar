@@ -38,6 +38,30 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' });
 	},
 
+	getContacts: function apiGetContacts() {
+		var cacheKey = 'my-contacts',
+			dataNode = 'mutual';
+		return this.cache.get(cacheKey)
+			.then(function(contacts) {
+				debug(contacts);
+				if(contacts) {
+					return contacts;
+				} else {
+                    return this.getUser()
+                        .then(function(user) {
+                            return user.userid;
+                        }.bind(this))
+                        .then(function(userid) {
+                            return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
+                        }.bind(this))
+                        .then(function(contacts) {
+                            this.cache.set(cacheKey, contacts[dataNode]);
+                            return contacts[dataNode];
+                        }.bind(this));
+				}
+			}.bind(this));
+	},
+
 	getUrlByUrlid: function(urlid) {
 		return this.api.get(this.config.endpoint.url, { urlid: urlid })
 			.then(function (result) { return result.url; });

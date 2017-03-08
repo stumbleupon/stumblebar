@@ -98,6 +98,40 @@
 						</div>
 					</div>
 
+
+
+
+
+					<div class="toolbar-section toolbar-share-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden">
+						<div class="toolbar-share-container-section toolbar-share-comment-container">
+							<!-- a message to send with the share -->
+							<label for="toolbar-share-comment">Say something</label><br>
+							<textarea id="toolbar-share-comment">Check this Out</textarea>
+						</div>
+						<div class="toolbar-share-container-section toolbar-share-recipients-container toolbar-border-top">
+							<!-- contacts who have been selected for share -->
+							<div id="toolbar-share-recipients-list"></div>
+						</div>
+						<div class="toolbar-share-container-section toolbar-share-contacts-container toolbar-border-top ">
+							<!-- the list of contacts to be invited -->
+							<label for="toolbar-share-contacts-list">Contacts</label><br>
+							<ul id="toolbar-share-contacts-list">
+							</ul>
+						</div>
+						<div class="toolbar-share-container-section toolbar-share-buttons-container">
+							<!-- buttons to initiate actions -->
+							<span class="toolbar-action action-stumble btn secondary-background primary-border" action="share" id="cancel-share">Cancel</span>
+							<span class="toolbar-action action-stumble btn primary-background primary-border" action="save-share" id="save-share">Save</span>
+						</div>
+					</div>
+					<li class="stub toolbar-action action-theme clickable" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></li>
+					<button class="stub btn pill secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
+
+
+
+
+
+
 					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden">
 						<div class="toolbar-entry-container">
 							Theme
@@ -124,6 +158,7 @@
 		</div>
 
 		<script src="utils.js"></script>
+		<script src="contactlist.js"></script>
 		<script src="toolbar.js"></script>
 	</body>
 </html>

@@ -47,6 +47,50 @@ body {
 	-webkit-backface-visibility: hidden; -webkit-perspective: 1000; -webkit-transform:translate3d(0,0,0); -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+#toolbar-share-recipients-list {
+	display: block;
+	position: relative;
+	width: 100%;
+}
+#toolbar-share-recipients-list:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+.toolbar-share-recipients-container {
+	max-height: 51px;
+	overflow-y: auto;
+}
+.toolbar-share-container-section {
+	display: block;
+	position: relative;
+	clear: left;
+}
+button.pill {
+	position: relative;
+	float: left;
+	width: auto;
+	height: 13px;
+	margin: 2px;
+	padding: 0 9px 0 18px;
+	border-radius: 9px;
+	border:none;
+	background-image:none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	cursor: pointer;
+}
+button.pill:before {
+	content:"";
+	width:13px;
+	height: 13px;
+	position: absolute;
+	left: 3px;
+	background-image: url('asset/Close.svg');
+	background-size: 13px 13px;
+	cursor: pointer;
+}
 /*
 .toolbar-action {
   cursor: pointer;
@@ -195,6 +239,19 @@ body {
 	background-color: #444;
 }
 
+.toolbar-share-container {
+	position: relative;
+	background-color: #444;
+	margin-left: 0;
+	padding-left: 44px !important;
+	color: white;
+}
+.toolbar-share-container-section {
+	min-height: 13px;
+}
+.toolbar-share-container .toolbar-share-buttons-container {
+	line-height: 26px;
+}
 
 .toolbar-settings-container {
 	background-color: #444;
@@ -202,11 +259,17 @@ body {
 	padding-left: 44px !important;
 	color: white;
 }
-.toolbar-settings-container ul {
+.toolbar-settings-container ul,
+.toolbar-share-container ul {
 	margin-left: 1em;
 }
-.toolbar-settings-container ul li {
+.toolbar-settings-container ul li,
+.toolbar-share-container ul li {
 	padding: .25em;
+}
+.toolbar-share-container ul {
+	max-height: 100px;
+	overflow-y: auto;
 }
 
 .toolbar-inline-info-container .toolbar-expand-icon, .toolbar-icon-right {
@@ -249,6 +312,10 @@ body {
 .primary-color {
 	color: #E94A2F;
 	background-color: inherit;
+}
+.secondary-background {
+	background-color: #888888;
+	color: white;
 }
 .primary-border {
 	border-color: #E94A2F;

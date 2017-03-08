@@ -1,7 +1,33 @@
-
+/**
+ * @class A class used to manage messaging to and from the background
+ */
 ToolbarEvent = {};
 ToolbarEvent.api = new StumbleUponApi(config);
 
+/**
+ * @typedef {Object} chrome.runtime.MessageSender
+ * @property {tabs.Tab} tab Optional tabs.Tab. The tabs.Tab which opened the connection. This property will only be present when the connection was opened from a tab (including content scripts).
+ * @property {Number} frameId Optional integer. The frame that opened the connection. Zero for top-level frames, positive for child frames. This will only be set when tab is set.
+ * @property {String} id Optional string. The ID of the extension that sent the message, if the message was sent by an extension. Note that this is the extension's internal ID, not the ID in the manifest.json applications key.
+ * @property {String} url Optional string. The URL of the page or frame hosting the script that sent the message. If the sender is a script running in an extension page (such as a background page, an options page, or a browser action or page action popup), the URL will be in the form "moz-extension://<extension-internal-id>/path/to/page.html". If the sender is a background script and you haven't included a background page, it will be "moz-extension://<extension-internal-id>/_blank.html". If the sender is a script running in a web page (including content scripts as well as normal page scripts), then url will be the web page URL. If the script is running in an iframe, url will be the iframe's URL.
+ * @property {String} tlsChannelId Optional string. The TLS channel ID of the page or frame that opened the connection, if requested by the extension, and if available.
+ * @see {@link https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/runtime/MessageSender}
+ */
+
+/**
+ * @typedef {Object} MessageRequest
+ * @property {String} action -- a string that must map to a method of this class
+ * @property {Object} url
+ * @property {Object} data
+ */
+
+/**
+ * route messages to handlers defined in this class and return the data via the provided callback
+ * @param request {MessageRequest}
+ * @property {chrome.runtime.MessageSender} sender -- provided by chrome
+ * @property {Function} sendResponse -- callback (technically optional, but required for this application)
+ * @returns {boolean}
+ */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
 	var action = request.action && request.action.replace(/-[a-z]/, function(x){return x[1].toUpperCase();});
@@ -24,6 +50,19 @@ ToolbarEvent._sanity = function() {
 			return user;
 		})
 }
+
+/**
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.share = function handleShare(request, sender) {
+	return Promise.resolve(ToolbarEvent.api.getContacts())
+		.then(function(contacts) {
+			return ToolbarEvent._buildResponse({ contacts:  contacts}, true);
+		});
+}
+
 
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
