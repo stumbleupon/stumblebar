@@ -59,6 +59,11 @@ var Toolbar = {
 		console.log(convo);
 		document.querySelector('#convo-id').value = convo.id;
 
+		document.querySelector('#convo-reply').addEventListener("keyup", function(e) {
+			if (e.keyCode == 13)
+				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+		});
+
 		document.querySelector('.convo-loading').addClass('hidden');
 	},
 
