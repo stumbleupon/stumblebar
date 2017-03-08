@@ -50,8 +50,8 @@ var Toolbar = {
 				if (person.id == entry.createdBy)
 					entryNode.querySelector('.convo-entry-user').innerText    = person.name || person.email;
 			});
-			entryNode.querySelector('.convo-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.createdAt)).getTime()) / 86400000) + ' days ago';
-			entryNode.querySelector('.convo-entry-snippet').innerText = entry.message;
+			entryNode.querySelector('.convo-entry-date').innerText    = reldate(entry.createdAt, 'md').text + ' ago';
+			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
 			entryNode.id = entry.id;
 
 			document.querySelector('#convo-container').appendChild(entryNode);
@@ -99,7 +99,7 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleInbox: function(inbox) {
+	handleInbox: function(inbox, r) {
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
 
@@ -111,9 +111,13 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
-			if (entry.conversationDetails.participants)
-				entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
-			entryNode.querySelector('.inbox-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.occurred)).getTime()) / 86400000) + ' days ago';
+			if (entry.sourceUserId == r.me)
+				entryNode.querySelector('.inbox-entry-user').innerText = 'You';
+			else
+				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
+			//else if (entry.conversationDetails.participants)
+			//	entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
+			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 'md').text + ' ago';
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
 			document.querySelector('#inbox-container').appendChild(entryNode);
@@ -131,7 +135,7 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox);
+			Toolbar.handleInbox(r.inbox, r);
 		if (r && r.convo)
 			Toolbar.handleConvo(r.convo);
 		if (!r || r.from != 'bar')

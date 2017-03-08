@@ -70,3 +70,28 @@ String.prototype.numberFormat = function() {
 		return Math.floor(parseInt(this) / 1000000, 1) + '.' + Math.floor(parseInt(this) / 100000)%10 + 'm';
 }
 
+function reldate(date, use) {
+	return reltime(Math.floor((Date.now() - (new Date(date)).getTime()) / 1000), use);
+}
+function reltime(time, use) {
+	var nicetime = [];
+	if (time < 60)
+		nicetime = { num: parseInt(time),            sm: "s", md: 'sec', lg: 'second'};
+	else if (time < 3600)
+		nicetime = { num: Math.floor(time/60),       sm: "m", md: 'min', lg: 'minute'};
+	else if (time < 86400)
+		nicetime = { num: Math.floor(time/3600),     sm: "h", md: 'hr',  lg: 'hour'  };
+	else if (time < 31536000)
+		nicetime = { num: Math.floor(time/86400),    sm: "d", md: "day", lg: "day"   };
+	else
+		nicetime = { num: Math.floor(time/31536000), sm: "y", md: "yr",  lg: "year"  };
+
+	if (nicetime.num !== 1) {
+		nicetime.md += 's';
+		nicetime.lg += 's';
+	}
+
+	nicetime.text = nicetime.num + ' ' + nicetime[use || 'md'];
+
+	return nicetime;
+}

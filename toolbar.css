@@ -587,22 +587,82 @@ body {
 	overflow: auto;
 }
 
+.inbox-entry {
+	border-bottom: 1px solid #888;
+}
+
 .inbox-container SPAN {
-	margin: 2px 0px;
-	border: 1px solid yellow;
+	margin: 4px;
 	vertical-align: middle;
 	display: inline-block;
+}
+
+.inbox-container .inbox-entry-date {
+	float: right;
 }
 
 .inbox-container .inbox-entry-title {
 	width: 120px;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	display: none;
+}
+
+.inbox-container .inbox-entry-snippet {
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 1em;
 }
 
 .inbox-container .inbox-entry-image {
-	width: 16px;
-	height: 16px;
+	width: 32px;
+	height: 32px;
 	display: inline-block;
 	background-size: cover;
+	margin-right: 8px;
+	float: left;
 }
+
+.convo-container {
+	white-space: normal;
+	max-width: 320px;
+}
+
+.convo-container .convo-entry {
+	white-space: normal;
+	width: 100%;
+	display: inline-block;
+}
+
+.convo-container .convo-entry-user {
+	font-weight: bold;
+}
+.convo-container .convo-entry-date {
+	float: right;
+	font-style: italic;
+}
+
+.convo-container .convo-entry-title {
+	width: 120px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: none;
+}
+
+.convo-container .convo-entry-image {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-size: cover;
+	margin-right: 8px;
+	float: left;
+	display: none;
+}
+
+.convo-container .convo-entry-body {
+	margin: .5em .5em 1.5em .5em;
+	display: block;
+	clear: both;
+}
+

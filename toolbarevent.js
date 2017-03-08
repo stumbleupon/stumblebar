@@ -162,7 +162,10 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations()
 		.then(function(inbox) {
-			return ToolbarEvent._buildResponse({ inbox: inbox });
+			return ToolbarEvent.api.cache.get('authed')
+				.then(function(userid) {
+					return ToolbarEvent._buildResponse({ inbox: inbox, me: userid });
+				});
 		})
 		.catch(ToolbarEvent.error);
 }
@@ -284,7 +287,7 @@ ToolbarEvent.ping = function() {
 		.then(ToolbarEvent.api.getUser.bind(ToolbarEvent.api))
 		.then(function(user) {
 			debug('Login success for user', user.username);
-			ToolbarEvent.api.cache.mset({ authed: config.authed = true });
+			ToolbarEvent.api.cache.mset({ authed: config.authed = user.userid });
 			ToolbarEvent.api.nextUrl(1)
 				.then(ToolbarEvent.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
