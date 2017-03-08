@@ -217,8 +217,13 @@ var Toolbar = {
             document.querySelector(".toolbar-share-container").toggleClass("hidden");
         }
         if (action == 'share-add-contact') {
-			// make the contact a participant
-			this.addParticipant(value, elem);
+            // make the contact a participant
+            this.addParticipant(value, elem);
+            elem.toggleClass("enabled");
+        }
+        if (action == 'share-delete-contact') {
+            // make the contact a participant
+            this.deleteParticipant(value, elem);
             elem.toggleClass("enabled");
         }
 		if (action == 'settings') {
@@ -244,13 +249,19 @@ var Toolbar = {
 		this.shareContactList.get(id).setParticipant(true);
 		this.updateShare();
 	},
+	deleteParticipant: function toolbarDeleteParticipant(value, sourceEl) {
+		var id = sourceEl.getAttribute('value');
+		console.log('deleting participant', id);
+		this.shareContactList.get(id).setParticipant(false);
+		this.updateShare();
+	},
 	updateShare: function updateShare() {
-        var attributeMap = [
-            {attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
-            {attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
-        ];
-        this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {isParticipant: false});
-        this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
+		var attributeMap = [
+			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+		];
+		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {isParticipant: false});
+		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
 	},
 	handleMouseDown: function(e) {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
