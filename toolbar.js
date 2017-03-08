@@ -67,13 +67,13 @@ var Toolbar = {
 			if (!entryNode.parentNode) {
 				document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
 			}
+
+			Toolbar.state.listenConvoBackoff = 15000;
 		});
 
 		document.querySelectorAll('#convo-container .convo-entry-date').forEach(function(elem) {
 			elem.innerText = reldate(elem.value, 's').text;
 		});
-
-		Toolbar.state.listenConvoBackoff = 15000;
 
 		if (convo.id && !position) {
 			document.querySelector('#convo-id').value = convo.id;
@@ -96,7 +96,8 @@ var Toolbar = {
 		Toolbar.state.listenConvoTimeout = setTimeout(function() {
 			console.log('RECHECK');
 			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, since: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
-			Toolbar.state.listenConvoBackoff = 6 * (Toolbar.state.listenConvoBackoff || 15000);
+			// Backoff -- 15s => 30s => 1m => 2m => 4m => 8m => 16m => ...
+			Toolbar.state.listenConvoBackoff = 2 * (Toolbar.state.listenConvoBackoff || 15000);
 			Toolbar.listenConvoHelper();
 		}, Toolbar.state.listenConvoBackoff);
 	},
