@@ -33,9 +33,9 @@ var Toolbar = {
 		if (state.convo) {
 			Toolbar.dispatch('loadConvo', { value: state.convo });
 		}
-    },
+	},
 
-    handleContacts: function(contacts) {
+	handleContacts: function(contacts) {
 		this.shareContactList = this.shareContactList || new ContactList(contacts.values);
 		this.updateShare();
 	},
@@ -137,10 +137,10 @@ var Toolbar = {
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
 			Toolbar.handleInbox(r.inbox);
-        if (r && r.contacts)
-            Toolbar.handleContacts(r.contacts);
-        if (r && r.convo)
-            Toolbar.handleConvo(r.convo);
+		if (r && r.contacts)
+			Toolbar.handleContacts(r.contacts);
+		if (r && r.convo)
+			Toolbar.handleConvo(r.convo);
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -185,11 +185,19 @@ var Toolbar = {
 			console.log(value);
 		}
 
-		Toolbar.handleImmediateAction(action, value.value || value, elem);
-		Toolbar.dispatch(action, value);
-		Toolbar.handleRedraw();
+		if(Toolbar.handleImmediateAction(action, value.value || value, elem)) {
+			Toolbar.dispatch(action, value);
+			Toolbar.handleRedraw();
+		}
 	},
 
+	/**
+	 * Called by top-level event delegate before dispatching to background
+	 * @param {string} action -- action attribute of the source element
+	 * @param {string} value -- value attribute from the source element
+	 * @param {HTMLElement} elem -- the source of the event
+	 * @returns {boolean} -- return false to cancel dispatching event to background and redrawing.
+	 */
 	handleImmediateAction: function(action, value, elem) {
 		if (action == "su") {
 			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
@@ -212,20 +220,20 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
-        if (action == 'share') {
-            elem.toggleClass("enabled");
-            document.querySelector(".toolbar-share-container").toggleClass("hidden");
-        }
-        if (action == 'share-add-contact') {
-            // make the contact a participant
-            this.addParticipant(value, elem);
-            elem.toggleClass("enabled");
-        }
-        if (action == 'share-delete-contact') {
-            // make the contact a participant
-            this.deleteParticipant(value, elem);
-            elem.toggleClass("enabled");
-        }
+		if (action == 'share') {
+			elem.toggleClass("enabled");
+			document.querySelector(".toolbar-share-container").toggleClass("hidden");
+		}
+		if (action == 'share-add-contact') {
+			// make the contact a participant
+			this.addParticipant(value, elem);
+			elem.toggleClass("enabled");
+		}
+		if (action == 'share-delete-contact') {
+			// make the contact a participant
+			this.deleteParticipant(value, elem);
+			elem.toggleClass("enabled");
+		}
 		if (action == 'settings') {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
@@ -235,6 +243,24 @@ var Toolbar = {
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
 		}
+		if (action == 'save-share') {
+			if(this.validateShare()) {
+				document.querySelector("[action=share]").toggleClass("enabled");
+				document.querySelector(".toolbar-share-container").toggleClass("hidden");
+			} else {
+				return false;
+			}
+		}
+		return true;
+	},
+	validateShare: function validateShare() {
+		// make sure there are some recipients
+		var recipients = this.shareContactList.find({isParticipant: true});
+		if(recipients.length === 0) {
+			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
+			return false;
+		}
+		return true;
 	},
 	mouse: {},
 	config: {},

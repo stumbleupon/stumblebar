@@ -91,6 +91,12 @@ button.pill:before {
 	background-size: 13px 13px;
 	cursor: pointer;
 }
+.invalid {
+	color: red;
+	background-color: transparent;
+	white-space: pre-line;
+	margin: 2px;
+}
 /*
 .toolbar-action {
   cursor: pointer;
