@@ -28,7 +28,9 @@
 
   "description": "Discover the best of the web",
   "icons": {
-    "48": "icons/discover-48.png"
+    "48":  "asset/Logo.png",
+    "64":  "asset/Logo.png",
+    "128": "asset/Logo.png"
   },
 
   "applications": {
@@ -48,7 +50,7 @@
 
   "browser_action": {
     "default_icon": {
-     "32" : "icons/discover-32.png"
+     "32" : "asset/Logo.png"
     },
     "default_title": "StumbleBar by StumbleUpon"
     //"default_popup": "content/discover.html"
