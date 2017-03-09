@@ -61,6 +61,7 @@ config.endpoint = {
   unrate:     '/discovery/:urlid/rating',
   url:        '/url',
   activities: '/activities',
+  contacts: '/connection/:userid/mutual',
   read:       '/activities/:id/:action',
 }
 config.url = {
@@ -89,6 +90,7 @@ config.conversationsAPI = {
 	  participants: '/participants',
 	  messages:     '/conversations/:id',
 	  comment:      '/conversations/:id/comments',
+	  share:        '/conversations',
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: {}

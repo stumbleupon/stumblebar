@@ -70,6 +70,35 @@ String.prototype.numberFormat = function() {
 		return Math.floor(parseInt(this) / 1000000, 1) + '.' + Math.floor(parseInt(this) / 100000)%10 + 'm';
 }
 
+/**
+ * look up the template and use it to return a new element applying the given attributes and substitutions
+ * @param {string} templateId
+ * @param {Object} attributes
+ * @param {string} Optional appendToElId -- if provided, append the newly created element to this
+ */
+function newFromTemplate(templateId, attributes, appendToElId) {
+    /** @type {Element} */
+    debug('new from template', arguments);
+    var template = document.getElementById(templateId),
+        appendToEl = document.getElementById(appendToElId);
+    if (!template || !template.classList.contains('stub')) {
+        return false;
+    }
+    var el = template.cloneNode(true);
+    el.classList.remove('template');
+    el.removeAttribute('hidden');
+    for (var name in attributes) {
+        var val = attributes[name];
+        debug(name, val);
+        el[name] = val;
+    }
+    if (appendToEl) {
+        debug('appending', appendToEl);
+        appendToEl.appendChild(el);
+    }
+
+    return el;
+}
 function reldate(date, use) {
 	return reltime(Math.floor((Date.now() - (new Date(date)).getTime()) / 1000), use);
 }

@@ -49,6 +49,11 @@ var Toolbar = {
 		}
 	},
 
+	handleContacts: function(contacts) {
+		this.shareContactList = this.shareContactList || new ContactList(contacts.values);
+		this.updateShare();
+	},
+
 	handleConvo: function(convo, position) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
@@ -193,7 +198,9 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox, r);
+			Toolbar.handleInbox(r.inbox);
+		if (r && r.contacts)
+			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
 			Toolbar.handleConvo(r.convo, r.position);
 		if (r && r.comment)
@@ -226,6 +233,7 @@ var Toolbar = {
 		var action = elem.getAttribute('action');
 		var value  = {value : elem.getAttribute('value')};
 		if (elem.getAttribute('values')) {
+			// decode the values into an object to send to dispatch
 			value = {};
 			elem.getAttribute('values').split(',').forEach(function(name) {
 				parts = name.split('=');
@@ -239,12 +247,25 @@ var Toolbar = {
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
 		}
-
-		Toolbar.handleImmediateAction(action, value.value || value, elem);
-		Toolbar.dispatch(action, value);
-		Toolbar.handleRedraw();
+		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
+		if(val) {
+			if(typeof val === "object") {
+				// handleImmediateAction is replacing data;
+				value = val;
+			}
+			Toolbar.dispatch(action, value);
+			Toolbar.handleRedraw();
+		}
 	},
 
+	/**
+	 * Called by top-level event delegate before dispatching to background
+	 * @param {string} action -- action attribute of the source element
+	 * @param {string} value -- value attribute from the source element
+	 * @param {HTMLElement} elem -- the source of the event
+	 * @returns {boolean|Object} -- return false to cancel dispatching event to background and redrawing
+	 *                              OR return an Object to replace the data object sent to dispatch.
+	 */
 	handleImmediateAction: function(action, value, elem) {
 		if (action == "su") {
 			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
@@ -267,6 +288,20 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
+		if (action == 'share') {
+			elem.toggleClass("enabled");
+			document.querySelector(".toolbar-share-container").toggleClass("hidden");
+		}
+		if (action == 'share-add-contact') {
+			// make the contact a participant
+			this.addParticipant(value, elem);
+			elem.toggleClass("enabled");
+		}
+		if (action == 'share-delete-contact') {
+			// make the contact a participant
+			this.deleteParticipant(value, elem);
+			elem.toggleClass("enabled");
+		}
 		if (action == 'settings') {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
@@ -276,6 +311,39 @@ var Toolbar = {
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
 		}
+		if (action == 'save-share') {
+			if(this.validateShare()) {
+				document.querySelector("[action=share]").toggleClass("enabled");
+				document.querySelector(".toolbar-share-container").toggleClass("hidden");
+				return this.getShareData();
+			} else {
+				return false;
+			}
+		}
+		return true;
+	},
+	getShareData: function getShareData() {
+		var data = {
+			contentType:'url',
+			contentId:null,
+			suUserIds:null,
+			initialMessage:null
+		};
+		data.contentId = Toolbar.url.urlid;
+		data.suUserIds = this.shareContactList.find({isParticipant: true}).map(function(contact) {
+			return contact.userid;
+		});
+		data.initialMessage = document.querySelector('#toolbar-share-comment').value;
+		return data;
+	},
+	validateShare: function validateShare() {
+		// make sure there are some recipients
+		var recipients = this.shareContactList.find({isParticipant: true});
+		if(recipients.length === 0) {
+			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
+			return false;
+		}
+		return true;
 	},
 	mouse: {},
 	config: {},
@@ -283,6 +351,29 @@ var Toolbar = {
 		lastMouse:     Date.now(),
 		canMiniMode:   false,
 		inMiniMode:    false,
+	},
+	addParticipant: function toolbarAddParticipant(value, sourceEl) {
+		var id = sourceEl.getAttribute('value');
+		console.log('adding participant', id);
+		this.shareContactList.get(id).setParticipant(true);
+		this.updateShare();
+	},
+	deleteParticipant: function toolbarDeleteParticipant(value, sourceEl) {
+		var id = sourceEl.getAttribute('value');
+		console.log('deleting participant', id);
+		this.shareContactList.get(id).setParticipant(false);
+		this.updateShare();
+	},
+	/**
+	 * Redraw the share section's lists of contacts and recipients using current state of the contact list.
+	 */
+	updateShare: function updateShare() {
+		var attributeMap = [
+			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+		];
+		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {isParticipant: false});
+		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
 	},
 	handleMouseDown: function(e) {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };

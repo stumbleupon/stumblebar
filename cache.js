@@ -68,7 +68,9 @@ Cache.prototype = {
 	},
 
 	set: function(key, value) {
-		return this.mset({key: value});
+		var obj = new Object();
+		obj[key] = value;
+		return this.mset(obj);
 	},
 
 	init: function(kvpairs) {

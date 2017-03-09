@@ -38,6 +38,30 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' });
 	},
 
+	getContacts: function apiGetContacts() {
+		var cacheKey = 'my-contacts',
+			dataNode = 'mutual';
+		return this.cache.get(cacheKey)
+			.then(function(contacts) {
+				debug(contacts);
+				if(contacts) {
+					return contacts;
+				} else {
+                    return this.getUser()
+                        .then(function(user) {
+                            return user.userid;
+                        }.bind(this))
+                        .then(function(userid) {
+                            return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
+                        }.bind(this))
+                        .then(function(contacts) {
+                            this.cache.set(cacheKey, contacts[dataNode]);
+                            return contacts[dataNode];
+                        }.bind(this));
+				}
+			}.bind(this));
+	},
+
 	getUrlByUrlid: function(urlid) {
 		return this.api.get(this.config.endpoint.url, { urlid: urlid })
 			.then(function (result) { return result.url; });
@@ -102,6 +126,22 @@ StumbleUponApi.prototype = {
 					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
 				});
 			}.bind(this));
+	},
+
+	/**
+	 * @typedef {Object} ShareData
+	 * @property {string} contentType
+	 * @property {string} contentId
+	 * @property {Array<number>} suUserIds
+	 * @property {string} initialMessage
+
+	/**
+	 * @param {ShareData} shareData
+	 */
+	saveShare: function(shareData) {
+		var convo = new Conversation(this.config.conversationsAPI, null);
+		convo.api.addHeaders(this.api.getHeaders());
+		return convo.save(shareData);
 	},
 
 	reportStumble: function(urlids, mode) {

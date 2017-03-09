@@ -11,13 +11,29 @@ function ApiRequest(opts) {
  * @return {string}
  */
 ApiRequest.serializePostData = function(obj, prefix) {
-	var str = [];
-	for(var p in obj) {
-		if (obj.hasOwnProperty(p)) {
-			var k = prefix ? encodeURIComponent(prefix) + "[" + encodeURIComponent(p) + "]" : p, v = obj[p];
-			str.push((v && typeof v == "object") ?
+	var str = [],
+		v;
+	if (obj instanceof Array) {
+		if (!prefix) {
+			throw "You can't serialize a plain array: " + JSON.stringify(obj);
+		}
+		for (var i = 0; i < obj.length; i++) {
+			v = obj[i];
+			var k = encodeURIComponent(prefix) + "[]" ;
+			if(!isScalar(v)) {
+                throw "You can't serialize nested objects: " + JSON.stringify(obj);
+			}
+			str.push(k + "=" + encodeURIComponent(v));
+		}
+	} else {
+		for (var p in obj) {
+			if (obj.hasOwnProperty(p)) {
+				var k = prefix ? encodeURIComponent(prefix) + "[" + encodeURIComponent(p) + "]" : p;
+				v = obj[p];
+				str.push((v && typeof v == "object") ?
 					ApiRequest.serializePostData(v, p) :
 					k + "=" + encodeURIComponent(v));
+			}
 		}
 	}
 	return str.join("&");
