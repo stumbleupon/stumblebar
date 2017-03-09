@@ -37,25 +37,25 @@ String.prototype.form = function(map) {
 	return newstr;
 }
 
-Element.prototype.addClass = function(name) {
+Node.prototype.addClass = function(name) {
 	if (!this.hasClass(name))
 		this.className += ' ' + name;
 	return this.className;
 }
 
-Element.prototype.removeClass = function(name) {
+Node.prototype.removeClass = function(name) {
 	return this.className = this.className.replace(RegExp('(\\s|^)' + name + '(\\s|$)'), ' ').trim();
 }
 
-Element.prototype.hasClass = function(name) {
+Node.prototype.hasClass = function(name) {
 	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
 }
 
-Element.prototype.changeClass = function(name, state) {
+Node.prototype.changeClass = function(name, state) {
 	return state ? this.addClass(name) : this.removeClass(name);
 }
 
-Element.prototype.toggleClass = function(name) {
+Node.prototype.toggleClass = function(name) {
 	return this.changeClass(name, !this.hasClass(name));
 }
 
