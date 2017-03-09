@@ -43,7 +43,7 @@ var Toolbar = {
 			document.querySelector('#convo-container').innerHTML = '';
 
 		convo.events.forEach(function(entry) {
-			var entryNode = document.querySelector('#' + convo.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
+			var entryNode = document.querySelector('#conv-' + entry.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
 
 			entryNode.removeClass('stub');
 
@@ -62,7 +62,7 @@ var Toolbar = {
 			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
 			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
-			entryNode.id = entry.id;
+			entryNode.id = 'conv-' + entry.id;
 
 			if (!entryNode.parentNode) {
 				document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
