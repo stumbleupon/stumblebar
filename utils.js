@@ -99,3 +99,8 @@ function newFromTemplate(templateId, attributes, appendToElId) {
 
 	return el;
 }
+
+
+Object.prototype.isScalar = function() {
+	return (/string|number|boolean/).test(typeof this);
+}
