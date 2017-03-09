@@ -132,6 +132,6 @@ function debounce(fn, delay) {
 }
 
 
-Object.prototype.isScalar = function() {
-	return (/string|number|boolean/).test(typeof this);
+function isScalar(x) {
+	return (/string|number|boolean/).test(typeof x);
 }
