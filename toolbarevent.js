@@ -41,16 +41,6 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	return true;
 }
 
-ToolbarEvent._sanity = function() {
-	return ToolbarEvent.api.cache.get('user')
-		.then(function(user) {
-			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
-			if (!user.userid)
-				return ToolbarEvent.ping();
-			return user;
-		})
-}
-
 /**
  *
  * @param {MessageRequest} request
@@ -118,18 +108,7 @@ ToolbarEvent.repos = function(request, sender) {
 	return ToolbarEvent._buildResponse({}, true);
 }
 
-ToolbarEvent._buildResponse = function(change, all) {
-	var response = Object.assign({all: all}, { config: config }, change);
-	if (response.all) {
-//				chrome.runtime.sendMessage(chrome.runtime.id, response);
-		chrome.tabs.query({}, function(tabs) {
-			tabs.forEach(function (tab) {
-				chrome.tabs.sendMessage(tab.id, response);
-			});
-		});
-	}
-	return Promise.resolve(response);
-}
+
 
 ToolbarEvent.dislike = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == -1)
@@ -228,7 +207,7 @@ ToolbarEvent.stumble = function(request, sender) {
 		.then(function(url) {
 			ToolbarEvent.api
 				.nextUrl(1)
-				.then(ToolbarEvent.preload);
+				.then(Page.preload);
 			Page.note(sender.tab.id, url);
 			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
 			ToolbarEvent.api.reportStumble([url.urlid]);
@@ -322,6 +301,28 @@ ToolbarEvent.signout = function() {
 	return ToolbarEvent.needsLogin();
 }
 
+ToolbarEvent.urlChange = function(request, sender) {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
+			console.log(url);
+			if (url) {
+				Page.urlChange(url, tabs[0].id)
+					.then(function(url) {
+						resolve(ToolbarEvent._buildResponse({url: url}));
+					});
+			} else {
+				reject();
+			}
+		});
+	});
+}
+
+ToolbarEvent.init = function(request, sender) {
+	request.config = config;
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
+}
+
 ToolbarEvent.signin =
 ToolbarEvent.loginPage = function(request, sender) {
 	ToolbarEvent.api._flush();
@@ -347,48 +348,38 @@ ToolbarEvent.ping = function() {
 			debug('Login success for user', user.username);
 			ToolbarEvent.api.cache.mset({ authed: config.authed = user.userid });
 			ToolbarEvent.api.nextUrl(1)
-				.then(ToolbarEvent.preload)
+				.then(Page.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
 		})
 		.catch(ToolbarEvent.needsLogin);
 }
 
-ToolbarEvent.preload = function(url) {
-	ToolbarEvent._prerender.href  = url.url;
-	ToolbarEvent._prefetch.href   = url.url;
-	ToolbarEvent._preload.href    = url.url;
-	debug("Preload", url.url);
+ToolbarEvent._buildResponse = function(change, all) {
+	var response = Object.assign({all: all}, { config: config }, change);
+	if (response.all) {
+//				chrome.runtime.sendMessage(chrome.runtime.id, response);
+		chrome.tabs.query({}, function(tabs) {
+			tabs.forEach(function (tab) {
+				chrome.tabs.sendMessage(tab.id, response);
+			});
+		});
+	}
+	return Promise.resolve(response);
+}
+
+ToolbarEvent._sanity = function() {
+	return ToolbarEvent.api.cache.get('user')
+		.then(function(user) {
+			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
+			if (!user.userid)
+				return ToolbarEvent.ping();
+			return user;
+		})
 }
 
 ToolbarEvent.getUrlFromPageCache = function(url) {
 	console.log('GUFPC', Page.urlCache[url]);
 	return ToolbarEvent._buildResponse({url: Page.urlCache[url]});
-}
-
-ToolbarEvent.urlChange = function(request, sender) {
-	return new Promise(function(resolve, reject) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
-			console.log(url);
-			if (url) {
-				Page.urlChange(url, tabs[0].id)
-					.then(function(url) {
-						resolve(ToolbarEvent._buildResponse({url: url}));
-					});
-			} else {
-				reject();
-			}
-		});
-	});
-	return p;
-	return ToolbarEvent._buildResponse({});
-	//return ToolbarEvent._buildResponse({url: Page.urlCache[request && request.url && request.url.url]});
-	return Promise.resolve(request);
-}
-
-ToolbarEvent.init = function(request, sender) {
-	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
 }
 
 ToolbarEvent._init = function() {
@@ -398,18 +389,6 @@ ToolbarEvent._init = function() {
 		 });
 
 	ToolbarEvent.ping();
-
-	ToolbarEvent._prerender  = document.createElement('link');
-	ToolbarEvent._prefetch   = document.createElement('link');
-	ToolbarEvent._preload    = document.createElement('link');
-
-	ToolbarEvent._prerender.rel  = 'prerender';
-	ToolbarEvent._prefetch.rel   = 'prefetch';
-	ToolbarEvent._preload.rel    = 'preload';
-
-	document.body.appendChild(ToolbarEvent._prerender);
-	document.body.appendChild(ToolbarEvent._prefetch);
-	document.body.appendChild(ToolbarEvent._preload);
 
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 }
