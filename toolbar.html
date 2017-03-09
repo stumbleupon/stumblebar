@@ -12,13 +12,13 @@
 				<div class="toolbar-logo-container">
 					<div class="toolbar-background-logo"></div>
 					<span class="toolbar-logo clickable"></span>
-					<span class="toolbar-settings-icon clickable" action="settings"></span>
+					<span class="toolbar-settings-icon clickable hide-when-share-expanded" action="settings"></span>
 				</div>
 
 				<div class="toolbar-section-container handed reverse-when-top-handed">
 					<div class="toolbar-section-header"></div>
 
-					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode clickable handed">
+					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
 						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode">
 							<span class="toolbar-mode" id="mode">All Interests</span>
 							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode"></span>
@@ -36,7 +36,7 @@
 						</div>
 					</div>
 
-					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed">
+					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed hide-when-share-expanded">
 						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
 						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
 						<span class="hide-in-mini-mode handed reverse-when-right-handed">
@@ -101,8 +101,7 @@
 
 
 
-
-					<div class="toolbar-section toolbar-share-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden scrollable">
+					<div class="toolbar-section toolbar-share-container show-when-share-expanded toolbar-border-top hidden">
 						<div class="toolbar-share-container-section toolbar-share-comment-container">
 							<!-- a message to send with the share -->
 							<label for="toolbar-share-comment">Say something</label><br>
@@ -115,7 +114,7 @@
 						<div class="toolbar-share-container-section toolbar-share-contacts-container toolbar-border-top ">
 							<!-- the list of contacts to be invited -->
 							<label for="toolbar-share-contacts-list">Contacts</label><br>
-							<ul id="toolbar-share-contacts-list">
+							<ul id="toolbar-share-contacts-list" class="scrollable">
 							</ul>
 						</div>
 						<div class="toolbar-share-container-section toolbar-share-buttons-container">
