@@ -14,7 +14,7 @@ var Toolbar = {
 		var message = "";
 		if (url.friend) {
 			message += '<img src="' + url.friend.thumbnail + '" class="inline-info-thumb"> ';
-			if (url.friend.firstrater == url.friend.username)
+			if (url.firstrater == url.friend.username)
 				message += "Discovered";
 			else
 				message += "Liked"
