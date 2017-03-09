@@ -24,7 +24,7 @@ config.accessTokenHeader = 'X-Su-AccessTokenKey';
 config.defaultHeaders = { 
     "X-Su-ConsumerKey":    "35774027dc2f2f64a280e63eafb018505c045655",
     "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
-    "X-Su-Version"    :    "Discoverbar 1.0"                         ,
+    "X-Su-Version"    :    "StumbleBar " + chrome.runtime.getManifest().version,
 };
 config.post = {
 	stumble: {
