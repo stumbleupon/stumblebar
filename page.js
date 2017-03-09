@@ -122,9 +122,9 @@ Page.urlChange = function(href, tabid) {
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
 			// Stop current page from loading
-			//chrome.tabs.executeScript(tabid, {
-			//	code: "javascript:void window.stop();",
-			//});
+			chrome.tabs.executeScript(tabid, {
+				code: "window.stop();",
+			});
 			chrome.tabs.update(tabid, { url: 'about:blank' });
 
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
