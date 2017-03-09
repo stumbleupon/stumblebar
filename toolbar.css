@@ -591,6 +591,10 @@ body {
 	border-bottom: 1px solid #888;
 }
 
+.inbox-entry.unread {
+	background-color: blue;
+}
+
 .inbox-container SPAN {
 	margin: 4px;
 	vertical-align: middle;
