@@ -66,6 +66,16 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
         });
 }
 
+
+
+/**
+ * Discover a new url.  This is usually not called directly.  
+ * This is usually a side-effect of submit
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
 	.then(function(url) {
@@ -77,32 +87,87 @@ ToolbarEvent.discover = function(request, sender) {
 	});
 }
 
+
+
+/**
+ * Record mode changes
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.mode = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
 	ToolbarEvent.stumble(request, sender);
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+/**
+ * Record theme changes
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.theme = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+/**
+ * Record hide-toggle requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.toggleHidden = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ hidden: config.hidden = !config.hidden });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+/**
+ * Record unhide requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.unhide = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ hidden: config.hidden = false });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+/**
+ * Record hide requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.hide = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ hidden: config.hidden = true });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+
+/**
+ * Record reposition requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.repos = function(request, sender) {
 	ToolbarEvent.api.cache.mset({ rpos: config.rpos = request.data.rpos });
 	return ToolbarEvent._buildResponse({}, true);
@@ -110,6 +175,13 @@ ToolbarEvent.repos = function(request, sender) {
 
 
 
+/**
+ * Dislikes the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.dislike = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
@@ -127,23 +199,51 @@ ToolbarEvent.dislike = function(request, sender) {
 					return Page.note(sender.tab.id, response.url);
 				});
 		})
-		.catch(ToolbarEvent.error);
+		.catch(ToolbarEvent._error);
 
 	request.url.userRating = { type: -1, subtype: 0 };
 	return Promise.resolve(request);
 }
 
+
+
+
+/**
+ * Loads the stumbleupon info page in a new tab
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.info = function(request, sender) {
 	if (Page.getUrlId(sender.tab.id))
 		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
 	Promise.resolve(request);
 }
 
+
+
+/**
+ * Updates the active config.  Never called by the toolbar.
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.updateConfig = function(request, sender) {
 	Object.assign(config, request.data);
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+
+
+/**
+ * Unrates the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.unrate = function(request, sender) {
 	ToolbarEvent
 		._sanity()
@@ -158,13 +258,20 @@ ToolbarEvent.unrate = function(request, sender) {
 					return Page.note(sender.tab.id, response.url);
 				});
 		})
-		.catch(ToolbarEvent.error);
+		.catch(ToolbarEvent._error);
 
 	request.url.userRating = { type: 0, subtype: 0 };
 	return Promise.resolve(request);
 }
 
 
+/**
+ * Likes the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.like = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
 		return ToolbarEvent.unrate(request, sender);
@@ -182,12 +289,20 @@ ToolbarEvent.like = function(request, sender) {
 					return Page.note(sender.tab.id, response.url);
 				});
 		})
-		.catch(ToolbarEvent.error);
+		.catch(ToolbarEvent._error);
 
 	request.url.userRating = { type: 1, subtype: 0 };
 	return Promise.resolve(request);
 }
 
+
+/**
+ * Gets a list of conversation threads
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations()
@@ -197,9 +312,19 @@ ToolbarEvent.inbox = function(request, sender) {
 					return ToolbarEvent._buildResponse({ inbox: inbox, me: userid });
 				});
 		})
-		.catch(ToolbarEvent.error);
+		.catch(ToolbarEvent._error);
 }
 
+
+
+/**
+ * Stumbles!  Preloads next url, notes the url, notes the state,
+ * updates the url in the requesting frame.
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.api
 		._mode(config.mode || config.defaults.mode)
@@ -217,15 +342,20 @@ ToolbarEvent.stumble = function(request, sender) {
 			// Don't send URL now, wait for init call
 			return ToolbarEvent._buildResponse({});
 		})
-		.catch(ToolbarEvent.error);
+		.catch(ToolbarEvent._error);
 }
 
-ToolbarEvent.error = function(e) {
-	console.log(e)
-	//ToolbarEvent.loginPage();
-	return Promise.reject(e);
-}
 
+
+/**
+ * Replies to a conversation
+ *
+ * @param {MessageRequest} request
+ * @param {String} request.data.id The conversation id
+ * @param {String} request.data.comment The comment to be posted
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.replyConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.id);
 	// Noop if comment is empty
@@ -237,10 +367,15 @@ ToolbarEvent.replyConvo = function(request, sender) {
 		});
 }
 
-ToolbarEvent.stateChange = function(request, sender) {
-	Page.state[sender.tab.id] = request.data;
-}
 
+
+/**
+ * Loads conversations messages
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
@@ -250,6 +385,17 @@ ToolbarEvent.loadConvo = function(request, sender) {
 		});
 }
 
+
+/**
+ * Changes the current tab to the url related to the provided conversation
+ * If an actionid is provided, marks the conversation as read
+ * If an urlid and id (conversation id) is provided, directly loads url without redirect
+ * If an url is provided, loads the stumbleupon url and relies on redirect
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.actionid) {
 		ToolbarEvent.api.markActivityAsRead(request.data.actionid);
@@ -275,7 +421,14 @@ ToolbarEvent.openConvo = function(request, sender) {
 	return ToolbarEvent._buildResponse({});
 }
 
-ToolbarEvent.signout = function() {
+/**
+ * Signs out of stumbleupon, marks as unathed
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.signout = function(request, sender) {
 	ToolbarEvent.api._flush();
 
 	chrome.tabs.create({
@@ -289,18 +442,16 @@ ToolbarEvent.signout = function() {
 		});
 	});
 
-//	var signoutFrame = document.createElement('iframe');
-//	signoutFrame.addEventListener("load", function() {
-//		debug('Background logout');
-//		//document.body.removeChild(signoutFrame);
-//	});
-//	signoutFrame.setAttribute('src', config.suPages.signout.form(config));
-//	console.log(config.suPages.signout.form(config));
-//	document.body.appendChild(signoutFrame);
-
 	return ToolbarEvent.needsLogin();
 }
 
+/**
+ * Handles url-change events, returns the su url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.urlChange = function(request, sender) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -318,11 +469,25 @@ ToolbarEvent.urlChange = function(request, sender) {
 	});
 }
 
+/**
+ * Gets the current toolbar state and url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
 	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
 }
 
+/**
+ * Loads the sign in page in the current active tab
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.signin =
 ToolbarEvent.loginPage = function(request, sender) {
 	ToolbarEvent.api._flush();
@@ -334,12 +499,23 @@ ToolbarEvent.loginPage = function(request, sender) {
 	return ToolbarEvent._buildResponse({});
 }
 
+/**
+ * Sets the authed flag to false, notifies all iframes
+ *
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
 	ToolbarEvent.api.cache.mset({ authed: config.authed = false });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
+/**
+ * Queries to see if the current user is logged in.
+ * If the user is logged in, the authed flag is set and the next url is preloaded
+ *
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.ping = function() {
 	return ToolbarEvent.api
 		.ping()
@@ -354,10 +530,16 @@ ToolbarEvent.ping = function() {
 		.catch(ToolbarEvent.needsLogin);
 }
 
+/**
+ * Builds a response to send back to the iframe'd toolbar
+ *
+ * @param {object} change Object to merge into response
+ * @param {boolean} all Send to all iframes
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent._buildResponse = function(change, all) {
 	var response = Object.assign({all: all}, { config: config }, change);
 	if (response.all) {
-//				chrome.runtime.sendMessage(chrome.runtime.id, response);
 		chrome.tabs.query({}, function(tabs) {
 			tabs.forEach(function (tab) {
 				chrome.tabs.sendMessage(tab.id, response);
@@ -367,6 +549,18 @@ ToolbarEvent._buildResponse = function(change, all) {
 	return Promise.resolve(response);
 }
 
+
+
+/********************
+ * Helper functions *
+ *******************/
+
+
+/**
+ * Attempts to fetch the user from the cache.  If the user isn't found, then we ping
+ *
+ * @returns {Promise}
+ */
 ToolbarEvent._sanity = function() {
 	return ToolbarEvent.api.cache.get('user')
 		.then(function(user) {
@@ -377,11 +571,9 @@ ToolbarEvent._sanity = function() {
 		})
 }
 
-ToolbarEvent.getUrlFromPageCache = function(url) {
-	console.log('GUFPC', Page.urlCache[url]);
-	return ToolbarEvent._buildResponse({url: Page.urlCache[url]});
-}
-
+/**
+ * Initializes the toolbar background state
+ */
 ToolbarEvent._init = function() {
 	ToolbarEvent.api.cache.mget(config.persist)
 		 .then(function (map) {
@@ -392,6 +584,20 @@ ToolbarEvent._init = function() {
 
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 }
+
+
+/**
+ * Reject the current promise, log the message
+ *
+ * @return {Promise} rejection
+ */
+ToolbarEvent._error = function(e) {
+	console.log(e)
+	//ToolbarEvent.loginPage();
+	return Promise.reject(e);
+}
+
+
 
 
 ToolbarEvent._init();
