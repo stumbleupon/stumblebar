@@ -212,7 +212,10 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations()
 		.then(function(inbox) {
-			return ToolbarEvent._buildResponse({ inbox: inbox });
+			return ToolbarEvent.api.cache.get('authed')
+				.then(function(userid) {
+					return ToolbarEvent._buildResponse({ inbox: inbox, me: userid });
+				});
 		})
 		.catch(ToolbarEvent.error);
 }
@@ -240,10 +243,14 @@ ToolbarEvent.stumble = function(request, sender) {
 ToolbarEvent.error = function(e) {
 	console.log(e)
 	//ToolbarEvent.loginPage();
+	return Promise.reject(e);
 }
 
 ToolbarEvent.replyConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.id);
+	// Noop if comment is empty
+	if (!request.data.comment || !request.data.comment.replace(/^[ ]+|[ ]+$/, ''))
+		return ToolbarEvent._buildResponse({ });
 	return Promise.resolve(convo.comment(request.data.comment))
 		.then(function(comment) {
 			return ToolbarEvent._buildResponse({ comment: comment });
@@ -257,9 +264,9 @@ ToolbarEvent.stateChange = function(request, sender) {
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
-	return Promise.resolve(convo.messages())
+	return Promise.resolve(convo.messages(request.data.since))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({ convo: convo });
+			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
 		});
 }
 
@@ -334,7 +341,7 @@ ToolbarEvent.ping = function() {
 		.then(ToolbarEvent.api.getUser.bind(ToolbarEvent.api))
 		.then(function(user) {
 			debug('Login success for user', user.username);
-			ToolbarEvent.api.cache.mset({ authed: config.authed = true });
+			ToolbarEvent.api.cache.mset({ authed: config.authed = user.userid });
 			ToolbarEvent.api.nextUrl(1)
 				.then(ToolbarEvent.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});

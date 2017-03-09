@@ -2,7 +2,7 @@ function Page() {
 }
 
 Page.tab = [];
-Page.state = {};
+Page.state = [];
 
 Page.handleEvent = function(e) {
 	console.log('event', e);
@@ -13,24 +13,37 @@ Page.handleIconClick = function(e) {
 	//	chrome.tabs.sendMessage(tabs[0].id, , function() {});
 	//});
 	console.log(e);
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, {type: "ping"}, function(response) {
-			// Handle pages that we can't inject
-			if (!response || !response.type == 'pong') {
-				ToolbarEvent.loginPage();
-				return false;
-			}
-			ToolbarEvent.handleRequest(
-				{
-					action: 'toggleHidden',
-					url: {},
-					data: {}
-				},
-				{ tab: tabs[0] },
-				function() {}
-			);
+	Page.ping()
+		.then(function(res) {
+			return ToolbarEvent.handleRequest(
+					{
+						action: 'toggleHidden',
+						url: {},
+						data: {}
+					},
+					{ tab: res.tab },
+					function() {}
+				);
+		})
+		.catch(function(res) {
+			ToolbarEvent.stumble({}, res)
+				.catch(ToolbarEvent.loginPage);
 		});
-	})
+}
+
+Page.ping = function(tabid) {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping"}, function(response) {
+				console.log(response);
+				// Handle pages that we can't inject
+				if (!response || response.type != 'pong')
+					reject({tab: {id: tabid || tabs[0].id}, response});
+				else
+					resolve({tab: {id: tabid || tabs[0].id}, response});
+			});
+		});
+	});
 }
 
 Page.lastState = function(tabid) {
@@ -105,9 +118,9 @@ Page.urlChange = function(href, tabid) {
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
 			// Stop current page from loading
-			chrome.tabs.executeScript(tabid, {
-				code: "window.stop();",
-			});
+			//chrome.tabs.executeScript(tabid, {
+			//	code: "javascript:void window.stop();",
+			//});
 
 			return Promise.resolve(Page.getUrlByUrlid(urlid) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
@@ -130,6 +143,7 @@ Page.urlChange = function(href, tabid) {
 	convoPath = href.match(new RegExp("https?://" + config.baseUrl + config.convoPath));
 	if (convoPath) {
 		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
+		console.log('CONVO ON ' + tabid);
 	}
 
 	return Promise
@@ -142,8 +156,8 @@ Page.urlChange = function(href, tabid) {
 			Page.note(tabid, url);
 			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 			//debug('Notify Url Change', tabid, url);
-			if (url.urlid)
-				ToolbarEvent.api.reportStumble([url.urlid]);
+			//if (url.urlid)
+			//	ToolbarEvent.api.reportStumble([url.urlid]);
 		})
 		.catch(function(error) {
 			Page.note(tabid, { url: href });
@@ -176,6 +190,12 @@ Page.handleTabSwitch = function(e) {
 	//console.log('switch', e);
 }
 
+Page.handleTabClose = function(tabid) {
+	if (Page.state[tabid])
+		delete Page.state[tabid];
+	if (Page.tab[tabid])
+		delete Page.tab[tabid];
+}
 
 Page.init = function() {
 	// listen to tab URL changes
@@ -183,6 +203,8 @@ Page.init = function() {
 
 	// listen to tab switching
 	chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
+
+	chrome.tabs.onRemoved.addListener(Page.handleTabClose);
 
 	// update when the extension loads initially
 	//updateTab();

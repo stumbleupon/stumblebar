@@ -5,7 +5,7 @@
   "version": "1.0",
 
   "content_scripts": [{
-    "js": ["bar.js"],
+    "js": ["utils.js", "dragndrop.js", "bar.js"],
     "css": ["bar.css"],
     "matches": ["*://*/*"],
     "all_frames": false,
@@ -66,8 +66,8 @@
 		  "api.js",
 		  "conversation.js",
 		  "stumbleuponapi.js",
-		  "toolbarevent.js",
-		  "page.js"
+		  "page.js",
+		  "toolbarevent.js"
 	  ]
   }
 

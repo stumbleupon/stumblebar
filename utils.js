@@ -79,25 +79,85 @@ String.prototype.numberFormat = function() {
 function newFromTemplate(templateId, attributes, appendToElId) {
     /** @type {Element} */
     debug('new from template', arguments);
-	var template = document.getElementById(templateId),
-		appendToEl = document.getElementById(appendToElId);
-	if(!template || !template.classList.contains('stub')) {
-		return false;
-	}
-	var el = template.cloneNode(true);
-	el.classList.remove('template');
-	el.removeAttribute('hidden');
-	for(var name in attributes) {
-		var val = attributes[name];
+    var template = document.getElementById(templateId),
+        appendToEl = document.getElementById(appendToElId);
+    if (!template || !template.classList.contains('stub')) {
+        return false;
+    }
+    var el = template.cloneNode(true);
+    el.classList.remove('template');
+    el.removeAttribute('hidden');
+    for (var name in attributes) {
+        var val = attributes[name];
         debug(name, val);
-		el[name] = val;
-	}
-    if(appendToEl) {
+        el[name] = val;
+    }
+    if (appendToEl) {
         debug('appending', appendToEl);
         appendToEl.appendChild(el);
     }
 
-	return el;
+    return el;
+}
+function reldate(date, use) {
+	return reltime(Math.floor((Date.now() - (new Date(date)).getTime()) / 1000), use);
+}
+function reltime(time, use) {
+	var nicetime = [];
+	if (time < 60)
+		nicetime = { num: parseInt(time),            s: "s", m: 'sec', l: 'second'};
+	else if (time < 3600)
+		nicetime = { num: Math.floor(time/60),       s: "m", m: 'min', l: 'minute'};
+	else if (time < 86400)
+		nicetime = { num: Math.floor(time/3600),     s: "h", m: 'hr',  l: 'hour'  };
+	else if (time < 31536000)
+		nicetime = { num: Math.floor(time/86400),    s: "d", m: "day", l: "day"   };
+	else
+		nicetime = { num: Math.floor(time/31536000), s: "y", m: "yr",  l: "year"  };
+
+	if (nicetime.num !== 1) {
+		nicetime.md += 's';
+		nicetime.lg += 's';
+	}
+
+	nicetime.text = nicetime.num + (use == 's' ? '' : ' ') + nicetime[use || 'm'];
+
+	return nicetime;
+}
+
+function throttle(fn, threshhold, scope) {
+	threshhold || (threshhold = 250);
+	var last,
+	deferTimer;
+	return function () {
+		var context = scope || this;
+
+		var now = +new Date,
+		args = arguments;
+		if (last && now < last + threshhold) {
+			// hold on to it
+			clearTimeout(deferTimer);
+			deferTimer = setTimeout(function () {
+				last = now;
+				fn.apply(context, args);
+			}, threshhold);
+		} else {
+			last = now;
+			fn.apply(context, args);
+		}
+	};
+}
+
+
+function debounce(fn, delay) {
+	var timer = null;
+	return function () {
+		var context = this, args = arguments;
+		clearTimeout(timer);
+		timer = setTimeout(function () {
+			fn.apply(context, args);
+		}, delay || 250);
+	};
 }
 
 

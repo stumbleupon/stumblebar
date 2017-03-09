@@ -40,31 +40,71 @@ var Toolbar = {
 		this.updateShare();
 	},
 
-	handleConvo: function(convo) {
+	handleConvo: function(convo, position) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
 
+		if (!position)
+			document.querySelector('#convo-container').innerHTML = '';
+
 		convo.events.forEach(function(entry) {
-			var entryNode = document.querySelector("#stub-convo-entry").cloneNode('deep');
+			var entryNode = document.querySelector('#conv-' + entry.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
 
-			//entryNode.setAttribute('value', entry.conversationDetails.originator.conversationUrl);
 			entryNode.removeClass('stub');
-			//entryNode.querySelector('.convo-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
-			//entryNode.querySelector('.convo-entry-title').innerText   = entry.conversationDetails.title;
-			convo.participants.forEach(function(person) {
-				if (person.id == entry.createdBy)
-					entryNode.querySelector('.convo-entry-user').innerText    = person.name || person.email;
-			});
-			entryNode.querySelector('.convo-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.createdAt)).getTime()) / 86400000) + ' days ago';
-			entryNode.querySelector('.convo-entry-snippet').innerText = entry.message;
-			entryNode.id = entry.id;
 
-			document.querySelector('#convo-container').appendChild(entryNode);
+			(convo.participants || []).forEach(function(person) {
+				if (person.id == entry.createdBy) {
+					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
+					if (person.id == Toolbar.config.authed)
+						entryNode.addClass('.convo-me');
+				}
+			});
+			if (!convo.participants) {
+				entryNode.querySelector('.convo-entry-user').innerText = 'You';
+				entryNode.addClass('.convo-me');
+			}
+
+			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
+			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
+			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
+			entryNode.id = 'conv-' + entry.id;
+
+			if (!entryNode.parentNode) {
+				document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
+			}
+
+			Toolbar.state.listenConvoBackoff = 15000;
 		});
-		console.log(convo);
-		document.querySelector('#convo-id').value = convo.id;
+
+		document.querySelectorAll('#convo-container .convo-entry-date').forEach(function(elem) {
+			elem.innerText = reldate(elem.value, 's').text;
+		});
+
+		if (convo.id && !position) {
+			document.querySelector('#convo-id').value = convo.id;
+
+			document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
+				if (e.keyCode == 13)
+					Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+			});
+
+			Toolbar.listenConvoHelper();
+		}
 
 		document.querySelector('.convo-loading').addClass('hidden');
+
+		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+	},
+
+	listenConvoHelper: function() {
+			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
+		Toolbar.state.listenConvoTimeout = setTimeout(function() {
+			console.log('RECHECK');
+			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, since: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
+			// Backoff -- 15s => 30s => 1m => 2m => 4m => 8m => 16m => ...
+			Toolbar.state.listenConvoBackoff = 2 * (Toolbar.state.listenConvoBackoff || 15000);
+			Toolbar.listenConvoHelper();
+		}, Toolbar.state.listenConvoBackoff);
 	},
 
 	handleConfig: function(config) {
@@ -104,7 +144,9 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleInbox: function(inbox) {
+	handleInbox: function(inbox, r) {
+		document.querySelector('#inbox-container').innerHTML = '';
+
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
 
@@ -116,10 +158,16 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
-			if (entry.conversationDetails.participants)
-				entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
-			entryNode.querySelector('.inbox-entry-date').innerText    = Math.floor((Date.now() - (new Date(entry.occurred)).getTime()) / 86400000) + ' days ago';
+			if (entry.sourceUserId == r.me)
+				entryNode.querySelector('.inbox-entry-user').innerText = 'You';
+			else
+				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
+			//else if (entry.conversationDetails.participants)
+			//	entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
+			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 's').text;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
+
+			entryNode.changeClass('unread', entry.read);
 
 			document.querySelector('#inbox-container').appendChild(entryNode);
 		});
@@ -140,7 +188,9 @@ var Toolbar = {
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
-			Toolbar.handleConvo(r.convo);
+			Toolbar.handleConvo(r.convo, r.position);
+		if (r && r.comment)
+			Toolbar.handleConvo({events:[r.comment]}, 'append');
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -179,11 +229,9 @@ var Toolbar = {
 				if (target[0] == '#') {
 					source = document.querySelector(target.split('.')[0]);
 					attr = target.split('.')[1] || 'value';
-					console.log(source, target, attr);
 				}
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
-			console.log(value);
 		}
 		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
 		if(val) {
@@ -318,6 +366,7 @@ var Toolbar = {
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	handleMouseMove: function(e) {
+		//window.top.postMessage({ type: "hover", hover: true }, '*');
 		if (!e.button && !e.buttons)
 			Toolbar.mouse.state = 'up';
 		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 8)
@@ -369,10 +418,12 @@ var Toolbar = {
 	handleIframeEvent: function(e) {
 		if (e.data.action == 'mouse') {
 			var data = e.data.data;
-			Toolbar.state.canMiniMode = !data || !data.iframe || !( // We can do mini mode if the mouse isn't hovering over the frame
-				   data.iframe.x < data.mouse.x && data.iframe.x + Toolbar.state.w > data.mouse.x
-				&& data.iframe.y < data.mouse.y && data.iframe.y + Toolbar.state.h > data.mouse.y
+			var hover = data && data.iframe && ( // We can do mini mode if the mouse isn't hovering over the frame
+				   data.iframe.x >= data.mouse.x && data.iframe.x + Toolbar.state.w <= data.mouse.x
+				&& data.iframe.y >= data.mouse.y && data.iframe.y + Toolbar.state.h <= data.mouse.y
 			);
+			Toolbar.state.canMiniMode = !hover;
+			//window.top.postMessage({ type: "hover", hover: hover }, '*');
 			return;
 		}
 		Toolbar.dispatch(e.data.action, e.data.data);

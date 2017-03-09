@@ -62,6 +62,7 @@ config.endpoint = {
   url:        '/url',
   activities: '/activities',
   contacts: '/connection/:userid/mutual',
+  read:       '/activities/:id/:action',
 }
 config.url = {
   info:    '/content/:urlid',
