@@ -48,7 +48,7 @@ Node.prototype.removeClass = function(name) {
 }
 
 Node.prototype.hasClass = function(name) {
-	return this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
+	return this.className && this.className.match(RegExp('(\\s|^)' + name + '(\\s|$)'))
 }
 
 Node.prototype.changeClass = function(name, state) {
