@@ -198,7 +198,7 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox);
+			Toolbar.handleInbox(r.inbox, r);
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
