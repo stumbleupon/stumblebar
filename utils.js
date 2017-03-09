@@ -130,3 +130,8 @@ function debounce(fn, delay) {
 		}, delay || 250);
 	};
 }
+
+
+Object.prototype.isScalar = function() {
+	return (/string|number|boolean/).test(typeof this);
+}
