@@ -164,6 +164,14 @@ body {
 	background-image: url("asset/Expand Horizontal.svg");
 	transform: rotate(-180deg);
 }
+
+.inline-info-body .inline-info-thumb {
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
+	vertical-align: text-bottom;
+}
+
 .toolbar-action-container .action-like {
 	background-image: url("asset/Icon/Like.svg");
 }

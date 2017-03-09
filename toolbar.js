@@ -11,9 +11,23 @@ var Toolbar = {
 				document.querySelector("#dislike").addClass("enabled");
 		}
 
-		var message = "Be the first to like this!"
+		var message = "";
+		if (url.friend) {
+			message += '<img src="' + url.friend.thumbnail + '" class="inline-info-thumb"> ';
+			if (url.friend.firstrater == url.friend.username)
+				message += "Discovered";
+			else
+				message += "Liked"
+			message += " by " + (url.friend.name || url.friend.username || url.friend.userid);
+		}
 		if (url.likes) {
-			message = "Liked by " + String(url.likes).numberFormat() + " people";
+			if (message)
+				message += " + " + String(url.likes).numberFormat() + " Others";
+			else
+				message = "Liked by " + String(url.likes).numberFormat() + " people";
+		}
+		if (!message) {
+			message = "Be the first to like this!"
 		}
 		document.querySelector("#inline-info-body").innerHTML = message;
 

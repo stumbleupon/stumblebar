@@ -68,7 +68,7 @@ config.url = {
 }
 config.modes = {
 	all:       { name: 'All Interests'   },
-	followers: { name: 'People I Follow' },
+	following: { name: 'People I Follow', post: { keyword: 'Following' } },
 	trending:  { name: 'Trending'        },
 	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
