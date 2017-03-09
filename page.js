@@ -110,13 +110,13 @@ Page.cleanupUrlCache = function() {
 	}
 }
 
-Page.note = function(tabid, url, mode) {
+Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
 	if (url.urlid) {
-		if (mode)
-		Page.urlCache[mode + ':' + url.urlid] = url;
+		if (url.mode)
+			Page.urlCache[url.mode + ':' + url.urlid] = url;
 		Page.urlCache[url.urlid] = url;
 		Page.urlCache.push(url);
 	}
