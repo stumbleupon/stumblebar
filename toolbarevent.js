@@ -70,8 +70,9 @@ ToolbarEvent.share = function handleShare(request, sender) {
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
     return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
-        .then(function(contacts) {
-            return ToolbarEvent._buildResponse({ contacts:  contacts}, true);
+        .then(function(convo) {
+            Page.state[sender.tab.id] = { convo: convo.id };
+            return ToolbarEvent._buildResponse({ convo:  convo}, true);
         });
 }
 
