@@ -1,7 +1,7 @@
 {
 
   "manifest_version": 2,
-  "name": "DiscoverBar",
+  "name": "StumbleBar by StumbleUpon",
   "version": "1.0",
 
   "content_scripts": [{
@@ -26,7 +26,7 @@
   ],
 
 
-  "description": "Discover the best of the webs",
+  "description": "Discover the best of the web",
   "icons": {
     "48": "icons/discover-48.png"
   },
@@ -50,7 +50,7 @@
     "default_icon": {
      "32" : "icons/discover-32.png"
     },
-    "default_title": "DiscoverBar"
+    "default_title": "StumbleBar by StumbleUpon"
     //"default_popup": "content/discover.html"
   },
 
