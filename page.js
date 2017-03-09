@@ -71,8 +71,8 @@ Page.getUrl = function(tabid) {
 Page.getUrlByHref = function(href) {
 	return Page.urlCache[href];
 }
-Page.getUrlByUrlid = function(urlid) {
-	return Page.urlCache[urlid];
+Page.getUrlByUrlid = function(urlid, mode) {
+	return Page.urlCache[mode + ':' + urlid] || Page.urlCache[urlid];
 }
 
 Page.urlCache = [];
@@ -81,32 +81,36 @@ Page.dirty = function() {
 	Page.urlCache = [];
 }
 
-Page.note = function(tabid, url) {
+Page.cleanupUrlCache = function() {
+	if (Page.urlCache.length >= 1e3) {
+		var oldUrl = Page.urlCache.splice(0, 1);
+		delete Page.urlCache[oldUrl.urlid];
+		delete Page.urlCache[oldUrl.mode + ':' + oldUrl.urlid];
+		delete Page.urlCache[oldUrl.url];
+		delete Page.urlCache[oldUrl.finalUrl];
+	}
+}
+
+Page.note = function(tabid, url, mode) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
 	if (url.urlid) {
+		if (mode)
+		Page.urlCache[mode + ':' + url.urlid] = url;
 		Page.urlCache[url.urlid] = url;
 		Page.urlCache.push(url);
-		if (Page.urlCache.length >= 1e3) {
-			var oldUrl = Page.urlCache.splice(0, 1);
-			delete Page.urlCache[oldUrl.urlid]
-		}
 	}
 
-// We need url-by-url to handle page-reloads because we don't fetch the page info again
+	// We need url-by-url to handle page-reloads because we don't fetch the page info again
 	if (url.url) {
 		Page.urlCache[url.url] = url;
 		if (url.finalUrl)
 			Page.urlCache[url.finalUrl] = url;
 		Page.urlCache.push(url);
-		if (Page.urlCache.length >= 1e3) {
-			var oldUrl = Page.urlCache.splice(0, 1);
-			delete Page.urlCache[oldUrl.url]
-			if (url.finalUrl)
-				delete Page.urlCache[oldUrl.finalUrl]
-		}
 	}
+
+	Page.cleanupUrlCache();
 
 	return Page.tab[tabid].url = url;
 }
@@ -122,7 +126,7 @@ Page.urlChange = function(href, tabid) {
 			//	code: "javascript:void window.stop();",
 			//});
 
-			return Promise.resolve(Page.getUrlByUrlid(urlid) || ToolbarEvent.api.getUrlByUrlid(urlid))
+			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
 					chrome.tabs.update(tabid, { url: url.url });
 					ToolbarEvent.unhide();
@@ -149,6 +153,9 @@ Page.urlChange = function(href, tabid) {
 	return Promise
 		.resolve(Page.getUrlByHref(href))
 		.then(function(url) {
+			return url && Page.getUrlByUrlid(url.urlid, config.mode);
+		})
+		.then(function(url) {
 			return url || ToolbarEvent.api.getUrlByHref(href);
 		})
 		.then(function(url) {
@@ -160,7 +167,7 @@ Page.urlChange = function(href, tabid) {
 			//	ToolbarEvent.api.reportStumble([url.urlid]);
 		})
 		.catch(function(error) {
-			Page.note(tabid, { url: href });
+			//Page.note(tabid, { url: href });
 			chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;

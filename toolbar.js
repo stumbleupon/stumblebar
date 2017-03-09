@@ -191,10 +191,10 @@ var Toolbar = {
 
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
-		if (r && r.url)
-			Toolbar.handleUrl(r.url);
 		if (r && r.config)
 			Toolbar.handleConfig(r.config);
+		if (r && r.url)
+			Toolbar.handleUrl(r.url);
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)

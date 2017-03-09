@@ -230,7 +230,7 @@ ToolbarEvent.stumble = function(request, sender) {
 				.nextUrl(1)
 				.then(ToolbarEvent.preload);
 			Page.note(sender.tab.id, url);
-			Page.state[sender.tab.id] = { stumble: url }
+			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
 			ToolbarEvent.api.reportStumble([url.urlid]);
 			request.url = url;
 			console.log(url);
@@ -273,7 +273,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.urlid && request.data.id) {
-		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
+		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
 			.then(function(url) {
 				Page.state[sender.tab.id] = { convo: request.data.id };
 				chrome.tabs.update(sender.tab.id, {

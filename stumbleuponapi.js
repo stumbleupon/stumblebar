@@ -122,6 +122,9 @@ StumbleUponApi.prototype = {
 				if (!results || !results._success)
 					return Promise.reject(results);
 				debug("Buffer fill", mode, results.guesses.values);
+				results.guesses.values.forEach(function(stumble) {
+					stumble.mode = mode;
+				});
 				return this.cache.mset({
 					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
 				});
