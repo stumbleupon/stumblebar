@@ -23,9 +23,9 @@ var Toolbar = {
 		}
 		if (url.likes) {
 			if (message)
-				message += " + " + String(url.likes).numberFormat() + " Others";
+				message += " + " + String(url.likes).numberFormat() + " Other" + ((url.likes == 1) ? "s" : "");
 			else
-				message = "Liked by " + String(url.likes).numberFormat() + " people";
+				message = "Liked by " + String(url.likes).numberFormat() + " " + ((url.likes == 1) ? "person" : "people");
 		}
 		if (!message) {
 			message = "Be the first to like this!"
