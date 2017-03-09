@@ -14,10 +14,11 @@ var Toolbar = {
 		var message = "";
 		if (url.friend) {
 			message += '<img src="' + url.friend.thumbnail + '" class="inline-info-thumb"> ';
-			if (url.firstrater == url.friend.username)
-				message += "Discovered";
-			else
-				message += "Liked"
+			// @TODO "Discovered by X + Y Others" sounds bad
+			//if (url.firstrater == url.friend.username)
+			//	message += "Discovered";
+			//else
+			message += "Liked"
 			message += " by " + (url.friend.name || url.friend.username || url.friend.userid);
 		}
 		if (url.likes) {
