@@ -78,7 +78,7 @@ var Toolbar = {
 		if (convo.id && !position) {
 			document.querySelector('#convo-id').value = convo.id;
 
-			document.querySelector('#convo-reply').addEventListener("keyup", function(e) {
+			document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
 				if (e.keyCode == 13)
 					Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
 			});

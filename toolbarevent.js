@@ -199,7 +199,7 @@ ToolbarEvent.error = function(e) {
 ToolbarEvent.replyConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.id);
 	// Noop if comment is empty
-	if (!request.data.comment || !request.data.comment.replace(/^[ ]+|[ ]+$/))
+	if (!request.data.comment || !request.data.comment.replace(/^[ ]+|[ ]+$/, ''))
 		return ToolbarEvent._buildResponse({ });
 	return Promise.resolve(convo.comment(request.data.comment))
 		.then(function(comment) {
