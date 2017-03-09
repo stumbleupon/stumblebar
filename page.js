@@ -125,6 +125,7 @@ Page.urlChange = function(href, tabid) {
 			//chrome.tabs.executeScript(tabid, {
 			//	code: "javascript:void window.stop();",
 			//});
+			chrome.tabs.update(tabid, { url: 'about:blank' });
 
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
@@ -183,13 +184,14 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 		// User is changing the URL
 		if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
 			Page.tab[tabid].url = {}
-		Page.urlChange(tab.url, tabid);
+		Page.urlChange(info.url || tab.url, tabid);
 	}
 
 	if (info.status == "complete") {
 		Page.tab[tabid].info = tab;
 		if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
 			Page.tab[tabid].url.finalUrl = info.url;
+		Page.urlChange(info.url || tab.url, tabid);
 	}
 }
 
