@@ -377,6 +377,14 @@ var Toolbar = {
 		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
 	},
 	handleMouseDown: function(e) {
+		if (e.target) {
+			var node = e.target;
+			do {
+				if (node.hasClass('no-drag') || node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')
+					return false;
+				node = node.parentNode;
+			} while (node);
+		}
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
