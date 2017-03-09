@@ -63,6 +63,8 @@ config.endpoint = {
   activities:  '/activities',
   contacts:    '/connection/:userid/mutual',
   markactivity:'/activities/:id/:action',
+  submit:      '/submit',
+  classify:    '/classification/:urlid/doClassification',
 }
 config.url = {
   info:    '/content/:urlid',

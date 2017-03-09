@@ -79,7 +79,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
 	.then(function(url) {
-		return ToolbarEvent.api.discover(url);
+		return ToolbarEvent.api.submit(url, false);
 	})
 	.then(function(url) { 
 		Page.note(sender.tab.id, url); 
