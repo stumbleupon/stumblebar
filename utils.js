@@ -101,6 +101,6 @@ function newFromTemplate(templateId, attributes, appendToElId) {
 }
 
 
-Object.prototype.isScalar = function() {
-	return (/string|number|boolean/).test(typeof this);
+function isScalar(x) {
+	return (/string|number|boolean/).test(typeof x);
 }

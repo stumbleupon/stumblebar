@@ -5,7 +5,7 @@ var Settings = {
 		var config = data.config;
 		var body = document.getElementById('settings-body');
 		for (p in config) {
-			var isScalar = config[p].isScalar();
+			var isScalar = isScalar(config[p]);
 			var elem = document.getElementById(p);
 			isScalar = false;
 			var value = config[p];
