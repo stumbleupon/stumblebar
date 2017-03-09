@@ -88,6 +88,6 @@
 	}
 
 	var bar = new IframeBar;
-	setInterval(bar.attemptInjection(bar), 1000);
+	setInterval(bar.attemptInjection.bind(bar), 1000);
 
 })();
