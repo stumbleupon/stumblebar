@@ -54,15 +54,15 @@ config.suPages = {
 	signin:    ':baseProto://:baseUrl/login',
 }
 config.endpoint = {
-  ping:       '/p',
-  user:       '/user/?version=2',
-  stumble:    '/stumble/:mode',
-  rate:       '/discovery/rating',
-  unrate:     '/discovery/:urlid/rating',
-  url:        '/url',
-  activities: '/activities',
-  contacts: '/connection/:userid/mutual',
-  read:       '/activities/:id/:action',
+  ping:        '/p',
+  user:        '/user/?version=2',
+  stumble:     '/stumble/:mode',
+  rate:        '/discovery/rating',
+  unrate:      '/discovery/:urlid/rating',
+  url:         '/url',
+  activities:  '/activities',
+  contacts:    '/connection/:userid/mutual',
+  markactivity:'/activities/:id/:action',
 }
 config.url = {
   info:    '/content/:urlid',

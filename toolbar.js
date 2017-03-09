@@ -159,7 +159,7 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleInbox: function(inbox, r) {
+	handleInbox: function(inbox) {
 		document.querySelector('#inbox-container').innerHTML = '';
 
 		inbox.forEach(function(entry) {
@@ -167,13 +167,14 @@ var Toolbar = {
 
 			entryNode.setAttribute('convourl', entry.conversationDetails.originator.conversationUrl);
 			entryNode.id = entry.conversationDetails.id;
-			entryNode.setAttribute('values', 'urlid,id,url=convourl');
+			entryNode.setAttribute('actionid', entry.id);
+			entryNode.setAttribute('values', 'urlid,id,actionid,url=convourl');
 			if (entry.urlId)
 				entryNode.setAttribute('urlid',  entry.urlId);
 			entryNode.removeClass('stub');
 			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
-			if (entry.sourceUserId == r.me)
+			if (entry.sourceUserId == Toolbar.config.authed)
 				entryNode.querySelector('.inbox-entry-user').innerText = 'You';
 			else
 				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
@@ -182,7 +183,7 @@ var Toolbar = {
 			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 's').text;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
-			entryNode.changeClass('unread', entry.read);
+			entryNode.changeClass('unread', !entry.read);
 
 			document.querySelector('#inbox-container').appendChild(entryNode);
 		});
@@ -199,7 +200,7 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox, r);
+			Toolbar.handleInbox(r.inbox);
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)

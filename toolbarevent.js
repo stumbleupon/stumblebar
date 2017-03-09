@@ -272,6 +272,9 @@ ToolbarEvent.loadConvo = function(request, sender) {
 }
 
 ToolbarEvent.openConvo = function(request, sender) {
+	if (request.data.actionid) {
+		ToolbarEvent.api.markActivityAsRead(request.data.actionid);
+	}
 	if (request.data.urlid && request.data.id) {
 		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
 			.then(function(url) {

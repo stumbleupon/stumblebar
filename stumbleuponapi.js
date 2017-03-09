@@ -92,7 +92,7 @@ StumbleUponApi.prototype = {
 	},
 
 	markActivityAsRead: function(id) {
-		return this.api.req(this.config.endpoint.activity.form({ id: id, action: 'read' }), { id: id, read: true }, { method: 'PUT' });
+		return this.api.req(this.config.endpoint.markactivity.form({ id: id, action: 'read' }), { id: id, read: true }, { method: 'PUT' });
 	},
 
 	getUser: function() {
