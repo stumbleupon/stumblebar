@@ -61,6 +61,7 @@ config.endpoint = {
   unrate:     '/discovery/:urlid/rating',
   url:        '/url',
   activities: '/activities',
+  read:       '/activities/:id/:action',
 }
 config.url = {
   info:    '/content/:urlid',

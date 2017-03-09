@@ -27,10 +27,12 @@ DragNDrop.prototype = {
 
 
 	sendToIframe: function(msg, bg) {
-		if (this.elem.contentWindow) {
-			this.elem.contentWindow.postMessage(msg, this.origin);
-		} else {
-		}
+		try {
+			if (this.elem.contentWindow) {
+				this.elem.contentWindow.postMessage(msg, this.origin);
+			} else {
+			}
+		} catch (e) {}
 		if (bg) {
 			try {
 				chrome.runtime.sendMessage(msg, function(response) {
@@ -176,6 +178,5 @@ DragNDrop.prototype = {
 			this.elem.style.display = 'none';
 		else
 			this.elem.style.display = 'block';
-		return;
 	}
 }
