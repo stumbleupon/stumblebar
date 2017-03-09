@@ -6,7 +6,8 @@
 function ContactList(contacts) {
     this.contacts = {};
     contacts.forEach(function(contact) {
-        this.add(contact.userid, contact.name);
+        var name = contact.name || contact.username;
+        this.add(contact.userid, name);
     }.bind(this));
 }
 

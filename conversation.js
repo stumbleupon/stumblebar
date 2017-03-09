@@ -16,5 +16,14 @@ Conversation.prototype = {
 
 	comment: function(message) {
 		return this.api.req(this.config.endpoint.comment.form({ id: this.id }), { conversationId: this.id, message: message })
+	},
+
+	/**
+	 * save (create/share) a new conversation
+	 * @param {ShareData} shareData
+	 * @returns {*|Promise}
+	 */
+	save: function(shareData) {
+		return this.api.req(this.config.endpoint.share, shareData);
 	}
 }

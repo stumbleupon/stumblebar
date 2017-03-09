@@ -169,6 +169,7 @@ var Toolbar = {
 		var action = elem.getAttribute('action');
 		var value  = {value : elem.getAttribute('value')};
 		if (elem.getAttribute('values')) {
+			// decode the values into an object to send to dispatch
 			value = {};
 			elem.getAttribute('values').split(',').forEach(function(name) {
 				parts = name.split('=');
@@ -184,8 +185,12 @@ var Toolbar = {
 			});
 			console.log(value);
 		}
-
-		if(Toolbar.handleImmediateAction(action, value.value || value, elem)) {
+		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
+		if(val) {
+			if(typeof val === "object") {
+				// handleImmediateAction is replacing data;
+				value = val;
+			}
 			Toolbar.dispatch(action, value);
 			Toolbar.handleRedraw();
 		}
@@ -196,7 +201,8 @@ var Toolbar = {
 	 * @param {string} action -- action attribute of the source element
 	 * @param {string} value -- value attribute from the source element
 	 * @param {HTMLElement} elem -- the source of the event
-	 * @returns {boolean} -- return false to cancel dispatching event to background and redrawing.
+	 * @returns {boolean|Object} -- return false to cancel dispatching event to background and redrawing
+	 *                              OR return an Object to replace the data object sent to dispatch.
 	 */
 	handleImmediateAction: function(action, value, elem) {
 		if (action == "su") {
@@ -247,11 +253,26 @@ var Toolbar = {
 			if(this.validateShare()) {
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
+				return this.getShareData();
 			} else {
 				return false;
 			}
 		}
 		return true;
+	},
+	getShareData: function getShareData() {
+		var data = {
+			contentType:'url',
+			contentId:null,
+			suUserIds:null,
+			initialMessage:null
+		};
+		data.contentId = Toolbar.url.urlid;
+		data.suUserIds = this.shareContactList.find({isParticipant: true}).map(function(contact) {
+			return contact.userid;
+		});
+		data.initialMessage = document.querySelector('#toolbar-share-comment').value;
+		return data;
 	},
 	validateShare: function validateShare() {
 		// make sure there are some recipients
@@ -281,6 +302,9 @@ var Toolbar = {
 		this.shareContactList.get(id).setParticipant(false);
 		this.updateShare();
 	},
+	/**
+	 * Redraw the share section's lists of contacts and recipients using current state of the contact list.
+	 */
 	updateShare: function updateShare() {
 		var attributeMap = [
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute

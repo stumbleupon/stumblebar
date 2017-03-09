@@ -89,6 +89,7 @@ config.conversationsAPI = {
 	  participants: '/participants',
 	  messages:     '/conversations/:id',
 	  comment:      '/conversations/:id/comments',
+	  share:        '/conversations',
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: {}

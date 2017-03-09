@@ -124,6 +124,22 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
+	/**
+	 * @typedef {Object} ShareData
+	 * @property {string} contentType
+	 * @property {string} contentId
+	 * @property {Array<number>} suUserIds
+	 * @property {string} initialMessage
+
+	/**
+	 * @param {ShareData} shareData
+	 */
+	saveShare: function(shareData) {
+		var convo = new Conversation(this.config.conversationsAPI, null);
+		convo.api.addHeaders(this.api.getHeaders());
+		return convo.save(shareData);
+	},
+
 	reportStumble: function(urlids, mode) {
 		return this.cache.mget('stumble', 'user', 'mode')
 			.then(function (map) {
