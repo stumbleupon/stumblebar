@@ -388,6 +388,22 @@ var Toolbar = {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
+	handleMouseWheel: function(e) {
+		if (e.target) {
+			var node = e.target;
+			do {
+				if (node.hasClass('scrollable')) {
+					if (node.scrollTop <= 0 && e.deltaY <= 0 || node.scrollTop + node.offsetHeight >= node.scrollHeight && e.deltaY >= 0) {
+						e.stopPropagation();
+						e.preventDefault();
+						return false;
+					}
+				}
+				node = node.parentNode;
+			} while (node);
+		}
+		return true;
+	},
 	handleMouseMove: function(e) {
 		//window.top.postMessage({ type: "hover", hover: true }, '*');
 		if (!e.button && !e.buttons)
@@ -463,9 +479,12 @@ var Toolbar = {
 		window.setInterval(Toolbar.tryMiniMode, 1000);
 
 		// Drag-n-drop logic
-		document.addEventListener("mousedown", Toolbar.handleMouseDown);
-		document.addEventListener("mousemove", Toolbar.handleMouseMove);
-		document.addEventListener("mouseup",   Toolbar.handleMouseUp);
+		document.addEventListener("mousedown",      Toolbar.handleMouseDown);
+		document.addEventListener("mousemove",      Toolbar.handleMouseMove);
+		document.addEventListener("mouseup",        Toolbar.handleMouseUp);
+		document.addEventListener("mousewheel",     Toolbar.handleMouseWheel);
+		document.addEventListener("wheel",          Toolbar.handleMouseWheel);
+		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel);
 
 		// Redraw
 		//Toolbar.handleRedraw();
