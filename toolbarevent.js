@@ -309,7 +309,7 @@ ToolbarEvent.inbox = function(request, sender) {
 		.then(function(inbox) {
 			return ToolbarEvent.api.cache.get('authed')
 				.then(function(userid) {
-					return ToolbarEvent._buildResponse({ inbox: inbox, me: userid });
+					return ToolbarEvent._buildResponse({ inbox: inbox });
 				});
 		})
 		.catch(ToolbarEvent._error);
@@ -326,6 +326,10 @@ ToolbarEvent.inbox = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.stumble = function(request, sender) {
+	ToolbarEvent.api.getPendingUnread().then(function(info) {
+		ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+		return ToolbarEvent._buildResponse({ }, true);
+	});
 	return ToolbarEvent.api
 		._mode(config.mode || config.defaults.mode)
 		.nextUrl()
@@ -398,7 +402,13 @@ ToolbarEvent.loadConvo = function(request, sender) {
  */
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.actionid) {
-		ToolbarEvent.api.markActivityAsRead(request.data.actionid);
+		ToolbarEvent.api.markActivityAsRead(request.data.actionid)
+			.then(function() {
+				ToolbarEvent.api.getPendingUnread().then(function(info) {
+					ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+					return ToolbarEvent._buildResponse({ }, true);
+				});
+			});
 	}
 	if (request.data.urlid && request.data.id) {
 		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
@@ -567,6 +577,10 @@ ToolbarEvent._sanity = function() {
 			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
 			if (!user.userid)
 				return ToolbarEvent.ping();
+			ToolbarEvent.api.getPendingUnread().then(function(info) {
+				ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+				return ToolbarEvent._buildResponse({ }, true);
+			});
 			return user;
 		})
 }

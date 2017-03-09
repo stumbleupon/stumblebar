@@ -65,6 +65,7 @@ config.endpoint = {
   markactivity:'/activities/:id/:action',
   submit:      '/submit',
   classify:    '/classification/:urlid/doClassification',
+  unread:      '/activities/snapshot',
 }
 config.url = {
   info:    '/content/:urlid',

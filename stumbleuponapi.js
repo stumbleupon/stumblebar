@@ -72,17 +72,25 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
+	getPendingUnread: function(scope) {
+		return this.api.get(this.config.endpoint.activities, { scope: scope || 'conversation' })
+			.then(function(info) {
+				if (!info._success)
+					return Promise.reject(info);
+				return info;
+			})
+	},
+
 	getConversations: function(start, limit) {
 		return this.getNotifications(start, limit, 'conversation')
 	},
 	getNotifications: function(start, limit, scope) {
-		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
 		return this.api.get(this.config.endpoint.activities, { start: start || 0, limit: limit || 25, scope: scope || 'conversation' })
 			.then(function(convos) {
 				if (!convos._success)
 					return Promise.reject(convos);
-				return convos.activities.values
-			})
+				return convos.activities.values;
+			});
 	},
 
 	getConversation: function(id) {
@@ -127,7 +135,7 @@ StumbleUponApi.prototype = {
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
-			.then(this._syncSharesPending.bind(this))
+			//.then(this._syncSharesPending.bind(this))
 			.then(function(results) {
 				if (!results || !results._success)
 					return Promise.reject(results);
@@ -173,7 +181,7 @@ StumbleUponApi.prototype = {
 				debug("Report stumble", urlids.join(','));
 				return this.api
 					.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
-					.then(this._syncSharesPending.bind(this))
+					//.then(this._syncSharesPending.bind(this))
 					.then(function(res) {
 						if (res._success) {
 							urlids.forEach(function(urlid) { this.seen[urlid].state = 'r'; }.bind(this));
