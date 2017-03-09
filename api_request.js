@@ -20,7 +20,7 @@ ApiRequest.serializePostData = function(obj, prefix) {
 		for (var i = 0; i < obj.length; i++) {
 			v = obj[i];
 			var k = encodeURIComponent(prefix) + "[]" ;
-			if(!v.isScalar()) {
+			if(!isScalar(v)) {
                 throw "You can't serialize nested objects: " + JSON.stringify(obj);
 			}
 			str.push(k + "=" + encodeURIComponent(v));
