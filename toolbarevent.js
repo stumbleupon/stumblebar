@@ -63,6 +63,17 @@ ToolbarEvent.share = function handleShare(request, sender) {
 		});
 }
 
+/**
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
+    return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
+        .then(function(contacts) {
+            return ToolbarEvent._buildResponse({ contacts:  contacts}, true);
+        });
+}
 
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)

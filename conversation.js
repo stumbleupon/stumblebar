@@ -24,6 +24,6 @@ Conversation.prototype = {
 	 * @returns {*|Promise}
 	 */
 	save: function(shareData) {
-		return this.api.req(this.config.endpoint.share, shareData);
+		return this.api.req(this.config.endpoint.share, shareData, { method: 'POST' });
 	}
 }
