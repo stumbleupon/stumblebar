@@ -1,15 +1,4 @@
 function Page() {
-	Page._prerender  = document.createElement('link');
-	Page._prefetch   = document.createElement('link');
-	Page._preload    = document.createElement('link');
-
-	Page._prerender.rel  = 'prerender';
-	Page._prefetch.rel   = 'prefetch';
-	Page._preload.rel    = 'preload';
-
-	document.body.appendChild(Page._prerender);
-	document.body.appendChild(Page._prefetch);
-	document.body.appendChild(Page._preload);
 }
 
 Page.tab = [];
@@ -238,6 +227,19 @@ Page.init = function() {
 	//updateTab();
 
 	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
+
+
+	Page._prerender  = document.createElement('link');
+	Page._prefetch   = document.createElement('link');
+	Page._preload    = document.createElement('link');
+
+	Page._prerender.rel  = 'prerender';
+	Page._prefetch.rel   = 'prefetch';
+	Page._preload.rel    = 'preload';
+
+	document.body.appendChild(Page._prerender);
+	document.body.appendChild(Page._prefetch);
+	document.body.appendChild(Page._preload);
 }
 
 Page.init();
