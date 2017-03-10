@@ -81,7 +81,7 @@ StumbleUponApi.prototype = {
 			})
 	},
 
-	getConversations: function(start, limit) {
+	getConversations: function(start, limit, type) {
 		return this.getNotifications(start, limit, 'conversation')
 	},
 	getNotifications: function(position, limit, scope, type) {

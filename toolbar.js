@@ -100,6 +100,9 @@ var Toolbar = {
 
 			Toolbar.listenConvoHelper();
 		}
+		if (position == 'prepend' && !convo.events.length) {
+			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
+		}
 
 		document.querySelector('.convo-loading').addClass('hidden');
 
@@ -110,7 +113,7 @@ var Toolbar = {
 			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
 		Toolbar.state.listenConvoTimeout = setTimeout(function() {
 			console.log('RECHECK');
-			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, since: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
+			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
 			// Backoff -- 15s => 30s => 1m => 2m => 4m => 8m => 16m => ...
 			Toolbar.state.listenConvoBackoff = 2 * (Toolbar.state.listenConvoBackoff || 15000);
 			Toolbar.listenConvoHelper();
@@ -183,6 +186,10 @@ var Toolbar = {
 			document.querySelector('#inbox-container').appendChild(entryNode);
 		});
 
+		if (!inbox.length) {
+			document.querySelector('#inbox-container').setAttribute('infinite-scroll-disabled', null);
+		}
+
 		document.querySelector('.inbox-loading').addClass('hidden');
 	},
 
@@ -216,6 +223,7 @@ var Toolbar = {
 			}, resolve);
 		}).then(Toolbar._handleResponse);
 	},
+
 	handleEvent: function(e) {
 		if (Toolbar.mouse.state == 'up') {
 			Toolbar.mouse.state = null;
@@ -228,6 +236,19 @@ var Toolbar = {
 		if (!elem || !elem.getAttribute)
 			return;
 		var action = elem.getAttribute('action');
+		var value = Toolbar.elemToValue(elem);
+		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
+		if(val) {
+			if(typeof val === "object") {
+				// handleImmediateAction is replacing data;
+				value = val;
+			}
+			Toolbar.dispatch(action, value);
+			Toolbar.handleRedraw();
+		}
+	},
+
+	elemToValue: function(elem) {
 		var value  = {value : elem.getAttribute('value')};
 		if (elem.getAttribute('values')) {
 			// decode the values into an object to send to dispatch
@@ -244,15 +265,7 @@ var Toolbar = {
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
 		}
-		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
-		if(val) {
-			if(typeof val === "object") {
-				// handleImmediateAction is replacing data;
-				value = val;
-			}
-			Toolbar.dispatch(action, value);
-			Toolbar.handleRedraw();
-		}
+		return value;
 	},
 
 	/**
@@ -390,16 +403,68 @@ var Toolbar = {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
+	handleInfiniteScroll: function(node) {
+		Toolbar.handlingInfiniteScroll = Toolbar.handlingInfiniteScroll || {};
+		if (Toolbar.handlingInfiniteScroll[node.id])
+			return false;
+		Toolbar.handlingInfiniteScroll[node.id] = true;
+
+		switch (node.id) {
+			case 'convo-container':
+				Toolbar.dispatch('load-convo', {
+					value: document.querySelector('#convo-id').value,
+					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
+					type: 'before'
+				})
+				.then(function() {
+					Toolbar.handlingInfiniteScroll[node.id] = false;
+				});
+				break;
+
+			case 'inbox-container':
+				Toolbar.dispatch('inbox', {
+					// @TODO
+					// position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), 0)[0].value,
+					// type: 'before'
+					position: document.querySelectorAll('#inbox-container .inbox-entry').length
+				})
+				.then(function() {
+					Toolbar.handlingInfiniteScroll[node.id] = false;
+				});
+				break;
+
+			default:
+				warning("Can't find infinite scroll handler", node);
+				return false;
+				break;
+		}
+
+		return true;
+	},
+	handleInfiniteScrollThrottled: throttle(function (node) { Toolbar.handleInfiniteScroll(node) }, 2500),
+
 	handleMouseWheel: function(e) {
 		if (e.target) {
 			var node = e.target;
 			do {
 				if (node.hasClass('scrollable')) {
-					if (node.scrollTop <= 0 && e.deltaY <= 0 || node.scrollTop + node.offsetHeight >= node.scrollHeight && e.deltaY >= 0) {
+					if (node.hasAttribute('infinite-scroll') && !node.hasAttribute('infinite-scroll-disabled')) {
+						var nearTop = node.scrollTop <= (node.getAttribute('infinite-scroll-offset') || 32);
+						var nearBottom = node.scrollTop + node.offsetHeight >= node.scrollHeight - (node.getAttribute('infinite-scroll-offset') || 32);
+
+						if (((node.getAttribute('infinite-scroll-trigger') || 'bottom') == 'bottom') ? nearBottom : nearTop) {
+							Toolbar.handleInfiniteScrollTrottled(node);
+						}
+					}
+
+					var atTop = node.scrollTop <= 0 && e.deltaY <= 0;
+					var atBottom = node.scrollTop + node.offsetHeight >= node.scrollHeight && e.deltaY >= 0;
+					if (atTop || atBottom) {
 						e.stopPropagation();
 						e.preventDefault();
 						return false;
 					}
+					return true;
 				}
 				node = node.parentNode;
 			} while (node);

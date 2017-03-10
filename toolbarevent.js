@@ -305,7 +305,7 @@ ToolbarEvent.like = function(request, sender) {
  */
 ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
-		.api.getConversations()
+		.api.getConversations(request.data.position, request.data.limit, request.data.type)
 		.then(function(inbox) {
 			return ToolbarEvent.api.cache.get('authed')
 				.then(function(userid) {
@@ -396,7 +396,7 @@ ToolbarEvent.closeConvo = function(request, sender) {
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
-	return Promise.resolve(convo.messages(request.data.since))
+	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
 		.then(function(convo) {
 			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
 		});
