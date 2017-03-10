@@ -56,26 +56,6 @@ body {
 .stop-flashing {
 	-webkit-backface-visibility: hidden; -webkit-perspective: 1000; -webkit-transform:translate3d(0,0,0); -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
-
-#toolbar-share-recipients-list {
-	display: block;
-	position: relative;
-	width: 100%;
-}
-#toolbar-share-recipients-list:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-.toolbar-share-recipients-container {
-	max-height: 51px;
-	overflow-y: auto;
-}
-.toolbar-share-container-section {
-	display: block;
-	position: relative;
-	clear: left;
-}
 button.pill {
 	position: relative;
 	float: left;
@@ -264,13 +244,26 @@ button.pill:before {
 }
 
 .toolbar-share-container {
+	width: 240px;
+}
+#toolbar-share-recipients-list {
+	display: block;
 	position: relative;
-	background-color: #444;
-	margin-left: 0;
-	padding-left: 44px !important;
-	color: white;
+	width: 100%;
+}
+#toolbar-share-recipients-list:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+.toolbar-share-recipients-container {
+	max-height: 51px;
+	overflow-y: auto;
 }
 .toolbar-share-container-section {
+	display: block;
+	position: relative;
+	clear: left;
 	min-height: 13px;
 }
 .toolbar-share-container .toolbar-share-buttons-container {
@@ -598,6 +591,14 @@ button.pill:before {
 }
 
 .toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container.share-expanded .hide-when-share-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container:not(.share-expanded) .show-when-share-expanded:not(.enabled) {
 	display: none;
 }
 

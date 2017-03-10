@@ -293,6 +293,7 @@ var Toolbar = {
 		if (action == 'share') {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");
+			document.querySelector(".toolbar-container").toggleClass("share-expanded");
 		}
 		if (action == 'share-add-contact') {
 			// make the contact a participant
@@ -317,6 +318,7 @@ var Toolbar = {
 			if(this.validateShare()) {
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
+                document.querySelector(".toolbar-container").toggleClass("share-expanded");
 				return this.getShareData();
 			} else {
 				return false;

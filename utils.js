@@ -85,7 +85,8 @@ function newFromTemplate(templateId, attributes, appendToElId) {
         return false;
     }
     var el = template.cloneNode(true);
-    el.classList.remove('template');
+    el.classList.remove('stub');
+    el.id = '';
     el.removeAttribute('hidden');
     for (var name in attributes) {
         var val = attributes[name];
