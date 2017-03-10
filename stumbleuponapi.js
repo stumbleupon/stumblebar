@@ -84,8 +84,8 @@ StumbleUponApi.prototype = {
 	getConversations: function(start, limit) {
 		return this.getNotifications(start, limit, 'conversation')
 	},
-	getNotifications: function(start, limit, scope) {
-		return this.api.get(this.config.endpoint.activities, { start: start || 0, limit: limit || 25, scope: scope || 'conversation' })
+	getNotifications: function(position, limit, scope, type) {
+		return this.api.get(this.config.endpoint.activities, { [type || 'start']: position || 0, limit: limit || 25, scope: scope || 'conversation' })
 			.then(function(convos) {
 				if (!convos._success)
 					return Promise.reject(convos);
