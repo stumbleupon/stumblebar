@@ -21,7 +21,20 @@
 		},
 
 		canInject: function() {
-			return (!location.ancestorOrigins || !location.ancestorOrigins.contains(this.origin)) && (location.hostname != "www.stumbleupon.com" && !location.pathname.match(/^\/su\/[^\/]+/));
+			return (
+				!location.ancestorOrigins
+			    || !location.ancestorOrigins.contains(this.origin)
+			) && (
+				// No Stumble /su URLs
+				location.hostname != "www.stumbleupon.com"
+			    && !location.pathname.match(/^\/su\/[^\/]+/)
+			) && (
+				// No pop-ups
+				!window.opener
+			) && (
+				// No iframes
+				window.top == window.self
+			);
 		},
 
 		getDocument: function() {
