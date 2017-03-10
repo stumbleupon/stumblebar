@@ -672,6 +672,9 @@ button.pill:before {
 	-webkit-animation: rotation 2s infinite linear;
 }
 
+.toolbar-convo-container {
+	padding-right: 1em;
+}
 
 .inbox-container, .convo-container {
 	max-height: 140px;
