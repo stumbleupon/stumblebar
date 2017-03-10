@@ -10,7 +10,7 @@
 		id: 'discoverbar',
 		theme: {
 			url: "toolbar.html",
-			iframe: 'position:fixed;bottom:0;left:0;display:none;' +
+			iframe: 'position:fixed;bottom:0;left:0;display:none;zoom:reset;' +
 				'width:288px;height:90px;z-index:2147483647;border:0;' +
 				'overflow:hidden;box-shadow: 0 0 16px -4px #000; border-radius:4px; border: 1px solid #aaa;' +
 				'transition: width 0.2s, height 0.2s;' +
