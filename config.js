@@ -86,7 +86,7 @@ config.defaults = {
 
 config.conversationsAPI = {
 	baseUrl:  'svc.stumbleupon.com',
-	baseProto:'http',
+	baseProto:'https',
 	apiPath:  '/convo',
 	endpoint: {
 	  auth:         '/auth/token',
