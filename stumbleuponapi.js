@@ -94,7 +94,7 @@ StumbleUponApi.prototype = {
 	},
 
 	addToList: function(listid, urlid) {
-		return this.api.req(this.config.endpoint.addtolist.form({ listid: listid }), { listid: listid, urlid: urlid })
+		return this.api.req(this.config.endpoint.addtolist.form({ listid: listid }), { listId: listid, urlid: urlid })
 			.then(function(item) {
 				if (!item._success)
 					return Promise.reject(item);

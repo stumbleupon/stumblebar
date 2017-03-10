@@ -158,39 +158,21 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleLists: function(list) {
-		if (!position)
-			document.querySelector('#lists-container').innerHTML = '';
+	handleLists: function(lists) {
+		document.querySelector('#lists-container').innerHTML = '';
 
 		lists.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
+			console.log(entry);
 
-			entryNode.setAttribute('convourl', entry.conversationDetails.originator.conversationUrl);
-			entryNode.id = entry.conversationDetails.id;
-			entryNode.setAttribute('actionid', entry.id);
-			entryNode.setAttribute('values', 'urlid,id,actionid,url=convourl');
-			if (entry.urlId)
-				entryNode.setAttribute('urlid',  entry.urlId);
+			entryNode.id = entry.id;
 			entryNode.removeClass('stub');
-			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
-			entryNode.querySelector('.lists-entry-title').innerText   = entry.conversationDetails.title;
-			if (entry.sourceUserId == Toolbar.config.authed)
-				entryNode.querySelector('.lists-entry-user').innerText = 'You';
-			else
-				entryNode.querySelector('.lists-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
-			//else if (entry.conversationDetails.participants)
-			//	entryNode.querySelector('.lists-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
-			entryNode.querySelector('.lists-entry-date').innerText    = reldate(entry.occurred, 's').text;
-			entryNode.querySelector('.lists-entry-snippet').innerText = entry.message;
 
-			entryNode.changeClass('unread', !entry.read);
+			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
+			entryNode.querySelector('.lists-entry-title').innerText   = entry.name;
 
-			document.querySelector('#lists-container').insertBefore(entryNode, position ? document.querySelector('#lists-container').firstChild : null);
+			document.querySelector('#lists-container').insertBefore(entryNode, null);
 		});
-
-		if (!lists.length) {
-			document.querySelector('#lists-container').setAttribute('infinite-scroll-disabled', null);
-		}
 
 		document.querySelector('.lists-loading').addClass('hidden');
 	},
@@ -242,6 +224,8 @@ var Toolbar = {
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
 			Toolbar.handleInbox(r.inbox, r.position);
+		if (r && r.lists)
+			Toolbar.handleLists(r.lists);
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)

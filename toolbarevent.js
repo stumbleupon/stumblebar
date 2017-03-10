@@ -303,9 +303,9 @@ ToolbarEvent.like = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
-ToolbarEvent.addList = function(request, sender) {
+ToolbarEvent.addToList = function(request, sender) {
 	return ToolbarEvent
-		.api.addToList(request.data.listid, request.data.itemid)
+		.api.addToList(request.data.listid, request.data.urlid)
 		.then(function(lists) {
 			return ToolbarEvent._buildResponse({ });
 		})
