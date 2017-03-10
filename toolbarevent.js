@@ -30,7 +30,7 @@ ToolbarEvent.api = new StumbleUponApi(config);
  */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
-	var action = request.action && request.action.replace(/-[a-z]/, function(x){return x[1].toUpperCase();});
+	var action = request.action && request.action.replace(/-[a-z]/g, function(x){return x[1].toUpperCase();});
 	if (!action || !ToolbarEvent[action])
 		return false;
 	ToolbarEvent[action](request, sender)
@@ -297,7 +297,7 @@ ToolbarEvent.like = function(request, sender) {
 
 
 /**
- * Adds to a list
+ * Adds an item to a list
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender

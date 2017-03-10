@@ -167,6 +167,8 @@ var Toolbar = {
 
 			entryNode.id = entry.id;
 			entryNode.removeClass('stub');
+			entryNode.setAttribute("values", "listid")
+			entryNode.setAttribute("listid", entry.id);
 
 			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
 			entryNode.querySelector('.lists-entry-title').innerText   = entry.name;
