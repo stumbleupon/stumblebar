@@ -136,12 +136,13 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.markactivity.form({ id: id, action: 'read' }), { id: id, read: true }, { method: 'PUT' });
 	},
 
-	submit: function(url, nsfw) {
-		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: false })
+	submit: function(url, nsfw, nolike) {
+		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: nsfw || false })
 			.then(function(res) {
 				if (!res || !res._success || !res.discovery.url.publicid)
 					return Promise.reject(res);
-				this.like(res.discovery.url.publicid);
+				if (!nolike)
+					this.like(res.discovery.url.publicid);
 				return res.discovery.url;
 			}.bind(this));
 	},
