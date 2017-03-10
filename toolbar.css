@@ -172,7 +172,7 @@ button.pill:before {
 	left: 0;
 	margin: 8px;
 }
-.toolbar-action-container .action-list {
+.toolbar-action-container .action-lists {
 	background-image: url("asset/Icon/List.svg");
 }
 .toolbar-action-container .action-inbox {
@@ -592,6 +592,10 @@ button.pill:before {
 }
 
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container:not(.lists-expanded) .show-when-lists-expanded:not(.enabled) {
 	display: none;
 }
 

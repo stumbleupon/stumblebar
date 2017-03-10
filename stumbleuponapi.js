@@ -93,6 +93,39 @@ StumbleUponApi.prototype = {
 			});
 	},
 
+	addToList: function(listid, urlid) {
+		return this.api.req(this.config.endpoint.addtolist.form({ listid: listid }), { listid: listid, urlid: urlid })
+			.then(function(item) {
+				if (!item._success)
+					return Promise.reject(item);
+				return item.item;
+			});
+	},
+
+	addList: function(name, description, visibility) {
+		return this.cache.get('user')
+			.then(function(user) {
+				return this.api.req(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, name: name, visibility: visibility || 'private', description: description || '', widgetText: name, widgetDataId: 'attribute miss', '_visible': (visibility || 'private') != 'private' })
+					.then(function(list) {
+						if (!list._success)
+							return Promise.reject(list);
+						return list.list;
+					});
+			}.bind(this));
+	},
+
+	getLists: function(unsorted) {
+		return this.cache.get('user')
+			.then(function(user) {
+				return this.api.get(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, sorted: !unsorted })
+					.then(function(lists) {
+						if (!lists._success)
+							return Promise.reject(lists);
+						return lists.lists.values;
+					});
+			}.bind(this));
+	},
+
 	getConversation: function(id) {
 		var convo = new Conversation(this.config.conversationsAPI, id);
 		convo.api.addHeaders(this.api.getHeaders());

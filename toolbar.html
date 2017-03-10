@@ -44,7 +44,7 @@
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
 							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
 							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" action="inbox" raction="inbox" id="inbox"><span class="badge"></span></span>
-							<span class="toolbar-action action-list   show-when-inline-info-expanded" action="list"  id="list"></span>
+							<span class="toolbar-action action-lists  show-when-inline-info-expanded" action="lists"  id="lists"></span>
 							<span class="toolbar-action action-info   show-when-inline-info-expanded" action="info"  id="info"></span>
 							<span class="toolbar-action action-inline-info  " action="expand" value="inline-info" id="inline-info"></span>
 						</span>
@@ -72,6 +72,23 @@
 						</div>
 
 						<span class="inbox-container scrollable" infinite-scroll id="inbox-container">
+						</span>
+					</div>
+
+					<div class="toolbar-section toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode">
+						<div class="lists-loading">
+							<span class="spinner"></span> Loading...
+						</div>
+
+						<div class="lists-entry clickable stub" action="open-convo" id="stub-lists-entry">
+							<span class="lists-entry-image"></span>
+							<span class="lists-entry-title"></span>
+							<span class="lists-entry-user"></span>
+							<span class="lists-entry-date"></span>
+							<span class="lists-entry-snippet"></span>
+						</div>
+
+						<span class="lists-container scrollable" id="lists-container">
 						</span>
 					</div>
 

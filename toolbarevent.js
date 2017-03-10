@@ -297,6 +297,63 @@ ToolbarEvent.like = function(request, sender) {
 
 
 /**
+ * Adds to a list
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.addList = function(request, sender) {
+	return ToolbarEvent
+		.api.addToList(request.data.listid, request.data.itemid)
+		.then(function(lists) {
+			return ToolbarEvent._buildResponse({ });
+		})
+		.catch(ToolbarEvent._error);
+}
+
+
+/**
+ * Adds a list
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.addList = function(request, sender) {
+	return ToolbarEvent
+		.api.addList(request.data.name, request.data.description, request.data.visibility)
+		.then(function(list) {
+			if (request.data.urlid) {
+				return ToolbarEvent.addToList({ listid: list.id, urlid: urlid })
+					.then(function(item) {
+						return ToolbarEvent._buildResponse({ list: list, listitem: item });
+					});
+			}
+			return ToolbarEvent._buildResponse({ list: list });
+		})
+		.catch(ToolbarEvent._error);
+}
+
+
+/**
+ * Gets a list of lists
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.lists = function(request, sender) {
+	return ToolbarEvent
+		.api.getLists()
+		.then(function(lists) {
+			return ToolbarEvent._buildResponse({ lists: lists });
+		})
+		.catch(ToolbarEvent._error);
+}
+
+
+/**
  * Gets a list of conversation threads
  *
  * @param {MessageRequest} request

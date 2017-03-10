@@ -66,6 +66,8 @@ config.endpoint = {
   submit:      '/submit',
   classify:    '/classification/:urlid/doClassification',
   unread:      '/activities/snapshot',
+  lists:       '/user/:userid/lists',
+  addtolist:   '/list/:listid/items',
 }
 config.url = {
   info:    '/content/:urlid',
