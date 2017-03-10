@@ -305,11 +305,19 @@ ToolbarEvent.like = function(request, sender) {
  */
 ToolbarEvent.addToList = function(request, sender) {
 	return ToolbarEvent
-		.api.addToList(request.data.listid, request.data.urlid)
-		.then(function(lists) {
-			return ToolbarEvent._buildResponse({ });
+		._sanity()
+		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			return urlid || ToolbarEvent.discover(request, sender)
+				.then(function(url) { return url.urlid; });
 		})
-		.catch(ToolbarEvent._error);
+		.then(function(urlid) { 
+			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid)
+				.then(function(item) {
+					return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
+				})
+				.catch(ToolbarEvent._error);
+		});
 }
 
 
@@ -324,13 +332,7 @@ ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
 		.api.addList(request.data.name, request.data.description, request.data.visibility)
 		.then(function(list) {
-			if (request.data.urlid) {
-				return ToolbarEvent.addToList({ listid: list.id, urlid: urlid })
-					.then(function(item) {
-						return ToolbarEvent._buildResponse({ list: list, listitem: item });
-					});
-			}
-			return ToolbarEvent._buildResponse({ list: list });
+			return ToolbarEvent.addToList({ data: { list: list } })
 		})
 		.catch(ToolbarEvent._error);
 }
