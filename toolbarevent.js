@@ -49,21 +49,21 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 ToolbarEvent.share = function handleShare(request, sender) {
 	return Promise.resolve(ToolbarEvent.api.getContacts())
 		.then(function(contacts) {
-			return ToolbarEvent._buildResponse({ contacts:  contacts}, true);
+			return ToolbarEvent._buildResponse({ contacts:  contacts, share: true}, true);
 		});
 }
 
 /**
- *
+ * after the share save, marke the page state, return a convo object to the ui.
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
-    return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
-        .then(function(convo) {
-            Page.state[sender.tab.id] = { convo: convo.id };
-            return ToolbarEvent._buildResponse({ convo:  convo}, true);
-        });
+	return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
+		.then(function(convo) {
+			Page.state[sender.tab.id] = { convo: convo.id };
+			return ToolbarEvent._buildResponse({ convo:  convo}, true);
+		});
 }
 
 
@@ -378,10 +378,13 @@ ToolbarEvent.replyConvo = function(request, sender) {
  */
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
-	var convo = ToolbarEvent.api.getConversation(request.data.value)
-	return Promise.resolve(convo.messages(request.data.since))
-		.then(function(convo) {
-			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
+	var convo = ToolbarEvent.api.getConversation(request.data.value),
+		contacts = ToolbarEvent.api.getContacts();
+	return Promise.all([convo.messages(request.data.since), contacts])
+		.then(function(resolutions) {
+			var convo = resolutions[0],
+				contacts = resolutions[1];
+			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null, contacts: contacts });
 		});
 }
 

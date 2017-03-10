@@ -69,9 +69,11 @@ button.pill {
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
+}
+button.pill.delete {
 	cursor: pointer;
 }
-button.pill:before {
+button.pill.delete:before {
 	content:"";
 	width:13px;
 	height: 13px;

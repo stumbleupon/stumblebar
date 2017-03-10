@@ -5,10 +5,7 @@
  */
 function ContactList(contacts) {
     this.contacts = {};
-    contacts.forEach(function(contact) {
-        var name = contact.name || contact.username;
-        this.add(contact.userid, name);
-    }.bind(this));
+    this.addMultiple(contacts);
 }
 
 /**
@@ -34,8 +31,21 @@ ContactList.prototype = {
      * @param name
      * @returns {Contact}
      */
-    add: function addContact(contactId, name) {
-        return this.contacts[contactId] = new Contact(contactId, name);
+    add: function addContact(contactId, name, isParticipant) {
+        return this.contacts[contactId] = new Contact(contactId, name, isParticipant);
+    },
+    /**
+     *
+     * @param {Array<Object>} contacts
+     */
+    addMultiple: function(contacts) {
+        if(contacts.forEach) {
+            contacts.forEach(function(contact) {
+                var name = contact.name ? contact.name + " (" + contact.username + ")" : contact.username,
+                    isParticipant = !!contact.isParticipant;
+                this.add(contact.userid, name, isParticipant);
+            }.bind(this));
+        }
     },
     /**
      * get a contact by id
@@ -100,13 +110,18 @@ ContactList.prototype = {
             return false;
         }
         var contacts = this.contacts;
+        appendToElement.innerHTML = '';
         if(filter) {
             contacts = this.find(filter);
+            contacts.forEach(function(contact) {
+                contact.render(stubId, attributeMappings, appendToElementId);
+            });
+        } else {
+            for(id in this.contacts) {
+                var contact = this.contacts[id];
+                contact.render(stubId, attributeMappings, appendToElementId);
+            }
         }
-        appendToElement.innerHTML = '';
-        contacts.forEach(function(contact) {
-            contact.render(stubId, attributeMappings, appendToElementId);
-        });
     }
 };
 
@@ -116,11 +131,11 @@ ContactList.prototype = {
  * @param name
  * @constructor
  */
-function Contact(id, name) {
+function Contact(id, name, isParticipant) {
     this.id = id;
     this.userid = id;
     this.name = name;
-    this.participant = false;
+    this.participant = !!isParticipant;
 }
 
 Contact.prototype = {

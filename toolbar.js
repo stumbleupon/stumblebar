@@ -51,11 +51,11 @@ var Toolbar = {
 	},
 
 	handleContacts: function(contacts) {
-		this.shareContactList = this.shareContactList || new ContactList(contacts.values);
+		this.shareContactList = new ContactList(contacts.values);
 		this.updateShare();
 	},
 
-	handleConvo: function(convo, position) {
+	handleConvo: function(convo, position, contacts) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
 
@@ -106,9 +106,29 @@ var Toolbar = {
 			Toolbar.listenConvoHelper();
 		}
 
+        this.convoContactList = new ContactList(contacts.values);
+		var participants = convo.participants.filter(function(participant) {
+			return participant.suUserId != Toolbar.config.authed;
+		}).map(function(participant) {
+			return {
+				isParticipant: true,
+				userid: participant.suUserId,
+				username: participant.suUserName,
+				name: participant.name
+			};
+		});
+		this.convoContactList.addMultiple(participants);
+		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
 		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+	},
+	updateConvoParticipants: function updateConvoParticipants() {
+		var attributeMap = [
+			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+		];
+		this.convoContactList.render('convo-contact-stub', attributeMap, 'convo-recipients-list', {isParticipant: true});
 	},
 
 	listenConvoHelper: function() {
@@ -201,10 +221,10 @@ var Toolbar = {
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
 			Toolbar.handleInbox(r.inbox);
-		if (r && r.contacts)
+		if (r && r.share == true && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
-			Toolbar.handleConvo(r.convo, r.position);
+			Toolbar.handleConvo(r.convo, r.position, r.contacts);
 		if (r && r.comment)
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
 		if (!r || r.from != 'bar')
