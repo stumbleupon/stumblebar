@@ -73,21 +73,42 @@
 			);
 		},
 
+		bodyInjectionWatcher: function() {
+			document.addEventListener('animationstart',       this.handleBodyInjectionEvent.bind(this), false);
+			document.addEventListener('MSAnimationStart',     this.handleBodyInjectionEvent.bind(this), false);
+			document.addEventListener('webkitAnimationStart', this.handleBodyInjectionEvent.bind(this), false);
+		},
+
+		handleBodyInjectionEvent: function(e) {
+			if (e && e.animationName == 'nodeInserted') {
+				console.log('BODY appears, StumbleBar time');
+				this.attemptInjection();
+				document.removeEventListener('animationstart',       this.handleBodyInjectionEvent.bind(this), false);
+				document.removeEventListener('MSAnimationStart',     this.handleBodyInjectionEvent.bind(this), false);
+				document.removeEventListener('webkitAnimationStart', this.handleBodyInjectionEvent.bind(this), false);
+			}
+		},
+
 		attemptInjection: function() {
 			if (!this.iframe)
 				return false;
 			var discoverbar = document.getElementById('discoverbar');
 			if (!discoverbar) {
+				if (!document.body)
+					return setTimeout(this.attemptInjection.bind(this), 10);
 				document.documentElement.appendChild(this.iframe);
+				console.log('StumbleBar created');
 				discoverbar = document.getElementById('discoverbar');
 			}
-			if (discoverbar && discoverbar.nextSibling) {
+			if (discoverbar && (discoverbar.nextSibling || !discoverbar.parentNode)) {
+				console.log('StumbleBar relayered', (!!discoverbar.nextSibling && 'sibling') || (!discoverbar.parentNode && 'parent'));
 				document.getElementsByTagName('html')[0].insertBefore(discoverbar, null);
 			}
 		}
 	}
 
 	var bar = new IframeBar;
+	bar.bodyInjectionWatcher();
 	setInterval(bar.attemptInjection.bind(bar), 1000);
 
 })();
