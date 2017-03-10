@@ -98,11 +98,6 @@ var Toolbar = {
 		if (convo.id && !position) {
 			document.querySelector('#convo-id').value = convo.id;
 
-			document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
-				if (e.keyCode == 13)
-					Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
-			});
-
 			Toolbar.listenConvoHelper();
 		}
 
@@ -311,6 +306,10 @@ var Toolbar = {
 		}
 		if (action == 'hide') {
 		}
+		if (action == 'close-convo') {
+			document.querySelector(".toolbar-container").removeClass("convo-expanded");
+			document.querySelector("#convo-reply").value = '';
+		}
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
 		}
@@ -488,6 +487,12 @@ var Toolbar = {
 		document.addEventListener("mousewheel",     Toolbar.handleMouseWheel);
 		document.addEventListener("wheel",          Toolbar.handleMouseWheel);
 		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel);
+
+		// Enter-on-send
+		document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
+			if (e.keyCode == 13 && !e.shiftKey)
+				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+		});
 
 		// Redraw
 		//Toolbar.handleRedraw();

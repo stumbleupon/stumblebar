@@ -243,6 +243,11 @@ button.pill:before {
 	background-color: #444;
 }
 
+.close-icon {
+	background-image: url("asset/Close.svg") !important;
+	background-size: cover;
+}
+
 .toolbar-share-container {
 	width: 240px;
 }
@@ -765,3 +770,8 @@ button.pill:before {
 	clear: both;
 }
 
+.convo-response-container .close-icon {
+	float: right;
+	width: 24px;
+	height: 24px;
+}

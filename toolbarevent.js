@@ -374,6 +374,19 @@ ToolbarEvent.replyConvo = function(request, sender) {
 
 
 /**
+ * Closes a conversation
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.closeConvo = function(request, sender) {
+	Page.state[sender.tab.id] = { };
+	return ToolbarEvent._buildResponse({ });
+}
+
+
+/**
  * Loads conversations messages
  *
  * @param {MessageRequest} request
