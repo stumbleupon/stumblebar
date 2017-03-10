@@ -11,7 +11,7 @@ Conversation.prototype = {
 	},
 
 	messages: function(stamp, type) {
-		return this.api.get(this.config.endpoint.messages.form({ id: this.id }), { ['events' + (type || 'since').replace('/^./', function(x) { return x.toUpperCase(); })]: stamp || '1970-01-01T00%3A00%3A00-00%3A00' });
+		return this.api.get(this.config.endpoint.messages.form({ id: this.id }), { ['events' + (type || 'since').replace('/(^.)/', function(x) { return x.toUpperCase(); })]: stamp || '1970-01-01T00%3A00%3A00-00%3A00' });
 	},
 
 	comment: function(message) {

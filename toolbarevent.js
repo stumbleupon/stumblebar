@@ -309,7 +309,7 @@ ToolbarEvent.inbox = function(request, sender) {
 		.then(function(inbox) {
 			return ToolbarEvent.api.cache.get('authed')
 				.then(function(userid) {
-					return ToolbarEvent._buildResponse({ inbox: inbox });
+					return ToolbarEvent._buildResponse({ inbox: inbox, position: request.data.position, type: request.data.type });
 				});
 		})
 		.catch(ToolbarEvent._error);

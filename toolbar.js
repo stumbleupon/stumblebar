@@ -111,6 +111,7 @@ var Toolbar = {
 
 	listenConvoHelper: function() {
 			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
+		clearTimeout(Toolbar.state.listenConvoTimeout);
 		Toolbar.state.listenConvoTimeout = setTimeout(function() {
 			console.log('RECHECK');
 			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
@@ -157,8 +158,9 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleInbox: function(inbox) {
-		document.querySelector('#inbox-container').innerHTML = '';
+	handleInbox: function(inbox, position) {
+		if (!position)
+			document.querySelector('#inbox-container').innerHTML = '';
 
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
@@ -183,7 +185,7 @@ var Toolbar = {
 
 			entryNode.changeClass('unread', !entry.read);
 
-			document.querySelector('#inbox-container').appendChild(entryNode);
+			document.querySelector('#inbox-container').insertBefore(entryNode, position ? document.querySelector('#convo-container').firstChild : null);
 		});
 
 		if (!inbox.length) {
@@ -202,7 +204,7 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox);
+			Toolbar.handleInbox(r.inbox, r.position);
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
@@ -441,7 +443,7 @@ var Toolbar = {
 
 		return true;
 	},
-	handleInfiniteScrollThrottled: throttle(function (node) { Toolbar.handleInfiniteScroll(node) }, 2500),
+	handleInfiniteScrollThrottled: debounce(function (node) { Toolbar.handleInfiniteScroll(node) }, 250),
 
 	handleMouseWheel: function(e) {
 		if (e.target) {
@@ -453,7 +455,7 @@ var Toolbar = {
 						var nearBottom = node.scrollTop + node.offsetHeight >= node.scrollHeight - (node.getAttribute('infinite-scroll-offset') || 32);
 
 						if (((node.getAttribute('infinite-scroll-trigger') || 'bottom') == 'bottom') ? nearBottom : nearTop) {
-							Toolbar.handleInfiniteScrollTrottled(node);
+							Toolbar.handleInfiniteScrollThrottled(node);
 						}
 					}
 
