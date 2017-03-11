@@ -19,7 +19,7 @@ ApiRequest.serializePostData = function(obj, prefix) {
 		}
 		for (var i = 0; i < obj.length; i++) {
 			v = obj[i];
-			var k = encodeURIComponent(prefix) + "[]" ;
+			var k = encodeURIComponent(prefix) + "%5B%5D" ;
 			if(!isScalar(v)) {
                 throw "You can't serialize nested objects: " + JSON.stringify(obj);
 			}
@@ -28,7 +28,7 @@ ApiRequest.serializePostData = function(obj, prefix) {
 	} else {
 		for (var p in obj) {
 			if (obj.hasOwnProperty(p)) {
-				var k = prefix ? encodeURIComponent(prefix) + "[" + encodeURIComponent(p) + "]" : p;
+				var k = prefix ? encodeURIComponent(prefix) + "%5B" + encodeURIComponent(p) + "%5D" : p;
 				v = obj[p];
 				str.push((v && typeof v == "object") ?
 					ApiRequest.serializePostData(v, p) :
