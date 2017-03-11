@@ -42,6 +42,8 @@ Page.handleIconClick = function(e) {
 Page.ping = function(tabid) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			if (!tabs[0])
+				return;
 			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping", info: tabs[0]}, function(response) {
 				// Handle pages that we can't inject
 				if (!response || response.type != 'pong')
