@@ -55,7 +55,7 @@ var Toolbar = {
 		this.updateShare();
 	},
 
-	handleConvo: function(convo, position, contacts) {
+	handleConvo: function(convo, position) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
 
@@ -104,7 +104,6 @@ var Toolbar = {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
-        this.convoContactList = new ContactList(contacts.values);
 		var participants = convo.participants.filter(function(participant) {
 			return participant.suUserId != Toolbar.config.authed;
 		}).map(function(participant) {
@@ -115,6 +114,7 @@ var Toolbar = {
 				name: participant.name
 			};
 		});
+		this.convoContactList = this.convoContactList || new ContactList();
 		this.convoContactList.addMultiple(participants);
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
@@ -126,7 +126,14 @@ var Toolbar = {
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
-		this.convoContactList.render('convo-contact-stub', attributeMap, 'convo-recipients-list', {isParticipant: true});
+		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', {isParticipant: true});
+		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {isParticipant: false});
+	},
+
+	handleConvoContacts: function(contacts) {
+		this.convoContactList = this.convoContactList || new ContactList();
+		this.convoContactList.addMultiple(contacts.values);
+		this.updateConvoParticipants();
 	},
 
 	listenConvoHelper: function() {
@@ -250,10 +257,12 @@ var Toolbar = {
 			Toolbar.handleLists(r.lists);
 		if (r && r.share == true && r.contacts)
 			Toolbar.handleContacts(r.contacts);
-		if (r && r.convo)
-			Toolbar.handleConvo(r.convo, r.position, r.contacts);
+		if (r && r.convo && r.requestedAction !== 'convo-show-contacts')
+			Toolbar.handleConvo(r.convo, r.position);
 		if (r && r.comment)
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
+        if (r && r.contacts && r.requestedAction === 'convo-show-contacts')
+            Toolbar.handleConvoContacts(r.contacts);
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -375,17 +384,31 @@ var Toolbar = {
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
 		}
+		if (action == 'convo-show-contacts') {
+			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+		}
+		if (action == 'convo-add-recipient') {
+			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+			return this.getNewConvoParticipantData(value);
+		}
 		if (action == 'save-share') {
 			if(this.validateShare()) {
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
-                document.querySelector(".toolbar-container").toggleClass("share-expanded");
+				document.querySelector(".toolbar-container").toggleClass("share-expanded");
 				return this.getShareData();
 			} else {
 				return false;
 			}
 		}
 		return true;
+	},
+	getNewConvoParticipantData: function getNewConvoParticipantData(userid) {
+		var data = {
+			conversationId:document.querySelector('#convo-id').value,
+			suUserIds:[userid]
+		};
+		return data;
 	},
 	getShareData: function getShareData() {
 		var data = {

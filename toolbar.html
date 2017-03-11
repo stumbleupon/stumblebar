@@ -117,8 +117,16 @@
 						<div class="convo-recipients-container toolbar-border-top">
 							<div id="convo-recipients-list"></div>
 						</div>
+						<span class="icon clickable show-contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
+						<div class="toolbar-container-section convo-contacts-container toolbar-border-top hidden">
+							<!-- the list of contacts to be invited -->
+							<label for="convo-contacts-list">Contacts</label><br>
+							<ul id="convo-contacts-list" class="scrollable">
+							</ul>
+						</div>
 					</div>
-					<button class="stub btn pill secondary-background" id="convo-contact-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<li class="stub toolbar-action action-theme clickable" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></li>
 
 
 

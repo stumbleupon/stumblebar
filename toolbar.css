@@ -89,6 +89,16 @@ button.pill.delete:before {
 	white-space: pre-line;
 	margin: 2px;
 }
+.icon.show-contacts {
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 24px;
+	height: 24px;
+	background-image: url('asset/icon/add-participants.png');
+	background-size: contain;
+}
 /*
 .toolbar-action {
   cursor: pointer;
@@ -253,17 +263,20 @@ button.pill.delete:before {
 .toolbar-share-container {
 	width: 240px;
 }
-#toolbar-share-recipients-list {
+#toolbar-share-recipients-list,
+#convo-recipients-list {
 	display: block;
 	position: relative;
 	width: 100%;
 }
-#toolbar-share-recipients-list:after {
+#toolbar-share-recipients-list:after,
+#convo-recipients-list:after {
 	content: '';
 	display: table;
 	clear: both;
 }
-.toolbar-share-recipients-container {
+.toolbar-share-recipients-container,
+.convo-recipients-container {
 	max-height: 51px;
 	overflow-y: auto;
 }
@@ -291,7 +304,8 @@ button.pill.delete:before {
 .toolbar-share-container ul li {
 	padding: .25em;
 }
-.toolbar-share-container ul {
+.toolbar-share-container ul,
+#convo-contacts-list {
 	max-height: 100px;
 	overflow-y: auto;
 }
