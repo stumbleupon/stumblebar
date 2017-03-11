@@ -30,7 +30,7 @@ ToolbarEvent.api = new StumbleUponApi(config);
  */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
-	var action = request.action && request.action.replace(/-[a-z]/, function(x){return x[1].toUpperCase();});
+	var action = request.action && request.action.replace(/-[a-z]/g, function(x){return x[1].toUpperCase();});
 	if (!action || !ToolbarEvent[action])
 		return false;
 	ToolbarEvent[action](request, sender)
@@ -79,7 +79,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
 	.then(function(url) {
-		return ToolbarEvent.api.submit(url, false);
+		return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
 	})
 	.then(function(url) { 
 		Page.note(sender.tab.id, url); 
@@ -297,6 +297,66 @@ ToolbarEvent.like = function(request, sender) {
 
 
 /**
+ * Adds an item to a list
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.addToList = function(request, sender) {
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			request.nolike = false;
+			return urlid || ToolbarEvent.discover(request, sender)
+				.then(function(url) { return url.urlid; });
+		})
+		.then(function(urlid) { 
+			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid)
+				.then(function(item) {
+					return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
+				})
+				.catch(ToolbarEvent._error);
+		});
+}
+
+
+/**
+ * Adds a list
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.addList = function(request, sender) {
+	return ToolbarEvent
+		.api.addList(request.data.name, request.data.description, request.data.visibility)
+		.then(function(list) {
+			return ToolbarEvent.addToList({ data: { list: list } })
+		})
+		.catch(ToolbarEvent._error);
+}
+
+
+/**
+ * Gets a list of lists
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.lists = function(request, sender) {
+	return ToolbarEvent
+		.api.getLists()
+		.then(function(lists) {
+			return ToolbarEvent._buildResponse({ lists: lists });
+		})
+		.catch(ToolbarEvent._error);
+}
+
+
+/**
  * Gets a list of conversation threads
  *
  * @param {MessageRequest} request
@@ -305,11 +365,11 @@ ToolbarEvent.like = function(request, sender) {
  */
 ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
-		.api.getConversations()
+		.api.getConversations(request.data.position, request.data.limit, request.data.type)
 		.then(function(inbox) {
 			return ToolbarEvent.api.cache.get('authed')
 				.then(function(userid) {
-					return ToolbarEvent._buildResponse({ inbox: inbox, me: userid });
+					return ToolbarEvent._buildResponse({ inbox: inbox, position: request.data.position, type: request.data.type });
 				});
 		})
 		.catch(ToolbarEvent._error);
@@ -326,6 +386,10 @@ ToolbarEvent.inbox = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.stumble = function(request, sender) {
+	ToolbarEvent.api.getPendingUnread().then(function(info) {
+		ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+		return ToolbarEvent._buildResponse({ }, true);
+	});
 	return ToolbarEvent.api
 		._mode(config.mode || config.defaults.mode)
 		.nextUrl()
@@ -370,6 +434,19 @@ ToolbarEvent.replyConvo = function(request, sender) {
 
 
 /**
+ * Closes a conversation
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.closeConvo = function(request, sender) {
+	Page.state[sender.tab.id] = { };
+	return ToolbarEvent._buildResponse({ });
+}
+
+
+/**
  * Loads conversations messages
  *
  * @param {MessageRequest} request
@@ -378,13 +455,10 @@ ToolbarEvent.replyConvo = function(request, sender) {
  */
 ToolbarEvent.loadConvo = function(request, sender) {
 	console.log(request);
-	var convo = ToolbarEvent.api.getConversation(request.data.value),
-		contacts = ToolbarEvent.api.getContacts();
-	return Promise.all([convo.messages(request.data.since), contacts])
-		.then(function(resolutions) {
-			var convo = resolutions[0],
-				contacts = resolutions[1];
-			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null, contacts: contacts });
+	var convo = ToolbarEvent.api.getConversation(request.data.value)
+	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
+		.then(function(convo) {
+			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
 		});
 }
 
@@ -401,7 +475,13 @@ ToolbarEvent.loadConvo = function(request, sender) {
  */
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.actionid) {
-		ToolbarEvent.api.markActivityAsRead(request.data.actionid);
+		ToolbarEvent.api.markActivityAsRead(request.data.actionid)
+			.then(function() {
+				ToolbarEvent.api.getPendingUnread().then(function(info) {
+					ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+					return ToolbarEvent._buildResponse({ }, true);
+				});
+			});
 	}
 	if (request.data.urlid && request.data.id) {
 		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
@@ -570,6 +650,10 @@ ToolbarEvent._sanity = function() {
 			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
 			if (!user.userid)
 				return ToolbarEvent.ping();
+			ToolbarEvent.api.getPendingUnread().then(function(info) {
+				ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+				return ToolbarEvent._buildResponse({ }, true);
+			});
 			return user;
 		})
 }

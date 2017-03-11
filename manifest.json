@@ -7,9 +7,10 @@
   "content_scripts": [{
     "js": ["utils.js", "dragndrop.js", "bar.js"],
     "css": ["bar.css"],
-    "matches": ["*://*/*"],
+    "matches": ["<all_urls>"],
+	"match_about_blank": true,
     "all_frames": false,
-		"run_at": "document_start"
+	"run_at": "document_start"
   }],
 
 //  "externally_connectable": true,

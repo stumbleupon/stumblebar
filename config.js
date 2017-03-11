@@ -65,6 +65,9 @@ config.endpoint = {
   markactivity:'/activities/:id/:action',
   submit:      '/submit',
   classify:    '/classification/:urlid/doClassification',
+  unread:      '/activities/snapshot',
+  lists:       '/user/:userid/lists',
+  addtolist:   '/list/:listid/items',
 }
 config.url = {
   info:    '/content/:urlid',
@@ -85,7 +88,7 @@ config.defaults = {
 
 config.conversationsAPI = {
 	baseUrl:  'svc.stumbleupon.com',
-	baseProto:'http',
+	baseProto:'https',
 	apiPath:  '/convo',
 	endpoint: {
 	  auth:         '/auth/token',

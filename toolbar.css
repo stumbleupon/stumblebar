@@ -174,7 +174,7 @@ button.pill.delete:before {
 	left: 0;
 	margin: 8px;
 }
-.toolbar-action-container .action-list {
+.toolbar-action-container .action-lists {
 	background-image: url("asset/Icon/List.svg");
 }
 .toolbar-action-container .action-inbox {
@@ -243,6 +243,11 @@ button.pill.delete:before {
 .toolbar:not(.mini-mode) .toolbar-settings-icon.enabled {
 	background-image: url("asset/Close.svg") !important;
 	background-color: #444;
+}
+
+.close-icon {
+	background-image: url("asset/Close.svg") !important;
+	background-size: cover;
 }
 
 .toolbar-share-container {
@@ -592,6 +597,10 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.lists-expanded) .show-when-lists-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
 	display: none;
 }
@@ -674,6 +683,9 @@ button.pill.delete:before {
 	-webkit-animation: rotation 2s infinite linear;
 }
 
+.toolbar-convo-container {
+	padding-right: 1em;
+}
 
 .inbox-container, .convo-container {
 	max-height: 140px;
@@ -764,3 +776,8 @@ button.pill.delete:before {
 	clear: both;
 }
 
+.convo-response-container .close-icon {
+	float: right;
+	width: 24px;
+	height: 24px;
+}

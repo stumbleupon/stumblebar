@@ -1,15 +1,4 @@
 function Page() {
-	Page._prerender  = document.createElement('link');
-	Page._prefetch   = document.createElement('link');
-	Page._preload    = document.createElement('link');
-
-	Page._prerender.rel  = 'prerender';
-	Page._prefetch.rel   = 'prefetch';
-	Page._preload.rel    = 'preload';
-
-	document.body.appendChild(Page._prerender);
-	document.body.appendChild(Page._prefetch);
-	document.body.appendChild(Page._preload);
 }
 
 Page.tab = [];
@@ -53,8 +42,9 @@ Page.handleIconClick = function(e) {
 Page.ping = function(tabid) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping"}, function(response) {
-				console.log(response);
+			if (!tabs[0])
+				return;
+			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping", info: tabs[0]}, function(response) {
 				// Handle pages that we can't inject
 				if (!response || response.type != 'pong')
 					reject({tab: {id: tabid || tabs[0].id}, response});
@@ -195,6 +185,7 @@ Page.urlChange = function(href, tabid) {
 
 Page.handleTabUpdate = function(tabid, info, tab) {
 //	console.log('update', tabid, info, tab);
+	Page.ping();
 
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
@@ -238,6 +229,19 @@ Page.init = function() {
 	//updateTab();
 
 	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
+
+
+	Page._prerender  = document.createElement('link');
+	Page._prefetch   = document.createElement('link');
+	Page._preload    = document.createElement('link');
+
+	Page._prerender.rel  = 'prerender';
+	Page._prefetch.rel   = 'prefetch';
+	Page._preload.rel    = 'preload';
+
+	document.body.appendChild(Page._prerender);
+	document.body.appendChild(Page._prefetch);
+	document.body.appendChild(Page._preload);
 }
 
 Page.init();

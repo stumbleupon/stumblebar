@@ -98,12 +98,10 @@ var Toolbar = {
 		if (convo.id && !position) {
 			document.querySelector('#convo-id').value = convo.id;
 
-			document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
-				if (e.keyCode == 13)
-					Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
-			});
-
 			Toolbar.listenConvoHelper();
+		}
+		if (position == 'prepend' && !convo.events.length) {
+			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
         this.convoContactList = new ContactList(contacts.values);
@@ -133,9 +131,10 @@ var Toolbar = {
 
 	listenConvoHelper: function() {
 			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
+		clearTimeout(Toolbar.state.listenConvoTimeout);
 		Toolbar.state.listenConvoTimeout = setTimeout(function() {
 			console.log('RECHECK');
-			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, since: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
+			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
 			// Backoff -- 15s => 30s => 1m => 2m => 4m => 8m => 16m => ...
 			Toolbar.state.listenConvoBackoff = 2 * (Toolbar.state.listenConvoBackoff || 15000);
 			Toolbar.listenConvoHelper();
@@ -179,8 +178,30 @@ var Toolbar = {
 		Toolbar.handleRedraw();
 	},
 
-	handleInbox: function(inbox) {
-		document.querySelector('#inbox-container').innerHTML = '';
+	handleLists: function(lists) {
+		document.querySelector('#lists-container').innerHTML = '';
+
+		lists.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
+			console.log(entry);
+
+			entryNode.id = entry.id;
+			entryNode.removeClass('stub');
+			entryNode.setAttribute("values", "listid")
+			entryNode.setAttribute("listid", entry.id);
+
+			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
+			entryNode.querySelector('.lists-entry-title').innerText   = entry.name;
+
+			document.querySelector('#lists-container').insertBefore(entryNode, null);
+		});
+
+		document.querySelector('.lists-loading').addClass('hidden');
+	},
+
+	handleInbox: function(inbox, position) {
+		if (!position)
+			document.querySelector('#inbox-container').innerHTML = '';
 
 		inbox.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
@@ -205,8 +226,12 @@ var Toolbar = {
 
 			entryNode.changeClass('unread', !entry.read);
 
-			document.querySelector('#inbox-container').appendChild(entryNode);
+			document.querySelector('#inbox-container').insertBefore(entryNode, position ? document.querySelector('#inbox-container').firstChild : null);
 		});
+
+		if (!inbox.length) {
+			document.querySelector('#inbox-container').setAttribute('infinite-scroll-disabled', null);
+		}
 
 		document.querySelector('.inbox-loading').addClass('hidden');
 	},
@@ -220,7 +245,9 @@ var Toolbar = {
 		if (r && r.state)
 			Toolbar.handleState(r.state);
 		if (r && r.inbox)
-			Toolbar.handleInbox(r.inbox);
+			Toolbar.handleInbox(r.inbox, r.position);
+		if (r && r.lists)
+			Toolbar.handleLists(r.lists);
 		if (r && r.share == true && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
@@ -241,6 +268,7 @@ var Toolbar = {
 			}, resolve);
 		}).then(Toolbar._handleResponse);
 	},
+
 	handleEvent: function(e) {
 		if (Toolbar.mouse.state == 'up') {
 			Toolbar.mouse.state = null;
@@ -253,6 +281,19 @@ var Toolbar = {
 		if (!elem || !elem.getAttribute)
 			return;
 		var action = elem.getAttribute('action');
+		var value = Toolbar.elemToValue(elem);
+		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
+		if(val) {
+			if(typeof val === "object") {
+				// handleImmediateAction is replacing data;
+				value = val;
+			}
+			Toolbar.dispatch(action, value);
+			Toolbar.handleRedraw();
+		}
+	},
+
+	elemToValue: function(elem) {
 		var value  = {value : elem.getAttribute('value')};
 		if (elem.getAttribute('values')) {
 			// decode the values into an object to send to dispatch
@@ -269,15 +310,7 @@ var Toolbar = {
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
 			});
 		}
-		var val = Toolbar.handleImmediateAction(action, value.value || value, elem);
-		if(val) {
-			if(typeof val === "object") {
-				// handleImmediateAction is replacing data;
-				value = val;
-			}
-			Toolbar.dispatch(action, value);
-			Toolbar.handleRedraw();
-		}
+		return value;
 	},
 
 	/**
@@ -302,6 +335,10 @@ var Toolbar = {
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
 			document.querySelector('.inbox-loading').removeClass('hidden');
+		}
+		if (action == 'lists') {
+			document.querySelector(".toolbar-container").toggleClass("lists-expanded");
+			document.querySelector('.lists-loading').removeClass('hidden');
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
@@ -330,6 +367,10 @@ var Toolbar = {
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
 		if (action == 'hide') {
+		}
+		if (action == 'close-convo') {
+			document.querySelector(".toolbar-container").removeClass("convo-expanded");
+			document.querySelector("#convo-reply").value = '';
 		}
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
@@ -411,16 +452,69 @@ var Toolbar = {
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
+
+	handleInfiniteScroll: function(node) {
+		Toolbar.handlingInfiniteScroll = Toolbar.handlingInfiniteScroll || {};
+		if (Toolbar.handlingInfiniteScroll[node.id])
+			return false;
+		Toolbar.handlingInfiniteScroll[node.id] = true;
+
+		switch (node.id) {
+			case 'convo-container':
+				Toolbar.dispatch('load-convo', {
+					value: document.querySelector('#convo-id').value,
+					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
+					type: 'before'
+				})
+				.then(function() {
+					Toolbar.handlingInfiniteScroll[node.id] = false;
+				});
+				break;
+
+			case 'inbox-container':
+				Toolbar.dispatch('inbox', {
+					// @TODO
+					// position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), 0)[0].value,
+					// type: 'before'
+					position: document.querySelectorAll('#inbox-container .inbox-entry').length
+				})
+				.then(function() {
+					Toolbar.handlingInfiniteScroll[node.id] = false;
+				});
+				break;
+
+			default:
+				warning("Can't find infinite scroll handler", node);
+				return false;
+				break;
+		}
+
+		return true;
+	},
+	handleInfiniteScrollThrottled: debounce(function (node) { Toolbar.handleInfiniteScroll(node) }, 250),
+
 	handleMouseWheel: function(e) {
 		if (e.target) {
 			var node = e.target;
 			do {
 				if (node.hasClass('scrollable')) {
-					if (node.scrollTop <= 0 && e.deltaY <= 0 || node.scrollTop + node.offsetHeight >= node.scrollHeight && e.deltaY >= 0) {
+					if (node.hasAttribute('infinite-scroll') && !node.hasAttribute('infinite-scroll-disabled')) {
+						var nearTop = node.scrollTop <= (node.getAttribute('infinite-scroll-offset') || 32);
+						var nearBottom = node.scrollTop + node.offsetHeight >= node.scrollHeight - (node.getAttribute('infinite-scroll-offset') || 32);
+
+						if (((node.getAttribute('infinite-scroll-trigger') || 'bottom') == 'bottom') ? nearBottom : nearTop) {
+							Toolbar.handleInfiniteScrollThrottled(node);
+						}
+					}
+
+					var atTop = node.scrollTop <= 0 && e.deltaY <= 0;
+					var atBottom = node.scrollTop + node.offsetHeight >= node.scrollHeight && e.deltaY >= 0;
+					if (atTop || atBottom) {
 						e.stopPropagation();
 						e.preventDefault();
 						return false;
 					}
+					return true;
 				}
 				node = node.parentNode;
 			} while (node);
@@ -508,6 +602,12 @@ var Toolbar = {
 		document.addEventListener("mousewheel",     Toolbar.handleMouseWheel);
 		document.addEventListener("wheel",          Toolbar.handleMouseWheel);
 		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel);
+
+		// Enter-on-send
+		document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
+			if (e.keyCode == 13 && !e.shiftKey)
+				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+		});
 
 		// Redraw
 		//Toolbar.handleRedraw();

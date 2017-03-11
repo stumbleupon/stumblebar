@@ -72,17 +72,58 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
-	getConversations: function(start, limit) {
+	getPendingUnread: function(scope) {
+		return this.api.get(this.config.endpoint.unread, { scope: scope || 'conversation' })
+			.then(function(info) {
+				if (!info._success)
+					return Promise.reject(info);
+				return info;
+			})
+	},
+
+	getConversations: function(start, limit, type) {
 		return this.getNotifications(start, limit, 'conversation')
 	},
-	getNotifications: function(start, limit, scope) {
-		// https://www.stumbleupon.com/api/v2_0/activities?start=0&limit=25&scope=conversation
-		return this.api.get(this.config.endpoint.activities, { start: start || 0, limit: limit || 25, scope: scope || 'conversation' })
+	getNotifications: function(position, limit, scope, type) {
+		return this.api.get(this.config.endpoint.activities, { [type || 'start']: position || 0, limit: limit || 25, scope: scope || 'conversation' })
 			.then(function(convos) {
 				if (!convos._success)
 					return Promise.reject(convos);
-				return convos.activities.values
-			})
+				return convos.activities.values;
+			});
+	},
+
+	addToList: function(listid, urlid) {
+		return this.api.req(this.config.endpoint.addtolist.form({ listid: listid }), { listId: listid, urlid: urlid })
+			.then(function(item) {
+				if (!item._success)
+					return Promise.reject(item);
+				return item.item;
+			});
+	},
+
+	addList: function(name, description, visibility) {
+		return this.cache.get('user')
+			.then(function(user) {
+				return this.api.req(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, name: name, visibility: visibility || 'private', description: description || '', widgetText: name, widgetDataId: 'attribute miss', '_visible': (visibility || 'private') != 'private' })
+					.then(function(list) {
+						if (!list._success)
+							return Promise.reject(list);
+						return list.list;
+					});
+			}.bind(this));
+	},
+
+	getLists: function(unsorted) {
+		return this.cache.get('user')
+			.then(function(user) {
+				return this.api.get(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, sorted: !unsorted })
+					.then(function(lists) {
+						if (!lists._success)
+							return Promise.reject(lists);
+						return lists.lists.values;
+					});
+			}.bind(this));
 	},
 
 	getConversation: function(id) {
@@ -95,12 +136,13 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.markactivity.form({ id: id, action: 'read' }), { id: id, read: true }, { method: 'PUT' });
 	},
 
-	submit: function(url, nsfw) {
-		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: false })
+	submit: function(url, nsfw, nolike) {
+		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: nsfw || false })
 			.then(function(res) {
 				if (!res || !res._success || !res.discovery.url.publicid)
 					return Promise.reject(res);
-				this.like(res.discovery.url.publicid);
+				if (!nolike)
+					this.like(res.discovery.url.publicid);
 				return res.discovery.url;
 			}.bind(this));
 	},
@@ -127,7 +169,7 @@ StumbleUponApi.prototype = {
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
-			.then(this._syncSharesPending.bind(this))
+			//.then(this._syncSharesPending.bind(this))
 			.then(function(results) {
 				if (!results || !results._success)
 					return Promise.reject(results);
@@ -173,7 +215,7 @@ StumbleUponApi.prototype = {
 				debug("Report stumble", urlids.join(','));
 				return this.api
 					.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
-					.then(this._syncSharesPending.bind(this))
+					//.then(this._syncSharesPending.bind(this))
 					.then(function(res) {
 						if (res._success) {
 							urlids.forEach(function(urlid) { this.seen[urlid].state = 'r'; }.bind(this));
