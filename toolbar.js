@@ -205,7 +205,7 @@ var Toolbar = {
 
 			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
 			entryNode.querySelector('.lists-entry-title').innerText   = entry.name || 'No Title';
-			entryNode.querySelector('.lists-entry-snippet').innerText = entry.description || 'No Description';
+			entryNode.querySelector('.lists-entry-snippet').innerText = '';
 
 			document.querySelector('#lists-container').insertBefore(entryNode, null);
 		});
