@@ -1,5 +1,6 @@
-function StumbleUponApi(config) {
+function StumbleUponApi(config, cache) {
 	this.config = config;
+	this.cache = cache;
 	this.state = {
 		loggedIn: false,
 		accessToken: null,
@@ -7,7 +8,6 @@ function StumbleUponApi(config) {
 	};
 	this.requests = {};
 	this.seen = {};
-	this.cache = new Cache(config.defaults);
 	this.cookie = new Cookie(config);
 	this.api = new Api(config);
 	//this.cookie.get('su_accesstoken')
