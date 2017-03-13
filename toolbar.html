@@ -88,22 +88,26 @@
 							<span class="lists-entry-snippet"></span>
 						</div>
 
+						<div class="lists-entry lists-create-action clickable" action="toggle" value="lists-container,lists-create-action,lists-create-container" style="font-size: 16px;">
+							[+] Create new list
+						</div>
+
 						<span class="lists-container scrollable" id="lists-container">
 						</span>
 
-						<div class="list-response-container">
+						<div class="lists-create-container hidden">
 							<input type="hidden" id="list-id">
 							<input type="text" id="list-name" placeholder="Name">
 							<br>
 							Description<br>
-							<textarea placeholder="Description" id="list-name"></textarea>
+							<textarea placeholder="Description" id="list-description"></textarea>
 							<br>
 							Visibilty
 							<input type="radio" name="list-visibility" value="public" checked> Public
 							<input type="radio" name="list-visibility" value="private"> Private
 							<br>
-							<span class="clickable" action="add-list" id="list-send" values="id=#list-id,comment=#list-name">Create</span>
-							<span class="clickable close-icon float-right" action="close-list"></span>
+							<span class="clickable" action="toggle" id="list-add-cancel" value="lists-create-action,lists-container,lists-create-container">Cancel</span>
+							<span class="clickable" action="add-list" id="list-send" values="name=#list-name,description=#list-description,id=#list-id,comment=#list-name">Create</span>
 						</div>
 					</div>
 
@@ -179,7 +183,7 @@
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-signout  clickable" action="signout">Sign Out</div> 
 						</div>
 						<div class="toolbar-entry-container toolbar-border-top">
-							<div class="toolbar-action action-hide clickable" action="hide">Hide Extension</div> 
+							<div class="toolbar-action action-hide clickable" action="hide-toolbar">Hide Extension</div> 
 						</div>
 					</div>
 

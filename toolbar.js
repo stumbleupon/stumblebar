@@ -55,11 +55,11 @@ var Toolbar = {
 		this.updateShare();
 	},
 
-	handleConvo: function(convo, position) {
+	handleConvo: function(convo) {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
 
-		if (!position)
+		if (!convo.position)
 			document.querySelector('#convo-container').innerHTML = '';
 
 		convo.events.forEach(function(entry) {
@@ -85,7 +85,7 @@ var Toolbar = {
 			entryNode.id = 'conv-' + entry.id;
 
 			if (!entryNode.parentNode) {
-				document.querySelector('#convo-container').insertBefore(entryNode, (position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
+				document.querySelector('#convo-container').insertBefore(entryNode, (convo.position == 'prepend') ? document.querySelector('#convo-container').firstChild : null);
 			}
 
 			Toolbar.state.listenConvoBackoff = 15000;
@@ -95,12 +95,12 @@ var Toolbar = {
 			elem.innerText = reldate(elem.value, 's').text;
 		});
 
-		if (convo.id && !position) {
+		if (convo.id && !convo.position) {
 			document.querySelector('#convo-id').value = convo.id;
 
 			Toolbar.listenConvoHelper();
 		}
-		if (position == 'prepend' && !convo.events.length) {
+		if (convo.position == 'prepend' && !convo.events.length) {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
@@ -159,9 +159,10 @@ var Toolbar = {
 	},
 
 	handleLists: function(lists) {
-		document.querySelector('#lists-container').innerHTML = '';
+		if (!lists.position)
+			document.querySelector('#lists-container').innerHTML = '';
 
-		lists.forEach(function(entry) {
+		lists.entries.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
 			console.log(entry);
 
@@ -171,7 +172,8 @@ var Toolbar = {
 			entryNode.setAttribute("listid", entry.id);
 
 			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
-			entryNode.querySelector('.lists-entry-title').innerText   = entry.name;
+			entryNode.querySelector('.lists-entry-title').innerText   = entry.name || 'No Title';
+			entryNode.querySelector('.lists-entry-snippet').innerText = entry.description || 'No Description';
 
 			document.querySelector('#lists-container').insertBefore(entryNode, null);
 		});
@@ -179,11 +181,11 @@ var Toolbar = {
 		document.querySelector('.lists-loading').addClass('hidden');
 	},
 
-	handleInbox: function(inbox, position) {
-		if (!position)
+	handleInbox: function(inbox) {
+		if (inbox.position)
 			document.querySelector('#inbox-container').innerHTML = '';
 
-		inbox.forEach(function(entry) {
+		inbox.messages.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
 
 			entryNode.setAttribute('convourl', entry.conversationDetails.originator.conversationUrl);
@@ -206,18 +208,40 @@ var Toolbar = {
 
 			entryNode.changeClass('unread', !entry.read);
 
-			document.querySelector('#inbox-container').insertBefore(entryNode, position ? document.querySelector('#inbox-container').firstChild : null);
+			document.querySelector('#inbox-container').insertBefore(entryNode, inbox.position ? document.querySelector('#inbox-container').firstChild : null);
 		});
 
-		if (!inbox.length) {
+		if (!inbox.messages.length) {
 			document.querySelector('#inbox-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
 		document.querySelector('.inbox-loading').addClass('hidden');
 	},
 
+	handleComment: function(comment) {
+		Toolbar.handleComment({ events:[ comment ], position: 'append' });
+	},
+
+	handleList: function(list) {
+		Toolbar.handleList({ lists: [ r.list ], position: 'append' });
+	},
+
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
+		Object.keys(r || {}).forEach(function(key) {
+			if (['all', 'data'].includes(key))
+				return;
+			method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
+			try {
+				if (Toolbar[method])
+					Toolbar[method](r[key]);
+				else
+					console.log("No handler found", method, r[key]);
+			} catch(e) {
+				console.log("Exception caught in _handleResponse", method, r[key], e);
+			}
+		});
+		/*
 		if (r && r.config)
 			Toolbar.handleConfig(r.config);
 		if (r && r.url)
@@ -228,12 +252,15 @@ var Toolbar = {
 			Toolbar.handleInbox(r.inbox, r.position);
 		if (r && r.lists)
 			Toolbar.handleLists(r.lists);
+		if (r && r.list)
+			Toolbar.handleList({ lists: [ r.list ] }, 'append');
 		if (r && r.contacts)
 			Toolbar.handleContacts(r.contacts);
 		if (r && r.convo)
 			Toolbar.handleConvo(r.convo, r.position);
 		if (r && r.comment)
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
+		*/
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -346,7 +373,13 @@ var Toolbar = {
 			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-settings-container").toggleClass("hidden");
 		}
-		if (action == 'hide') {
+		if (action == 'add-list') {
+			Toolbar.handleImmediateAction('toggle', document.querySelector("#list-add-cancel").getAttribute('value'));
+		}
+		if (action == 'toggle') {
+			value.split(',').forEach(function(name) {
+				Array.prototype.slice.call(document.querySelectorAll("." + name)).forEach(function(elem) { elem.toggleClass('hidden'); });
+			});
 		}
 		if (action == 'close-convo') {
 			document.querySelector(".toolbar-container").removeClass("convo-expanded");
@@ -585,6 +618,7 @@ var Toolbar = {
 
 		// Enter-on-send
 		document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
+			console.log(e);
 			if (e.keyCode == 13 && !e.shiftKey)
 				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
 		});

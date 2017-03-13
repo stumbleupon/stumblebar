@@ -232,7 +232,7 @@ Page.urlChange = function(href, tabid) {
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
 					chrome.tabs.update(tabid, { url: url.url });
-					ToolbarEvent.unhide();
+					ToolbarEvent.unhideToolbar();
 
 					return ToolbarEvent._buildResponse({ url: url, hidden: false })
 				})
