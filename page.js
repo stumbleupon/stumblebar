@@ -1,13 +1,31 @@
+/**
+ * Handlers for page-related and tab-related functionality
+ */
 function Page() {
 }
 
-Page.tab = [];
+
+/**
+ * The current su state
+ */
 Page.state = [];
 
-Page.handleEvent = function(e) {
-	console.log('event', e);
+/**
+ * Get the last known state of the provided tab
+ *
+ * @param {Number} tabid Tab ID
+ * @return {Object} current state of tabid
+ */
+Page.lastState = function(tabid) {
+	return Page.state[tabid] || {};
 }
 
+
+/**
+ * Preload helper, takes an SU url object (usually the next stumble) and preloads that page
+ *
+ * @param {SuUrl} url SuUrl object to attempt to preload
+ */
 Page.preload = function(url) {
 	Page._prerender.href  = url.url;
 	Page._prefetch.href   = url.url;
@@ -16,11 +34,13 @@ Page.preload = function(url) {
 }
 
 
+/**
+ * Browser icon click handler.  Pings the current tab to see if it has rendered.
+ * If it has, it toggles hidden.  If it hasn't, it attempts to stumble.
+ *
+ * @param {event} e window.event object
+ */
 Page.handleIconClick = function(e) {
-	//chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-	//	chrome.tabs.sendMessage(tabs[0].id, , function() {});
-	//});
-	console.log(e);
 	Page.ping()
 		.then(function(res) {
 			return ToolbarEvent.handleRequest(
@@ -39,6 +59,12 @@ Page.handleIconClick = function(e) {
 		});
 }
 
+/**
+ * Pings a tabid
+ *
+ * @param {Number} tabid Tab ID to ping
+ * @return {Promise}
+ */
 Page.ping = function(tabid) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -55,15 +81,38 @@ Page.ping = function(tabid) {
 	});
 }
 
-Page.lastState = function(tabid) {
-	return Page.state[tabid] || {};
-}
+/**
+ * The current tab info
+ */
+Page.tab = [];
+
+/**
+ * Get the last url seen by the provided tab id
+ *
+ * @param {Number} tabid Tab ID
+ * @return {SuUrl}
+ */
 Page.lastUrl = function(tabid) {
 	return Page.tab[tabid] && Page.tab[tabid].url;
 }
+
+/**
+ * Get the last urlid seen by the provided tab id
+ *
+ * @param {Number} tabid Tab ID
+ * @return {SuUrl}
+ */
 Page.getUrlId = function(tabid) {
 	return Page.tab[tabid] && Page.tab[tabid].url && Page.tab[tabid].url.urlid;
 }
+
+
+/**
+ * Get the last urlid seen by the provided tab id
+ *
+ * @param {Number} tabid Tab ID
+ * @return {SuUrl}
+ */
 Page.getUrl = function(tabid) {
 	return new Promise(function (resolve, reject) {
 		var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
