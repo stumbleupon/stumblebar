@@ -1,5 +1,6 @@
-function StumbleUponApi(config) {
+function StumbleUponApi(config, cache) {
 	this.config = config;
+	this.cache = cache;
 	this.state = {
 		loggedIn: false,
 		accessToken: null,
@@ -7,7 +8,6 @@ function StumbleUponApi(config) {
 	};
 	this.requests = {};
 	this.seen = {};
-	this.cache = new Cache(config.defaults);
 	this.cookie = new Cookie(config);
 	this.api = new Api(config);
 	//this.cookie.get('su_accesstoken')
@@ -325,7 +325,6 @@ StumbleUponApi.prototype = {
 	_syncSharesPending: function(res) {
 		if (res && res.shares_pending) {
 			this.cache.mset({ numShares: res.shares_pending });
-			this.config.numShares = res.shares_pending
 		}
 		return res;
 	},

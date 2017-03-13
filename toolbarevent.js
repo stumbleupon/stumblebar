@@ -2,7 +2,6 @@
  * @class A class used to manage messaging to and from the background
  */
 ToolbarEvent = {};
-ToolbarEvent.api = new StumbleUponApi(config);
 
 /**
  * @typedef {Object} chrome.runtime.MessageSender
@@ -123,7 +122,7 @@ ToolbarEvent.discover = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.mode = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
+	ToolbarEvent.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
 	ToolbarEvent.stumble(request, sender);
 	return ToolbarEvent._buildResponse({}, true);
 }
@@ -138,7 +137,7 @@ ToolbarEvent.mode = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.theme = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
+	ToolbarEvent.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -152,7 +151,7 @@ ToolbarEvent.theme = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.toggleHidden = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ hidden: config.hidden = !config.hidden });
+	ToolbarEvent.cache.mset({ hidden: config.hidden = !config.hidden });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -166,7 +165,7 @@ ToolbarEvent.toggleHidden = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.unhide = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ hidden: config.hidden = false });
+	ToolbarEvent.cache.mset({ hidden: config.hidden = false });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -180,7 +179,7 @@ ToolbarEvent.unhide = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.hide = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ hidden: config.hidden = true });
+	ToolbarEvent.cache.mset({ hidden: config.hidden = true });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -195,7 +194,7 @@ ToolbarEvent.hide = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.repos = function(request, sender) {
-	ToolbarEvent.api.cache.mset({ rpos: config.rpos = request.data.rpos });
+	ToolbarEvent.cache.mset({ rpos: config.rpos = request.data.rpos });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -376,6 +375,7 @@ ToolbarEvent.lists = function(request, sender) {
 	return ToolbarEvent
 		.api.getLists()
 		.then(function(lists) {
+			console.log(lists);
 			return ToolbarEvent._buildResponse({ lists: lists });
 		})
 		.catch(ToolbarEvent._error);
@@ -393,7 +393,7 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations(request.data.position, request.data.limit, request.data.type)
 		.then(function(inbox) {
-			return ToolbarEvent.api.cache.get('authed')
+			return ToolbarEvent.cache.get('authed')
 				.then(function(userid) {
 					return ToolbarEvent._buildResponse({ inbox: inbox, position: request.data.position, type: request.data.type });
 				});
@@ -413,7 +413,7 @@ ToolbarEvent.inbox = function(request, sender) {
  */
 ToolbarEvent.stumble = function(request, sender) {
 	ToolbarEvent.api.getPendingUnread().then(function(info) {
-		ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+		ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
 		return ToolbarEvent._buildResponse({ }, true);
 	});
 	return ToolbarEvent.api
@@ -504,7 +504,7 @@ ToolbarEvent.openConvo = function(request, sender) {
 		ToolbarEvent.api.markActivityAsRead(request.data.actionid)
 			.then(function() {
 				ToolbarEvent.api.getPendingUnread().then(function(info) {
-					ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+					ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
 					return ToolbarEvent._buildResponse({ }, true);
 				});
 			});
@@ -615,7 +615,7 @@ ToolbarEvent.loginPage = function(request, sender) {
  */
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
-	ToolbarEvent.api.cache.mset({ authed: config.authed = false });
+	ToolbarEvent.cache.mset({ authed: config.authed = false });
 	return ToolbarEvent._buildResponse({}, true);
 }
 
@@ -631,7 +631,7 @@ ToolbarEvent.ping = function() {
 		.then(ToolbarEvent.api.getUser.bind(ToolbarEvent.api))
 		.then(function(user) {
 			debug('Login success for user', user.username);
-			ToolbarEvent.api.cache.mset({ authed: config.authed = user.userid });
+			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
@@ -666,18 +666,18 @@ ToolbarEvent._buildResponse = function(change, all) {
 
 
 /**
- * Attempts to fetch the user from the cache.  If the user isn't found, then we ping
+ * Attempts to fetch the user from the ToolbarEvent.cache.  If the user isn't found, then we ping
  *
  * @returns {Promise}
  */
 ToolbarEvent._sanity = function() {
-	return ToolbarEvent.api.cache.get('user')
+	return ToolbarEvent.cache.get('user')
 		.then(function(user) {
-			ToolbarEvent.api.cache.mset({ authed: config.authed = !!user.userid });
+			ToolbarEvent.cache.mset({ authed: config.authed = !!user.userid });
 			if (!user.userid)
 				return ToolbarEvent.ping();
 			ToolbarEvent.api.getPendingUnread().then(function(info) {
-				ToolbarEvent.api.cache.mset({ numShares: config.numShares = info.unread });
+				ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
 				return ToolbarEvent._buildResponse({ }, true);
 			});
 			return user;
@@ -688,14 +688,19 @@ ToolbarEvent._sanity = function() {
  * Initializes the toolbar background state
  */
 ToolbarEvent._init = function() {
-	ToolbarEvent.api.cache.mget(config.persist)
+	ToolbarEvent.cache = new Cache(config.defaults);
+
+	ToolbarEvent.api = new StumbleUponApi(config.api.stumbleupon, ToolbarEvent.cache);
+	ToolbarEvent.api._flush();
+
+	ToolbarEvent.cache.mget(config.persist)
 		 .then(function (map) {
 			 Object.assign(config, map);
 		 });
 
-	ToolbarEvent.ping();
-
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
+
+	ToolbarEvent.ping();
 }
 
 
@@ -714,5 +719,4 @@ ToolbarEvent._error = function(e) {
 
 
 ToolbarEvent._init();
-ToolbarEvent.api._flush();
 
