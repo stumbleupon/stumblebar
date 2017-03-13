@@ -41,10 +41,6 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	}
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
-			if(typeof response === "object") {
-				response.requestedAction = requestedAction;
-				response.appliedAction = action;
-			}
 			console.log("ToolbarEvent.sendResponse", request, response);
 			sendResponse(response);
 		});
@@ -59,7 +55,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 ToolbarEvent.share = function handleShare(request, sender) {
 	return Promise.resolve(ToolbarEvent.api.getContacts())
 		.then(function(contacts) {
-			return ToolbarEvent._buildResponse({ contacts:  contacts, share: true}, false);
+			return ToolbarEvent._buildResponse({share: { contacts: contacts}}, false);
 		});
 }
 
@@ -72,7 +68,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 	return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
 		.then(function(convo) {
 			Page.state[sender.tab.id] = { convo: convo.id };
-			return ToolbarEvent._buildResponse({ convo:  convo}, false);
+			return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
 		});
 }
 
@@ -89,7 +85,7 @@ ToolbarEvent.convoAddRecipient = function(request, sender) {
 ToolbarEvent.convoShowContacts = function(request, sender) {
 	return Promise.resolve(ToolbarEvent.api.getContacts())
 		.then(function(contacts) {
-			return ToolbarEvent._buildResponse({ contacts:  contacts, convo: true}, false);
+			return ToolbarEvent._buildResponse({convoContacts: { contacts:  contacts}}, false);
 		});
 }
 

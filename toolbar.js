@@ -50,9 +50,14 @@ var Toolbar = {
 		}
 	},
 
-	handleContacts: function(contacts) {
-		this.shareContactList = new ContactList(contacts.values);
+	handleShare: function(shareResponse) {
+		this.shareContactList = new ContactList(shareResponse.contacts.values);
 		this.updateShare();
+	},
+
+	handleNewConvo: function(newConvo) {
+		var convo = newConvo.convo;
+		return this.handleConvo(convo);
 	},
 
 	handleConvo: function(convo) {
@@ -130,9 +135,9 @@ var Toolbar = {
 		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {isParticipant: false});
 	},
 
-	handleConvoContacts: function(contacts) {
+	handleConvoContacts: function(convoContacts) {
 		this.convoContactList = this.convoContactList || new ContactList();
-		this.convoContactList.addMultiple(contacts.values);
+		this.convoContactList.addMultiple(convoContacts.contacts.values);
 		this.updateConvoParticipants();
 	},
 
@@ -258,7 +263,7 @@ var Toolbar = {
 		Object.keys(r || {}).forEach(function(key) {
 			if (['all', 'data'].includes(key))
 				return;
-			method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
+			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
 				if (Toolbar[method])
 					Toolbar[method](r[key]);
