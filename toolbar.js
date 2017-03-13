@@ -223,7 +223,7 @@ var Toolbar = {
 	},
 
 	handleList: function(list) {
-		Toolbar.handleList({ lists: [ r.list ], position: 'append' });
+		Toolbar.handleLists({ lists: [ r.list ], position: 'append' });
 	},
 
 	_handleResponse: function(r) {
