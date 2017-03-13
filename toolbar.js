@@ -214,7 +214,7 @@ var Toolbar = {
 	},
 
 	handleInbox: function(inbox) {
-		if (inbox.position)
+		if (!inbox.position)
 			document.querySelector('#inbox-container').innerHTML = '';
 
 		inbox.messages.forEach(function(entry) {
