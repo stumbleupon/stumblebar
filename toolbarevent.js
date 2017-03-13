@@ -453,11 +453,10 @@ ToolbarEvent.closeConvo = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.loadConvo = function(request, sender) {
-	console.log(request);
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: request.data.since ? 'append' : null })});
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: request.data.stamp ? 'append' : null })});
 		});
 }
 
