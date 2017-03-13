@@ -240,7 +240,7 @@ var Toolbar = {
 
 			entryNode.changeClass('unread', !entry.read);
 
-			document.querySelector('#inbox-container').insertBefore(entryNode, inbox.position ? document.querySelector('#inbox-container').firstChild : null);
+			document.querySelector('#inbox-container').insertBefore(entryNode, (inbox.position == 'prepend') ? document.querySelector('#inbox-container').firstChild : null);
 		});
 
 		if (!inbox.messages.length) {
@@ -529,6 +529,7 @@ var Toolbar = {
 
 		switch (node.id) {
 			case 'convo-container':
+				document.querySelector('.convo-loading').removeClass('hidden');
 				Toolbar.dispatch('load-convo', {
 					value: document.querySelector('#convo-id').value,
 					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
@@ -540,6 +541,7 @@ var Toolbar = {
 				break;
 
 			case 'inbox-container':
+				document.querySelector('.inbox-loading').removeClass('hidden');
 				Toolbar.dispatch('inbox', {
 					// @TODO
 					// position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), 0)[0].value,
@@ -556,6 +558,7 @@ var Toolbar = {
 				return false;
 				break;
 		}
+		Toolbar.handleRedraw();
 
 		return true;
 	},
