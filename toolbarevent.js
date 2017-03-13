@@ -673,7 +673,7 @@ ToolbarEvent._init = function() {
 
 	ToolbarEvent.cache = new Cache(config.defaults);
 
-	ToolbarEvent.api = new StumbleUponApi(config, ToolbarEvent.cache);
+	ToolbarEvent.api = new StumbleUponApi(config.api.stumbleupon, ToolbarEvent.cache);
 	ToolbarEvent.api._flush();
 }
 

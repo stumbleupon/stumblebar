@@ -10,41 +10,12 @@ var config = {
 //  }
 }
 config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
-config.baseUrl = 'www.stumbleupon.com'
-config.baseProto = 'https'
-config.apiPath = '/api/v2_0'
 
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
 config.convoPath = '/convo/([^/]+)(/([^/]+))?';
 config.convoPathNames = { path: 0, convoid: 1, stateId: 3 }
 
-config.accessToken = 'su_accesstoken'
-config.accessTokenHeader = 'X-Su-AccessTokenKey';
-config.defaultHeaders = { 
-    "X-Su-ConsumerKey":    "35774027dc2f2f64a280e63eafb018505c045655",
-    "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
-    "X-Su-Version"    :    "StumbleBar " + chrome.runtime.getManifest().version,
-};
-config.post = {
-	stumble: {
-		guesses: 10,
-		prefill_ad_hole: true,
-		userid: 0,
-		local_buffer_item_count: 0,
-		guess_only: 1
-	},
-	seen: {
-		guesses: 0,
-		prefill_ad_hole: true,
-		userid: 0,
-		local_buffer_item_count: 0,
-		guess_only: 1,
-		guess_urlids: []
-	},
-}
-config.maxRetries = 3;
-config.refillPos = 3;
 config.miniModeTimeout = 500;
 config.suPages = {
 	profile:   ':baseProto://:baseUrl/stumbler',
@@ -52,22 +23,6 @@ config.suPages = {
 	sponsored: ':baseProto://:baseUrl/sponsored-page',
 	signout:   ':baseProto://:baseUrl/logout',
 	signin:    ':baseProto://:baseUrl/login',
-}
-config.endpoint = {
-  ping:        '/p',
-  user:        '/user/?version=2',
-  stumble:     '/stumble/:mode',
-  rate:        '/discovery/rating',
-  unrate:      '/discovery/:urlid/rating',
-  url:         '/url',
-  activities:  '/activities',
-  contacts:    '/connection/:userid/mutual',
-  markactivity:'/activities/:id/:action',
-  submit:      '/submit',
-  classify:    '/classification/:urlid/doClassification',
-  unread:      '/activities/snapshot',
-  lists:       '/user/:userid/lists',
-  addtolist:   '/list/:listid/items',
 }
 config.url = {
   info:    '/content/:urlid',
@@ -79,14 +34,18 @@ config.modes = {
 	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
 }
-config.defaults = {
-	mode: 'all',
-	theme: '',
-	user: 0,
-	stumble: { list: [], pos: -1, mode: 'all' },
-}
 
-config.conversationsAPI = {
+
+config.accessToken = 'su_accesstoken'
+config.accessTokenHeader = 'X-Su-AccessTokenKey';
+config.defaultHeaders = { 
+    "X-Su-ConsumerKey":    "35774027dc2f2f64a280e63eafb018505c045655",
+    "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
+    "X-Su-Version"    :    "StumbleBar " + chrome.runtime.getManifest().version,
+};
+
+config.api = {}
+config.api.conversations = {
 	baseUrl:  'svc.stumbleupon.com',
 	baseProto:'https',
 	apiPath:  '/convo',
@@ -99,6 +58,55 @@ config.conversationsAPI = {
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: {}
+	accessToken: config.accessToken,
+	accessTokenHeader: config.accessTokenHeader,
+}
+config.api.stumbleupon = {
+	baseUrl:  'www.stumbleupon.com',
+	baseProto:'https',
+	apiPath:  '/api/v2_0',
+	endpoint: {
+		ping:        '/p',
+		user:        '/user/?version=2',
+		stumble:     '/stumble/:mode',
+		rate:        '/discovery/rating',
+		unrate:      '/discovery/:urlid/rating',
+		url:         '/url',
+		activities:  '/activities',
+		contacts:    '/connection/:userid/mutual',
+		markactivity:'/activities/:id/:action',
+		submit:      '/submit',
+		classify:    '/classification/:urlid/doClassification',
+		unread:      '/activities/snapshot',
+		lists:       '/user/:userid/lists',
+		addtolist:   '/list/:listid/items',
+	},
+	defaultHeaders: config.defaultHeaders,
+	defaults: {
+		mode: 'all',
+		theme: '',
+		user: 0,
+		stumble: { list: [], pos: -1, mode: 'all' },
+	}
+	post: {
+		stumble: {
+			guesses: 10,
+			prefill_ad_hole: true,
+			userid: 0,
+			local_buffer_item_count: 0,
+			guess_only: 1
+		},
+		seen: {
+			guesses: 0,
+			prefill_ad_hole: true,
+			userid: 0,
+			local_buffer_item_count: 0,
+			guess_only: 1,
+			guess_urlids: []
+		},
+	},
+	maxRetries: 3,
+	refillPos: 3
 }
 
 
