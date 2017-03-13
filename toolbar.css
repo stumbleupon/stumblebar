@@ -184,7 +184,7 @@ button.pill.delete:before {
 	left: 0;
 	margin: 8px;
 }
-.toolbar-action-container .action-lists {
+.toolbar-action-container .action-lists, .lists-icon {
 	background-image: url("asset/Icon/List.svg");
 }
 .toolbar-action-container .action-inbox {
@@ -746,6 +746,52 @@ button.pill.delete:before {
 	background-size: cover;
 	margin-right: 8px;
 	float: left;
+}
+
+.lists-entry {
+	border-bottom: 1px solid #888;
+}
+
+.lists-entry.unread {
+	background-color: blue;
+}
+
+.lists-container SPAN {
+	margin: 4px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.lists-container .lists-entry-date {
+	float: right;
+	display: none;
+}
+
+.lists-container .lists-entry-title {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.lists-container .lists-entry-snippet {
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 1em;
+	font-style: italic;
+}
+
+.lists-container .lists-entry-image {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-size: cover;
+	margin-right: 8px;
+	float: left;
+}
+
+.lists-container .list-create-action .lists-icon {
+	width: 16px;
+	height: 16px;
 }
 
 .convo-container {

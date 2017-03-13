@@ -164,7 +164,7 @@ ToolbarEvent.toggleHidden = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
-ToolbarEvent.unhide = function(request, sender) {
+ToolbarEvent.unhideToolbar = function(request, sender) {
 	ToolbarEvent.cache.mset({ hidden: config.hidden = false });
 	return ToolbarEvent._buildResponse({}, true);
 }
@@ -178,7 +178,7 @@ ToolbarEvent.unhide = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
-ToolbarEvent.hide = function(request, sender) {
+ToolbarEvent.hideToolbar = function(request, sender) {
 	ToolbarEvent.cache.mset({ hidden: config.hidden = true });
 	return ToolbarEvent._buildResponse({}, true);
 }
@@ -358,7 +358,7 @@ ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
 		.api.addList(request.data.name, request.data.description, request.data.visibility)
 		.then(function(list) {
-			return ToolbarEvent.addToList({ data: { list: list } })
+			return ToolbarEvent.addToList({ data: { list: list } }, sender)
 		})
 		.catch(ToolbarEvent._error);
 }
@@ -375,8 +375,7 @@ ToolbarEvent.lists = function(request, sender) {
 	return ToolbarEvent
 		.api.getLists()
 		.then(function(lists) {
-			console.log(lists);
-			return ToolbarEvent._buildResponse({ lists: lists });
+			return ToolbarEvent._buildResponse({ lists: { entries: lists } });
 		})
 		.catch(ToolbarEvent._error);
 }
@@ -395,7 +394,7 @@ ToolbarEvent.inbox = function(request, sender) {
 		.then(function(inbox) {
 			return ToolbarEvent.cache.get('authed')
 				.then(function(userid) {
-					return ToolbarEvent._buildResponse({ inbox: inbox, position: request.data.position, type: request.data.type });
+					return ToolbarEvent._buildResponse({inbox: { messages: inbox, position: request.data.position, type: request.data.type }});
 				});
 		})
 		.catch(ToolbarEvent._error);
@@ -484,7 +483,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({ convo: convo, position: request.data.since ? 'append' : null });
+			return ToolbarEvent._buildResponse(Object.assign({}, convo, {position: request.data.since ? 'append' : null }));
 		});
 }
 

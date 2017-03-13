@@ -126,29 +126,65 @@ Page.getUrl = function(tabid) {
 		});
 	});
 }
+
+
+/**
+ * A cache of fetched SuUrls
+ */
+Page.urlCache = [];
+
+
+/**
+ * Get a SuUrl from the urlCache
+ *
+ * @param {String} href The url to fetch from the cache
+ * @return {Object}
+ */
 Page.getUrlByHref = function(href) {
 	return Page.urlCache[href];
 }
+
+/**
+ * Get a SuUrl by urlid from the urlCache.  Note that this may return an
+ * url that was generated in another mode and has that mode's metadata.
+ *
+ * @param {String} urlid The public url id
+ * @param {String} mode The mode
+ * @return {SuUrl}
+ */
 Page.getUrlByUrlid = function(urlid, mode) {
 	return Page.urlCache[mode + ':' + urlid] || Page.urlCache[urlid];
 }
 
-Page.urlCache = [];
-
-Page.dirty = function() {
-	Page.urlCache = [];
-}
-
+/**
+ * Cleans up url cache by trimming the cache down to 1000 urls
+ */
 Page.cleanupUrlCache = function() {
-	if (Page.urlCache.length >= 1e3) {
-		var oldUrl = Page.urlCache.splice(0, 1);
-		delete Page.urlCache[oldUrl.urlid];
-		delete Page.urlCache[oldUrl.mode + ':' + oldUrl.urlid];
-		delete Page.urlCache[oldUrl.url];
-		delete Page.urlCache[oldUrl.finalUrl];
+	while (Page.urlCache.length >= 1e3) {
+		Page.removeUrlFromUrlCache(Page.urlCache.splice(0, 1));
 	}
 }
 
+/**
+ * Removes a SuUrl from the url cache
+ */
+Page.removeUrlFromUrlCache = function(url) {
+	if (!url)
+		return;
+	delete Page.urlCache[url.urlid];
+	delete Page.urlCache[url.mode + ':' + url.urlid];
+	delete Page.urlCache[url.url];
+	delete Page.urlCache[url.finalUrl];
+}
+
+
+/**
+ * Note the current SuUrl loaded by the current tabid.  Adds url to the url cache, performs cleanup.
+ *
+ * @param {Number} tabid Tab ID
+ * @param {SuUrl} url An SuUrl object
+ * @return {SuUrl}
+ */
 Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
@@ -173,7 +209,15 @@ Page.note = function(tabid, url) {
 	return Page.tab[tabid].url = url;
 }
 
+/**
+ * Handle URL changes triggered by tab or stumble events
+ *
+ * @param {String} href The new uri
+ * @param {Number} tabid Tab ID
+ * @return {Promise}
+ */
 Page.urlChange = function(href, tabid) {
+	// Handle http://su/su/{urlid} urls.  Stop the request, redirect directly to page, return a promise
 	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
 	if (webtbPath) {
 		ToolbarEvent._sanity();
@@ -188,7 +232,7 @@ Page.urlChange = function(href, tabid) {
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
 					chrome.tabs.update(tabid, { url: url.url });
-					ToolbarEvent.unhide();
+					ToolbarEvent.unhideToolbar();
 
 					return ToolbarEvent._buildResponse({ url: url, hidden: false })
 				})
@@ -197,18 +241,23 @@ Page.urlChange = function(href, tabid) {
 		}
 	}
 
+	// If we're hitting http://su/..., revalidate our auth
 	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/'));
 	if (suPath && !config.authed) {
 		ToolbarEvent._sanity();
 		debug('SUPATH SANITY CHECK');
 	}
 
+	// If we're hitting http://su/convo/..., set the conversation id on the page state
 	convoPath = href.match(new RegExp("https?://" + config.baseUrl + config.convoPath));
 	if (convoPath) {
 		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
 		console.log('CONVO ON ' + tabid);
 	}
 
+
+	// Attempted to pull the current url from the page cache or SU api.  If we can,
+	// report it to the toolbar in the current tab
 	return Promise
 		.resolve(Page.getUrlByHref(href))
 		.then(function(url) {
@@ -218,20 +267,22 @@ Page.urlChange = function(href, tabid) {
 			return url || ToolbarEvent.api.getUrlByHref(href);
 		})
 		.then(function(url) {
-			//console.log(url);
 			Page.note(tabid, url);
 			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
-			//debug('Notify Url Change', tabid, url);
-			//if (url.urlid)
-			//	ToolbarEvent.api.reportStumble([url.urlid]);
 		})
 		.catch(function(error) {
-			//Page.note(tabid, { url: href });
 			chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
 }
 
+/**
+ * Handle tab loading and complete messages
+ *
+ * @param {Number} tabid Tab ID
+ * @param {Object} info Tab info object
+ * @param {Object} tab The new state of the tab
+ */
 Page.handleTabUpdate = function(tabid, info, tab) {
 //	console.log('update', tabid, info, tab);
 	Page.ping();
@@ -254,17 +305,31 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 	}
 }
 
+/**
+ * Does nothing, but in the future can be used to unload the stumblebar
+ * from contexts to save memory
+ */
 Page.handleTabSwitch = function(e) {
 	//console.log('switch', e);
 }
 
+/**
+ * Clean up tab states and caches on tab close
+ *
+ * @param {Number} tabid Tab ID
+ */
 Page.handleTabClose = function(tabid) {
 	if (Page.state[tabid])
 		delete Page.state[tabid];
-	if (Page.tab[tabid])
+	if (Page.tab[tabid]) {
+		Page.removeUrlFromUrlCache(Page.lastUrl(tabid));
 		delete Page.tab[tabid];
+	}
 }
 
+/**
+ * Initialize page handlers
+ */
 Page.init = function() {
 	// listen to tab URL changes
 	chrome.tabs.onUpdated.addListener(Page.handleTabUpdate);
