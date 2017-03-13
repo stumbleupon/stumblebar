@@ -111,7 +111,7 @@ config.api.stumbleupon = {
 	},
 	maxRetries: 3,
 	refillPos: 3,
-	conversationAPI: config.api.conversations,
+	conversationsAPI: config.api.conversations,
 	accessToken: config.accessToken,
 	accessTokenHeader: config.accessTokenHeader,
 }
