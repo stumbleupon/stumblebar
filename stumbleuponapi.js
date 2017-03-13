@@ -319,7 +319,6 @@ StumbleUponApi.prototype = {
 	_syncSharesPending: function(res) {
 		if (res && res.shares_pending) {
 			this.cache.mset({ numShares: res.shares_pending });
-			this.config.numShares = res.shares_pending
 		}
 		return res;
 	},

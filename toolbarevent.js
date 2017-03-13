@@ -662,19 +662,19 @@ ToolbarEvent._sanity = function() {
  * Initializes the toolbar background state
  */
 ToolbarEvent._init = function() {
+	ToolbarEvent.cache = new Cache(config.defaults);
+
+	ToolbarEvent.api = new StumbleUponApi(config.api.stumbleupon, ToolbarEvent.cache);
+	ToolbarEvent.api._flush();
+
 	ToolbarEvent.cache.mget(config.persist)
 		 .then(function (map) {
 			 Object.assign(config, map);
 		 });
 
-	ToolbarEvent.ping();
-
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 
-	ToolbarEvent.cache = new Cache(config.defaults);
-
-	ToolbarEvent.api = new StumbleUponApi(config.api.stumbleupon, ToolbarEvent.cache);
-	ToolbarEvent.api._flush();
+	ToolbarEvent.ping();
 }
 
 
