@@ -25,5 +25,12 @@ Conversation.prototype = {
 	 */
 	save: function(shareData) {
 		return this.api.req(this.config.endpoint.share, shareData, { method: 'POST' });
+	},
+
+	addRecipient: function(convoRecipientData) {
+		return this.api.raw(
+			this.config.endpoint.addRecipient.form({ id: this.id }),
+			convoRecipientData
+		);
 	}
 }

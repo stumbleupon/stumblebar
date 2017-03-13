@@ -62,6 +62,12 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
+	convoAddRecipient: function(convoRecipientData) {
+		var convo = new Conversation(this.config.conversationsAPI, convoRecipientData.conversationId);
+		convo.api.addHeaders(this.api.getHeaders());
+		return convo.addRecipient(convoRecipientData);
+	},
+
 	getUrlByUrlid: function(urlid) {
 		return this.api.get(this.config.endpoint.url, { urlid: urlid })
 			.then(function (result) { return result.url; });

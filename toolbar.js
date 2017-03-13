@@ -50,9 +50,14 @@ var Toolbar = {
 		}
 	},
 
-	handleContacts: function(contacts) {
-		this.shareContactList = this.shareContactList || new ContactList(contacts.values);
+	handleShare: function(shareResponse) {
+		this.shareContactList = new ContactList(shareResponse.contacts.values);
 		this.updateShare();
+	},
+
+	handleNewConvo: function(newConvo) {
+		var convo = newConvo.convo;
+		return this.handleConvo(convo);
 	},
 
 	handleConvo: function(convo) {
@@ -104,9 +109,36 @@ var Toolbar = {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
+		var participants = convo.participants.filter(function(participant) {
+			return participant.suUserId != Toolbar.config.authed;
+		}).map(function(participant) {
+			return {
+				isParticipant: true,
+				userid: participant.suUserId,
+				username: participant.suUserName,
+				name: participant.name
+			};
+		});
+		this.convoContactList = this.convoContactList || new ContactList();
+		this.convoContactList.addMultiple(participants);
+		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
 		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+	},
+	updateConvoParticipants: function updateConvoParticipants() {
+		var attributeMap = [
+			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+		];
+		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', {isParticipant: true});
+		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {isParticipant: false});
+	},
+
+	handleConvoContacts: function(convoContacts) {
+		this.convoContactList = this.convoContactList || new ContactList();
+		this.convoContactList.addMultiple(convoContacts.contacts.values);
+		this.updateConvoParticipants();
 	},
 
 	listenConvoHelper: function() {
@@ -231,7 +263,7 @@ var Toolbar = {
 		Object.keys(r || {}).forEach(function(key) {
 			if (['all', 'data', 'event'].includes(key))
 				return;
-			method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
+			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
 				if (Toolbar[method])
 					Toolbar[method](r[key]);
@@ -252,14 +284,16 @@ var Toolbar = {
 			Toolbar.handleInbox(r.inbox, r.position);
 		if (r && r.lists)
 			Toolbar.handleLists(r.lists);
+		if (r && r.share == true && r.contacts)
+		 Toolbar.handleContacts(r.contacts);
 		if (r && r.list)
 			Toolbar.handleList({ lists: [ r.list ] }, 'append');
-		if (r && r.contacts)
-			Toolbar.handleContacts(r.contacts);
-		if (r && r.convo)
+		if (r && r.convo && r.requestedAction !== 'convo-show-contacts')
 			Toolbar.handleConvo(r.convo, r.position);
 		if (r && r.comment)
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
+        if (r && r.contacts && r.requestedAction === 'convo-show-contacts')
+            Toolbar.handleConvoContacts(r.contacts);
 		*/
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
@@ -392,17 +426,31 @@ var Toolbar = {
 		if (action == 'reply-convo') {
 			document.querySelector("#convo-reply").value = '';
 		}
+		if (action == 'convo-show-contacts') {
+			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+		}
+		if (action == 'convo-add-recipient') {
+			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+			return this.getNewConvoParticipantData(value);
+		}
 		if (action == 'save-share') {
 			if(this.validateShare()) {
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
-                document.querySelector(".toolbar-container").toggleClass("share-expanded");
+				document.querySelector(".toolbar-container").toggleClass("share-expanded");
 				return this.getShareData();
 			} else {
 				return false;
 			}
 		}
 		return true;
+	},
+	getNewConvoParticipantData: function getNewConvoParticipantData(userid) {
+		var data = {
+			conversationId:document.querySelector('#convo-id').value,
+			suUserIds:[userid]
+		};
+		return data;
 	},
 	getShareData: function getShareData() {
 		var data = {

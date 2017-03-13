@@ -71,9 +71,11 @@ button.pill {
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
+}
+button.pill.delete {
 	cursor: pointer;
 }
-button.pill:before {
+button.pill.delete:before {
 	content:"";
 	width:13px;
 	height: 13px;
@@ -88,6 +90,16 @@ button.pill:before {
 	background-color: transparent;
 	white-space: pre-line;
 	margin: 2px;
+}
+.icon.show-contacts {
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 24px;
+	height: 24px;
+	background-image: url('asset/icon/add-participants.png');
+	background-size: contain;
 }
 /*
 .toolbar-action {
@@ -253,17 +265,20 @@ button.pill:before {
 .toolbar-share-container {
 	width: 240px;
 }
-#toolbar-share-recipients-list {
+#toolbar-share-recipients-list,
+#convo-recipients-list {
 	display: block;
 	position: relative;
 	width: 100%;
 }
-#toolbar-share-recipients-list:after {
+#toolbar-share-recipients-list:after,
+#convo-recipients-list:after {
 	content: '';
 	display: table;
 	clear: both;
 }
-.toolbar-share-recipients-container {
+.toolbar-share-recipients-container,
+.convo-recipients-container {
 	max-height: 51px;
 	overflow-y: auto;
 }
@@ -291,7 +306,8 @@ button.pill:before {
 .toolbar-share-container ul li {
 	padding: .25em;
 }
-.toolbar-share-container ul {
+.toolbar-share-container ul,
+#convo-contacts-list {
 	max-height: 100px;
 	overflow-y: auto;
 }
@@ -826,4 +842,9 @@ button.pill:before {
 	float: right;
 	width: 24px;
 	height: 24px;
+}
+
+.scrollable {
+	overflow-y: auto;
+	overflow-x: hidden;
 }

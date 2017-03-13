@@ -133,7 +133,19 @@
 							<span class="clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
 							<span class="clickable close-icon float-right" action="close-convo"></span>
 						</div>
+						<div class="convo-recipients-container toolbar-border-top">
+							<div id="convo-recipients-list"></div>
+						</div>
+						<span class="icon clickable show-contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
+						<div class="toolbar-container-section convo-contacts-container toolbar-border-top hidden">
+							<!-- the list of contacts to be invited -->
+							<label for="convo-contacts-list">Contacts</label><br>
+							<ul id="convo-contacts-list" class="scrollable">
+							</ul>
+						</div>
 					</div>
+					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<li class="stub toolbar-action action-theme clickable" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></li>
 
 
 
@@ -161,7 +173,7 @@
 						</div>
 					</div>
 					<li class="stub toolbar-action action-theme clickable" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></li>
-					<button class="stub btn pill secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub btn pill delete secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<div class="invalid stub" id="toolbar-share-empty-recipient" hidden>add recipients by clicking in the list below.</div>
 
 

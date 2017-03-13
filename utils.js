@@ -78,7 +78,6 @@ String.prototype.numberFormat = function() {
  */
 function newFromTemplate(templateId, attributes, appendToElId) {
     /** @type {Element} */
-    debug('new from template', arguments);
     var template = document.getElementById(templateId),
         appendToEl = document.getElementById(appendToElId);
     if (!template || !template.classList.contains('stub')) {
@@ -90,11 +89,9 @@ function newFromTemplate(templateId, attributes, appendToElId) {
     el.removeAttribute('hidden');
     for (var name in attributes) {
         var val = attributes[name];
-        debug(name, val);
         el[name] = val;
     }
     if (appendToEl) {
-        debug('appending', appendToEl);
         appendToEl.appendChild(el);
     }
 

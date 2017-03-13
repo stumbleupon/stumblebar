@@ -29,9 +29,16 @@ ToolbarEvent = {};
  */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	console.log("ToolbarEvent.handleRequest", request);
-	var action = request.action && request.action.replace(/-[a-z]/g, function(x){return x[1].toUpperCase();});
-	if (!action || !ToolbarEvent[action])
+	var action = request.action;
+	var requestedAction = request.action,
+		action = requestedAction && requestedAction.replace(/-[a-z]/g, function (x) {
+			return x[1].toUpperCase();
+		});
+	console.log("action: ", action);
+	if (!action || !ToolbarEvent[action]) {
+		console.log("bailing");
 		return false;
+	}
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
 			console.log("ToolbarEvent.sendResponse", request, response);
@@ -48,24 +55,39 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 ToolbarEvent.share = function handleShare(request, sender) {
 	return Promise.resolve(ToolbarEvent.api.getContacts())
 		.then(function(contacts) {
-			return ToolbarEvent._buildResponse({ contacts:  contacts}, true);
+			return ToolbarEvent._buildResponse({share: { contacts: contacts}}, false);
 		});
 }
 
 /**
- *
+ * after the share save, marke the page state, return a convo object to the ui.
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
-    return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
-        .then(function(convo) {
-            Page.state[sender.tab.id] = { convo: convo.id };
-            return ToolbarEvent._buildResponse({ convo:  convo}, true);
-        });
+	return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
+		.then(function(convo) {
+			Page.state[sender.tab.id] = { convo: convo.id };
+			return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
+		});
 }
 
+ToolbarEvent.convoAddRecipient = function(request, sender) {
+	return Promise.resolve(ToolbarEvent.api.convoAddRecipient(request.data))
+		.then(function(response) {
+			if(typeof response === "string") {
+				response = {response: response};
+			}
+			return ToolbarEvent._buildResponse({response: response}, false)
+		});
+}
 
+ToolbarEvent.convoShowContacts = function(request, sender) {
+	return Promise.resolve(ToolbarEvent.api.getContacts())
+		.then(function(contacts) {
+			return ToolbarEvent._buildResponse({convoContacts: { contacts:  contacts}}, false);
+		});
+}
 
 /**
  * Discover a new url.  This is usually not called directly.  
