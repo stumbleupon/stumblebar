@@ -11,6 +11,8 @@ body {
   border: 1px solid black;
 */
 	font-size: 13px;
+	zoom: initial;
+	zoom: reset;
 }
 .toolbar-container {
   vertical-align: middle;
