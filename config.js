@@ -10,6 +10,9 @@ var config = {
 //  }
 }
 config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
+	
+config.baseUrl   = 'www.stumbleupon.com';
+config.baseProto = 'https';
 
 config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
@@ -57,7 +60,7 @@ config.api.conversations = {
 	  share:        '/conversations',
 	},
 	defaultHeaders: config.defaultHeaders,
-	defaults: {}
+	defaults: {},
 	accessToken: config.accessToken,
 	accessTokenHeader: config.accessTokenHeader,
 }
@@ -87,7 +90,7 @@ config.api.stumbleupon = {
 		theme: '',
 		user: 0,
 		stumble: { list: [], pos: -1, mode: 'all' },
-	}
+	},
 	post: {
 		stumble: {
 			guesses: 10,
@@ -106,7 +109,10 @@ config.api.stumbleupon = {
 		},
 	},
 	maxRetries: 3,
-	refillPos: 3
+	refillPos: 3,
+	conversationAPI: config.api.conversations,
+	accessToken: config.accessToken,
+	accessTokenHeader: config.accessTokenHeader,
 }
 
 
