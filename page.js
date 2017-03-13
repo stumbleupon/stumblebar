@@ -217,6 +217,10 @@ Page.note = function(tabid, url) {
  * @return {Promise}
  */
 Page.urlChange = function(href, tabid) {
+	chrome.tabs.getZoom(tabid, function(zoom) {
+		chrome.tabs.sendMessage(tabid, { zoom: zoom });
+	});
+
 	// Handle http://su/su/{urlid} urls.  Stop the request, redirect directly to page, return a promise
 	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
 	if (webtbPath) {
@@ -327,6 +331,10 @@ Page.handleTabClose = function(tabid) {
 	}
 }
 
+Page.handleZoom = function(zoom) {
+	chrome.tabs.sendMessage(zoom.tabId, { zoom: zoom.newZoomFactor });
+}
+
 /**
  * Initialize page handlers
  */
@@ -339,8 +347,7 @@ Page.init = function() {
 
 	chrome.tabs.onRemoved.addListener(Page.handleTabClose);
 
-	// update when the extension loads initially
-	//updateTab();
+	chrome.tabs.onZoomChange.addListener(Page.handleZoom);
 
 	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
 

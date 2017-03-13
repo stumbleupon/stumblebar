@@ -58,6 +58,7 @@ DragNDrop.prototype = {
 
 	updateIframePos: function() {
 		if (this.dpos.state == 'drag') {
+			var zoom = (this.dpos.internal || {}).zoom || 1;
 			//    last pos outside of iframe  - mousedown pos in iframe + change in mouse screen position from mouse down
 			if (this.mpos.from == 'iframe') {
 				this.mpos.iframe = {
@@ -74,8 +75,8 @@ DragNDrop.prototype = {
 					h: this.elem.offsetHeight
 				};
 			}
-			this.elem.style.left = Math.min(window.innerWidth  - this.elem.offsetWidth , Math.max(0, this.mpos.iframe.x)) + 'px';
-			this.elem.style.top  = Math.min(window.innerHeight - this.elem.offsetHeight, Math.max(0, this.mpos.iframe.y)) + 'px';
+			this.elem.style.left = Math.min(window.innerWidth  * zoom - this.elem.offsetWidth , Math.max(0, this.mpos.iframe.x)) + 'px';
+			this.elem.style.top  = Math.min(window.innerHeight * zoom - this.elem.offsetHeight, Math.max(0, this.mpos.iframe.y)) + 'px';
 		}
 	},
 

@@ -229,7 +229,7 @@ var Toolbar = {
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
 		Object.keys(r || {}).forEach(function(key) {
-			if (['all', 'data'].includes(key))
+			if (['all', 'data', 'event'].includes(key))
 				return;
 			method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
@@ -274,6 +274,10 @@ var Toolbar = {
 				data: data || {}
 			}, resolve);
 		}).then(Toolbar._handleResponse);
+	},
+
+	handleZoom: function(zoom) {
+		Toolbar.state.zoom = zoom;
 	},
 
 	handleEvent: function(e) {
@@ -463,7 +467,7 @@ var Toolbar = {
 			} while (node);
 		}
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
-		window.top.postMessage({ type: "down", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+		window.top.postMessage({ type: "down", message: { zoom: Toolbar.state.zoom, screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 
 	handleInfiniteScroll: function(node) {
@@ -541,7 +545,7 @@ var Toolbar = {
 		if (Toolbar.mouse.state == 'down' && Math.max(Math.abs(Toolbar.mouse.pos.x - e.screenX), Math.abs(Toolbar.mouse.pos.y - e.screenY)) >= 8)
 			Toolbar.mouse.state = 'drag';
 		if (Toolbar.mouse.state == 'drag')
-			window.top.postMessage({ type: "drag", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
+			window.top.postMessage({ type: "drag", message: { zoom: Toolbar.state.zoom, screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 		Toolbar.state.lastMouse = Date.now();
 		Toolbar.state.canMiniMode = false;
 		if (Toolbar.state.inMiniMode)
@@ -582,6 +586,7 @@ var Toolbar = {
 			h: Toolbar.state.h = document.querySelector(".toolbar-section-container").offsetHeight,
 			rpos: Toolbar.config.rpos,
 			hidden: Toolbar.config.hidden,
+			zoom: Toolbar.state.zoom,
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
