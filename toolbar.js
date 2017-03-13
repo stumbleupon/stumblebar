@@ -414,6 +414,9 @@ var Toolbar = {
 		if (action == 'add-list') {
 			Toolbar.handleImmediateAction('toggle', document.querySelector("#list-add-cancel").getAttribute('value'));
 		}
+		if (action == 'add-list' || action == 'add-to-list') {
+			document.querySelector(".toolbar-container").removeClass("lists-expanded");
+		}
 		if (action == 'toggle') {
 			value.split(',').forEach(function(name) {
 				Array.prototype.slice.call(document.querySelectorAll("." + name)).forEach(function(elem) { elem.toggleClass('hidden'); });
