@@ -96,7 +96,7 @@ button.pill.delete:before {
 	bottom: 0;
 	width: 24px;
 	height: 24px;
-	background-image: url('asset/icon/add-participants.png');
+	background-image: url('asset/Icon/add-participants.png');
 	background-size: contain;
 }
 /*
