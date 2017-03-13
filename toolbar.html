@@ -90,6 +90,21 @@
 
 						<span class="lists-container scrollable" id="lists-container">
 						</span>
+
+						<div class="list-response-container">
+							<input type="hidden" id="list-id">
+							<input type="text" id="list-name" placeholder="Name">
+							<br>
+							Description<br>
+							<textarea placeholder="Description" id="list-name"></textarea>
+							<br>
+							Visibilty
+							<input type="radio" name="list-visibility" value="public" checked> Public
+							<input type="radio" name="list-visibility" value="private"> Private
+							<br>
+							<span class="clickable" action="add-list" id="list-send" values="id=#list-id,comment=#list-name">Create</span>
+							<span class="clickable close-icon float-right" action="close-list"></span>
+						</div>
 					</div>
 
 					<div class="toolbar-section toolbar-convo-container toolbar-border-top show-when-convo-expanded hide-in-mini-mode">

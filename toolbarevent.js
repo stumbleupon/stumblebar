@@ -332,7 +332,7 @@ ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
 		.api.addList(request.data.name, request.data.description, request.data.visibility)
 		.then(function(list) {
-			return ToolbarEvent.addToList({ data: { list: list } })
+			return ToolbarEvent.addToList({ data: { list: list } }, sender)
 		})
 		.catch(ToolbarEvent._error);
 }
