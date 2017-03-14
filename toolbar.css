@@ -252,9 +252,6 @@ button.pill.delete:before {
 .toolbar-action-container .action-share {
 	background-image: url("asset/Icon/Share.svg");
 }
-.toolbar-action-container .action-share.enabled {
-	background-image: url("asset/Icon/Share-enabled.svg");
-}
 .toolbar-expand-icon {
 	background-image: url("asset/Expand.svg");
 	width: 34px;
