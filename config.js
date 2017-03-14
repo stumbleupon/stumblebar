@@ -84,6 +84,7 @@ config.api.stumbleupon = {
 		unread:      '/activities/snapshot',
 		lists:       '/user/:userid/lists',
 		addtolist:   '/list/:listid/items',
+		blocksite:   '/domain/:urlid/block',
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: {

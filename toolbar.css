@@ -176,6 +176,15 @@ button.pill.delete:before {
 	cursor: pointer;
 	content: "";
 	display: inline-block;
+	position: relative;
+}
+.toolbar-action.action-dislike-menu {
+	position: absolute;
+	right: -3px;
+	width: auto;
+	font-size: 20px;
+	top: 0px;
+	margin-top: -5px;
 }
 .toolbar-action-icons {
 	margin-right: 8px;
@@ -620,6 +629,10 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.dislike-menu-expanded) .show-when-dislike-menu-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
 }
@@ -635,6 +648,11 @@ button.pill.delete:before {
 .toolbar-container.share-expanded .hide-when-share-expanded:not(.enabled) {
 	display: none;
 }
+
+.toolbar-container.dislike-menu-expanded .hide-when-dislike-menu-expanded:not(.enabled) {
+	display: none;
+}
+
 
 .toolbar-container:not(.share-expanded) .show-when-share-expanded:not(.enabled) {
 	display: none;

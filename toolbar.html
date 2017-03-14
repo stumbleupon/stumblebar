@@ -3,6 +3,7 @@
 		<link rel="stylesheet" href="reset.css" type="text/css" />
 		<link rel="stylesheet" href="toolbar.css" type="text/css" />
 		<link rel="prerender"  href="" id="prerender">
+		<meta charset="UTF-8">
 	</head>
 	<body class="stop-flashing">
 		<div class="toolbar-container">
@@ -42,12 +43,24 @@
 						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">
 							<span class="toolbar-action action-like   " action="like"    id="like"></span>
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
-							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
+							<span class="toolbar-action action-dislike" action="dislike" id="dislike">
+								<span class="toolbar-action action-dislike-menu primary-color" action="dislike-menu" id="dislike-menu">⌄</span>
+							</span>
 							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" action="inbox" raction="inbox" id="inbox"><span class="badge"></span></span>
 							<span class="toolbar-action action-lists  show-when-inline-info-expanded" action="lists"  id="lists"></span>
 							<span class="toolbar-action action-info   show-when-inline-info-expanded" action="info"  id="info"></span>
 							<span class="toolbar-action action-inline-info  " action="expand" value="inline-info" id="inline-info"></span>
 						</span>
+					</div>
+
+					<div class="toolbar-section toolbar-dislike-menu-container show-when-dislike-menu-expanded toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
+						<div class="toolbar-mode-selection primary-color reverse-when-top-handed">
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-spam">Report: Spam</div>
+							<!--
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-miscat">Report: Wrong Topic</div>
+							-->
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="block-site">Block Site</div>
+						</div>
 					</div>
 
 					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode clickable hide-when-share-expanded" action="info">

@@ -416,6 +416,9 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
+		if (['dislike-menu', 'report-spam', 'report-miscat', 'block-site'].includes(action)) {
+			document.querySelector(".toolbar-container").toggleClass("dislike-menu-expanded");
+		}
 		if (action == 'share') {
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");
 			document.querySelector(".toolbar-container").toggleClass("share-expanded");

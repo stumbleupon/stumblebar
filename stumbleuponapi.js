@@ -88,6 +88,10 @@ StumbleUponApi.prototype = {
 			})
 	},
 
+	blockSite: function(urlid) {
+		return this.api.req(this.config.endpoint.blocksite.form({ urlid: urlid }));
+	},
+
 	getConversations: function(start, limit, type) {
 		return this.getNotifications(start, limit, 'conversation')
 	},

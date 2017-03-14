@@ -218,14 +218,45 @@ ToolbarEvent.repos = function(request, sender) {
 
 
 /**
+ * Blocks the current site
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.blockSite = function(request, sender) {
+	ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.resolve(request);
+			}
+			return ToolbarEvent.api.blockSite(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		})
+		.catch(ToolbarEvent._error);
+
+	request.url.userRating = { type: -1, subtype: 0 };
+	return Promise.resolve(request);
+}
+
+
+
+
+/**
  * Dislikes the current url
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
+ToolbarEvent.reportSpam =
 ToolbarEvent.dislike = function(request, sender) {
-	if ((request.url && request.url.userRating && request.url.userRating.type) == -1)
+	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
