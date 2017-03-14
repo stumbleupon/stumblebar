@@ -115,6 +115,7 @@ ToolbarEvent.discover = function(request, sender) {
 		})
 		.then(function(url) { 
 			Page.note(sender.tab.id, url); 
+			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
 			return url;
 		});
 }
@@ -689,17 +690,21 @@ ToolbarEvent.ping = function() {
  * Builds a response to send back to the iframe'd toolbar
  *
  * @param {object} change Object to merge into response
- * @param {boolean} all Send to all iframes
+ * @param {boolean} tabid Push immediately to tabid.  Use true or '*' to push to all tabs.
  * @return {Promise} toolbar config response
  */
-ToolbarEvent._buildResponse = function(change, all) {
-	var response = Object.assign({all: all}, { config: config }, change);
-	if (response.all) {
-		chrome.tabs.query({}, function(tabs) {
-			tabs.forEach(function (tab) {
-				chrome.tabs.sendMessage(tab.id, response);
+ToolbarEvent._buildResponse = function(change, tabid) {
+	var response = Object.assign({}, { config: config }, change);
+	if (tabid) {
+		if (tabid === true || tabid === '*') {
+			chrome.tabs.query({}, function(tabs) {
+				tabs.forEach(function (tab) {
+					chrome.tabs.sendMessage(tab.id, response);
+				});
 			});
-		});
+		} else {
+			chrome.tabs.sendMessage(tabid, response);
+		}
 	}
 	return Promise.resolve(response);
 }

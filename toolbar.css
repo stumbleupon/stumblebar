@@ -213,7 +213,7 @@ button.pill.delete:before {
     filter: grayscale(100%) brightness(150%);
 	
 }
-.toolbar-action-container .action-info.on {
+#info.on {
 	-webkit-filter: none !important;
     filter: none !important;
 }
