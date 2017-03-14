@@ -419,6 +419,10 @@ var Toolbar = {
 		if (action == 'share') {
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");
 			document.querySelector(".toolbar-container").toggleClass("share-expanded");
+			document.querySelector(".toolbar-container").removeClass("lists-expanded");
+			document.querySelector(".toolbar-container").removeClass("mode-expanded");
+			document.querySelector(".toolbar-container").removeClass("inline-info-expanded");
+			document.querySelector(".toolbar-container").removeClass("inbox-expanded");
 		}
 		if (action == 'share-add-contact') {
 			// make the contact a participant
