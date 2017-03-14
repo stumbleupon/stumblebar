@@ -189,20 +189,17 @@ Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
-	if (url.urlid) {
-		if (url.mode)
-			Page.urlCache[url.mode + ':' + url.urlid] = url;
+	if (url.urlid && url.mode)
+		Page.urlCache[url.mode + ':' + url.urlid] = url;
+	if (url.urlid)
 		Page.urlCache[url.urlid] = url;
-		Page.urlCache.push(url);
-	}
-
-	// We need url-by-url to handle page-reloads because we don't fetch the page info again
-	if (url.url) {
+	if (url.url)
 		Page.urlCache[url.url] = url;
-		if (url.finalUrl)
-			Page.urlCache[url.finalUrl] = url;
+	if (url.finalUrl)
+		Page.urlCache[url.finalUrl] = url;
+
+	if (Page.urlCache.indexOf(url) == -1)
 		Page.urlCache.push(url);
-	}
 
 	Page.cleanupUrlCache();
 
