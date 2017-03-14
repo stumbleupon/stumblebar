@@ -76,6 +76,20 @@ var Toolbar = {
 
 		var currentOffset = document.querySelector('#convo-container').scrollHeight - document.querySelector('#convo-container').scrollTop;
 
+		var personMap = {};
+		var myConvoId = false;
+		(convo.participants || []).forEach(function(person) {
+			var name = "";
+			var suname = ( person.suUserName || person.suUserId || person.email );
+			if (person.name)
+				name = person.name + ' (' + suname + ')';
+			else
+				name = suname;
+			personMap[person.id] = name;
+			if (person.suUserID == Toolbar.config.authed)
+				myConvoId = person.id;
+		});
+
 		var added = 0;
 		convo.events.forEach(function(entry) {
 			var entryNode = document.querySelector('#conv-' + entry.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
@@ -85,14 +99,8 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 
 			var poster = null;
-			(convo.participants || []).forEach(function(person) {
-				if (person.id == entry.createdBy) {
-					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
-					poster = person.name || person.email;
-					if (person.id == Toolbar.config.authed)
-						entryNode.addClass('.convo-me');
-				}
-			});
+			entryNode.querySelector('.convo-entry-user').innerText = personMap[entry.createdBy];
+			entryNode.changeClass('.convo-me', entry.createdBy == myConvoId);
 			if (!convo.participants) {
 				poster = 'You';
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
@@ -104,8 +112,8 @@ var Toolbar = {
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
 			if (entry.type == 'invite') {
 				var newppl = [];
-				entry.invitedParticipants.forEach(function(person) {
-					newppl.push(person.name || person.email);
+				entry.invitedParticipants.forEach(function(id) {
+					newppl.push(personMap[id]);
 				});
 				if (newppl.length <= 1)
 					newppl = newppl.join(' and ');
@@ -113,7 +121,7 @@ var Toolbar = {
 					newppl[newppl.length - 1] = 'and ' + newppl[newppl.length - 1];
 					newppm = newppl.join(', ');
 				}
-				entryNode.querySelector('.convo-entry-body').innerText = poster + ' invited ' + newppl;
+				entryNode.querySelector('.convo-entry-body').innerText = 'Invited ' + newppl;
 			}
 			entryNode.id = 'conv-' + entry.id;
 
