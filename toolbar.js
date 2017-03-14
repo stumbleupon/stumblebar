@@ -417,7 +417,6 @@ var Toolbar = {
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
 		if (action == 'share') {
-			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");
 			document.querySelector(".toolbar-container").toggleClass("share-expanded");
 		}
