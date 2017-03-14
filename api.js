@@ -92,6 +92,8 @@ Api.prototype = {
 	req: function(path, data, opts) {
 		return this.raw(((opts || {}).apiPrefix || this.opts.apiPrefix) + path, data, opts)
 			.then(function(response) {
+				if (this.opts.nonJSONResponse || (opts || {}).nonJSONResponse)
+					return {response: response, _success: true};
 				return JSON.parse(response);
 			}.bind(this));
 	},

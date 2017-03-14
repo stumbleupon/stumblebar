@@ -120,7 +120,7 @@ var Toolbar = {
 			};
 		});
 		this.convoContactList = this.convoContactList || new ContactList();
-		this.convoContactList.addMultiple(participants);
+		this.convoContactList.addMultiple(participants, true);
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
@@ -294,7 +294,12 @@ var Toolbar = {
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
         if (r && r.contacts && r.requestedAction === 'convo-show-contacts')
             Toolbar.handleConvoContacts(r.contacts);
+		 if (r && r.requestedAction === 'convo-add-recipient') {
+		 // expect the background to set conversationId on the response
+		 Toolbar.dispatch('loadConvo', {value: r.response.conversationId});
+		 }
 		*/
+
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;

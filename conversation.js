@@ -28,9 +28,13 @@ Conversation.prototype = {
 	},
 
 	addRecipient: function(convoRecipientData) {
-		return this.api.raw(
+		return this.api.req(
 			this.config.endpoint.addRecipient.form({ id: this.id }),
-			convoRecipientData
-		);
+			convoRecipientData,
+			{nonJSONResponse: true}
+		).then(function(response) {
+			response.conversationId = this.id;
+			return response;
+		}.bind(this));
 	}
 }
