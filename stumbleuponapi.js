@@ -286,13 +286,19 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
+	_flushStumbles: function() {
+		return this.cache.mset({
+			stumbles: [],
+			stumblePos: -1,
+		});
+	},
+
 	_flush: function() {
 		this.api.addHeaders({[this.config.accessTokenHeader]: null});
 		return this.cache.mset({
 			accessToken: null,
-			stumbles: [],
-			stumblePos: -1,
 		});
+		this.flushStumbles();
 	},
 
 	_buildPost: function(type, remap) {
