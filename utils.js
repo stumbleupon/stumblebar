@@ -13,9 +13,13 @@ var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 var TRACE = {};
 
-function uriToDomain(uri) {
+function uriToDomain(uri, tld) {
 	try {
-		return uri.split("/")[2].split(":")[0].split("@").slice(-1)[0].split(".").slice(-2).join('.')
+		var domain = uri.split("/")[2].split(":")[0].split("@").slice(-1)[0];
+		if (tld)
+			domain = domain.split(".").slice(-2).join('.');
+
+		return domain;
 	} catch(e) {
 		return false;
 	}
