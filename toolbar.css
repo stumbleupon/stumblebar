@@ -726,6 +726,8 @@ button.pill.delete:before {
 	height: 17px;
 	display: inline-block;
 	background-position: center;
+	background-color: #666;
+	border-radius: 8px;
 
 	-webkit-animation: rotation 2s infinite linear;
 }
