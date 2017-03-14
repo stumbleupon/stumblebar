@@ -173,10 +173,10 @@ StumbleUponApi.prototype = {
 
 	getStumbles: function() {
 		var mode = null;
-		return this.cache.mget('mode', 'user')
+		return this.cache.mget('mode', 'user', 'modeinfo')
 			.then(function(map) {
 				mode = map.mode;
-				var post = this._buildPost("stumble", {userid: map.user.userid});
+				var post = Object.assign(this._buildPost("stumble", {userid: map.user.userid}), map.modeinfo || {});
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
@@ -306,8 +306,8 @@ StumbleUponApi.prototype = {
 		return post;
 	},
 
-	_mode: function(mode) {
-		this.cache.mset({mode: mode});
+	_mode: function(mode, info) {
+		this.cache.mset({mode: mode, modeinfo: info});
 		return this;
 	},
 

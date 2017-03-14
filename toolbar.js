@@ -227,7 +227,6 @@ var Toolbar = {
 
 		lists.entries.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
-			console.log(entry);
 
 			entryNode.id = entry.id;
 			entryNode.removeClass('stub');

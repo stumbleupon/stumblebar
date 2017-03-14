@@ -141,8 +141,19 @@ ToolbarEvent.su = function(request, sender) {
  */
 ToolbarEvent.mode = function(request, sender) {
 	ToolbarEvent.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
+	ToolbarEvent._generateModeInfo(request, sender);
 	ToolbarEvent.stumble(request, sender);
 	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+
+ToolbarEvent._generateModeInfo = function(request, sender) {
+	if (config.mode == 'domain')
+		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ (sender.tab.url).split("/")[2].split(":")[0].split("@").slice(-1)[0].split(".").slice(-2).join('.') ] } });
+	else
+		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
+	return config.modeinfo;
 }
 
 
@@ -465,7 +476,7 @@ ToolbarEvent.stumble = function(request, sender) {
 		return ToolbarEvent._buildResponse({ }, true);
 	});
 	return ToolbarEvent.api
-		._mode(config.mode || config.defaults.mode)
+		._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
 		.nextUrl()
 		.then(function(url) {
 			ToolbarEvent.api

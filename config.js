@@ -9,7 +9,7 @@ var config = {
 //		}.bind(this));
 //  }
 }
-config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
+config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed'];
 	
 config.baseUrl   = 'www.stumbleupon.com';
 config.baseProto = 'https';
@@ -36,6 +36,7 @@ config.modes = {
 	trending:  { name: 'Trending'        },
 	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
+	domain:    { name: 'Domain'         , post: { domains: [ 'wikiepdia.com' ] } },
 }
 
 
