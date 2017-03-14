@@ -40,6 +40,7 @@ StumbleUponApi.prototype = {
 
 	getContacts: function apiGetContacts() {
 		var cacheKey = 'my-contacts',
+			cacheTtl = 300000,
 			dataNode = 'mutual';
 		return this.cache.get(cacheKey)
 			.then(function(contacts) {
@@ -55,7 +56,7 @@ StumbleUponApi.prototype = {
                             return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
                         }.bind(this))
                         .then(function(contacts) {
-                            this.cache.set(cacheKey, contacts[dataNode]);
+                            this.cache.set(cacheKey, contacts[dataNode], cacheTtl);
                             return contacts[dataNode];
                         }.bind(this));
 				}
