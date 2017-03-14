@@ -73,7 +73,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 				.then(function(url) { return url.urlid; });
 		})
 		.then(function(urlid) {
-			request.data.urlid = urlid;
+			request.data.contentId = urlid;
 			return ToolbarEvent.api.saveShare(request.data)
 				.then(function(convo) {
 					Page.state[sender.tab.id] = { convo: convo.id };
