@@ -177,6 +177,9 @@ button.pill.delete:before {
 	content: "";
 	display: inline-block;
 }
+.toolbar-action-icons {
+	margin-right: 8px;
+}
 .toolbar-action {
 	position: relative;
 }
