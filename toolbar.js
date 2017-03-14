@@ -133,7 +133,7 @@ var Toolbar = {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
-		var participants = convo.participants.filter(function(participant) {
+		var participants = (convo.participants || []).filter(function(participant) {
 			return participant.suUserId != Toolbar.config.authed;
 		}).map(function(participant) {
 			return {
@@ -278,7 +278,7 @@ var Toolbar = {
 	},
 
 	handleComment: function(comment) {
-		Toolbar.handleComment({ events:[ comment ], position: 'append' });
+		Toolbar.handleConvo({ events:[ comment ], position: 'append' });
 	},
 
 	handleList: function(list) {
