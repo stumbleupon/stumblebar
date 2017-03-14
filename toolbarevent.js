@@ -65,7 +65,7 @@ ToolbarEvent.share = function handleShare(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
-	ToolbarEvent
+	return ToolbarEvent
 		._sanity()
 		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) {
