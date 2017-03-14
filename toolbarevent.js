@@ -149,10 +149,12 @@ ToolbarEvent.mode = function(request, sender) {
 
 
 ToolbarEvent._generateModeInfo = function(request, sender) {
-	if (config.mode == 'domain')
-		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ (sender.tab.url).split("/")[2].split(":")[0].split("@").slice(-1)[0].split(".").slice(-2).join('.') ] } });
-	else
+	if (config.mode == 'domain') {
+		if (request.action == 'mode' || !(config.modeinfo || {}).domains)
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ (sender.tab.url).split("/")[2].split(":")[0].split("@").slice(-1)[0].split(".").slice(-2).join('.') ] } });
+	} else {
 		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
+	}
 	return config.modeinfo;
 }
 
