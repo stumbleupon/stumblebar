@@ -67,7 +67,7 @@ ToolbarEvent.share = function handleShare(request, sender) {
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
+		.then(function() { return request.data.contentId || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) {
 			return urlid || ToolbarEvent.discover(request, sender)
 				.then(function(url) { return url.urlid; });
