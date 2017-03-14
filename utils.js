@@ -13,11 +13,19 @@ var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 var TRACE = {};
 
-function uriToDomain(uri, tld) {
+// Lazy SLDs: curl https://en.wikipedia.org/wiki/Second-level_domain | grep '<li><b>' | sed -e 's/.*<li><b>//g' -e 's@</b>.*@@g' -e 's/^\.//g' | xargs echo | sed -e 's/ /","/g' -e 's/$/"];/' -e 's/^/var SLDs = ["/g'
+// Good suffix list: https://publicsuffix.org/list/public_suffix_list.dat
+var SLDs = ["asn.au","com.au","net.au","id.au","org.au","edu.au","gov.au","csiro.au","act.au","nsw.au","nt.au","qld.au","sa.au","tas.au","vic.au","wa.au","co.at","or.at","priv.at","ac.at","avocat.fr","aeroport.fr","veterinaire.fr","co.hu","film.hu","lakas.hu","ingatlan.hu","sport.hu","hotel.hu","nz","ac.nz","co.nz","geek.nz","gen.nz","kiwi.nz","maori.nz","net.nz","org.nz","school.nz","cri.nz","govt.nz","health.nz","iwi.nz","mil.nz","parliament.nz","ac.il","co.il","org.il","net.il","k12.il","gov.il","muni.il","idf.il","ac.za","gov.za","law.za","mil.za","nom.za","school.za","net.za","co.uk","org.uk","me.uk","ltd.uk","plc.uk","net.uk","sch.uk","ac.uk","gov.uk","mod.uk","nhs.uk","police.uk"];
+
+function uriToDomain(uri, full) {
 	try {
-		var domain = uri.split("/")[2].split(":")[0].split("@").slice(-1)[0];
-		if (tld)
-			domain = domain.split(".").slice(-2).join('.');
+		var domain = uri.split("/")[2].split(":")[0].split("@").slice(-1)[0].toLowerCase();
+		if (!full) {
+			if (SLDs.includes(domain.split(".").slice(-2).join('.')))
+				domain = domain.split(".").slice(-3).join('.');
+			else
+				domain = domain.split(".").slice(-2).join('.');
+		}
 
 		return domain;
 	} catch(e) {

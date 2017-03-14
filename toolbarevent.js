@@ -144,7 +144,7 @@ ToolbarEvent.mode = function(request, sender) {
 	ToolbarEvent._generateModeInfo(request, sender);
 	ToolbarEvent.api._flushStumbles();
 	ToolbarEvent.stumble(request, sender);
-	return ToolbarEvent._buildResponse({}, true);
+	return ToolbarEvent._buildResponse({ mode: config.mode, modeinfo: config.modeinfo }, true);
 }
 
 
