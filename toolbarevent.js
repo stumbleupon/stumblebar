@@ -634,7 +634,7 @@ ToolbarEvent.urlChange = function(request, sender) {
  */
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id), version: chrome.runtime.getManifest().version });
 }
 
 /**

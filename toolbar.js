@@ -1,4 +1,8 @@
 var Toolbar = {
+	handleVersion: function(version) {
+		document.querySelector("#toolbar-version").innerText = version;
+	},
+
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
