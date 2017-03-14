@@ -65,11 +65,22 @@ ToolbarEvent.share = function handleShare(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
-	return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
-		.then(function(convo) {
-			Page.state[sender.tab.id] = { convo: convo.id };
-			return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
-		});
+	ToolbarEvent
+		._sanity()
+		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) {
+			return urlid || ToolbarEvent.discover(request, sender)
+				.then(function(url) { return url.urlid; });
+		})
+		.then(function(urlid) {
+			request.data.urlid = urlid;
+			return ToolbarEvent.api.saveShare(request.data)
+				.then(function(convo) {
+					Page.state[sender.tab.id] = { convo: convo.id };
+					return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
+				});
+		})
+		.catch(ToolbarEvent._error);
 }
 
 ToolbarEvent.convoAddRecipient = function(request, sender) {
