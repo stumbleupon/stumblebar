@@ -63,6 +63,7 @@ var Toolbar = {
 	},
 
 	handleNewConvo: function(newConvo) {
+		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
 		var convo = newConvo.convo;
 		return this.handleConvo(convo);
 	},
@@ -479,6 +480,7 @@ var Toolbar = {
 			return this.getNewConvoParticipantData(value);
 		}
 		if (action == 'save-share') {
+			document.querySelector('.toolbar-share-sending-container').removeClass('hidden');
 			if(this.validateShare()) {
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
