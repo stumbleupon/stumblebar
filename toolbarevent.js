@@ -478,7 +478,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: request.data.stamp ? 'append' : null })});
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) })});
 		});
 }
 

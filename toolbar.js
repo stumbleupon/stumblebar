@@ -67,19 +67,27 @@ var Toolbar = {
 		if (!convo.position)
 			document.querySelector('#convo-container').innerHTML = '';
 
+		var currentOffset = document.querySelector('#convo-container').scrollHeight - document.querySelector('#convo-container').scrollTop;
+
+		var added = 0;
 		convo.events.forEach(function(entry) {
 			var entryNode = document.querySelector('#conv-' + entry.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
 
+			added += !entryNode.id;
+
 			entryNode.removeClass('stub');
 
+			var poster = null;
 			(convo.participants || []).forEach(function(person) {
 				if (person.id == entry.createdBy) {
 					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
+					poster = person.name || person.email;
 					if (person.id == Toolbar.config.authed)
 						entryNode.addClass('.convo-me');
 				}
 			});
 			if (!convo.participants) {
+				poster = 'You';
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
 				entryNode.addClass('.convo-me');
 			}
@@ -87,6 +95,19 @@ var Toolbar = {
 			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
 			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
+			if (entry.type == 'invite') {
+				var newppl = [];
+				entry.invitedParticipants.forEach(function(person) {
+					newppl.push(person.name || person.email);
+				});
+				if (newppl.length <= 1)
+					newppl = newppl.join(' and ');
+				else {
+					newppl[newppl.length - 1] = 'and ' + newppl[newppl.length - 1];
+					newppm = newppl.join(', ');
+				}
+				entryNode.querySelector('.convo-entry-body').innerText = poster + ' invited ' + newppl;
+			}
 			entryNode.id = 'conv-' + entry.id;
 
 			if (!entryNode.parentNode) {
@@ -105,7 +126,10 @@ var Toolbar = {
 
 			Toolbar.listenConvoHelper();
 		}
-		if (convo.position == 'prepend' && !convo.events.length) {
+
+		// @TODO FIXME
+		//if (convo.position == 'prepend' && !convo.events.length) {
+		if (convo.position == 'prepend' && !added) {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
@@ -124,7 +148,10 @@ var Toolbar = {
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
-		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+		if (convo.position) // Remember scroll position
+			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight - currentOffset;
+		else // Scroll to the bottom
+			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
 	},
 	updateConvoParticipants: function updateConvoParticipants() {
 		var attributeMap = [
