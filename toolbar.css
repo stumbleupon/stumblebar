@@ -428,6 +428,10 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 }
+.theme-dark-sidebar .close-icon {
+	background-color: #666;
+	border-radius: 4px;
+}
 .theme-dark-sidebar .toolbar-background {
 	background-color: white;
 	opacity: 0.777;
@@ -482,6 +486,10 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 */
+}
+.theme-all-light .close-icon {
+	background-color: #666;
+	border-radius: 4px;
 }
 .theme-all-light .toolbar-background {
 	background-color: white;
