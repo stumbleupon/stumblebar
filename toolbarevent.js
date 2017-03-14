@@ -110,13 +110,13 @@ ToolbarEvent.convoShowContacts = function(request, sender) {
  */
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
-	.then(function(url) {
-		return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
-	})
-	.then(function(url) { 
-		Page.note(sender.tab.id, url); 
-		return url;
-	});
+		.then(function(url) {
+			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
+		})
+		.then(function(url) { 
+			Page.note(sender.tab.id, url); 
+			return url;
+		});
 }
 
 

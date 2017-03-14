@@ -114,17 +114,18 @@ Page.getUrlId = function(tabid) {
  * @return {SuUrl}
  */
 Page.getUrl = function(tabid) {
-	return new Promise(function (resolve, reject) {
-		var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
-			   || Page.tab[tabid] && Page.tab[tabid].info && Page.tab[tabid].info.url;
-		;
-		if (url)
-			return resolve(url);
+	var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
+		   || Page.tab[tabid] && Page.tab[tabid].info && Page.tab[tabid].info.url;
+	;
 
-		chrome.tabs.get(tabid, function(tab) {
-			resolve(tab.url);
-		});
-	});
+	if (!url)
+		return Promise.reject({});
+
+	return Promise.resolve(url);
+
+//		chrome.tabs.get(tabid, function(tab) {
+//			resolve(tab.url);
+//		});
 }
 
 
@@ -160,7 +161,7 @@ Page.getUrlByUrlid = function(urlid, mode) {
  * Cleans up url cache by trimming the cache down to 1000 urls
  */
 Page.cleanupUrlCache = function() {
-	while (Page.urlCache.length >= 1e3) {
+	if (Page.urlCache.length >= 1e3) {
 		Page.removeUrlFromUrlCache(Page.urlCache.splice(0, 1));
 	}
 }
