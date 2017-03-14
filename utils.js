@@ -13,6 +13,14 @@ var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 var TRACE = {};
 
+function uriToDomain(uri) {
+	try {
+		return uri.split("/")[2].split(":")[0].split("@").slice(-1)[0].split(".").slice(-2).join('.')
+	} catch(e) {
+		return false;
+	}
+}
+
 function debug() {
 	var e = new Error;
 	var messages = ['DEBUG'].concat(Array.prototype.slice.call(arguments));
