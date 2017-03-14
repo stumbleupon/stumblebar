@@ -109,6 +109,16 @@ ToolbarEvent.discover = function(request, sender) {
 }
 
 
+/**
+ * Open an SU page
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.su = function(request, sender) {
+	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+};
+
 
 /**
  * Record mode changes

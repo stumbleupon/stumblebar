@@ -394,9 +394,6 @@ var Toolbar = {
 	 *                              OR return an Object to replace the data object sent to dispatch.
 	 */
 	handleImmediateAction: function(action, value, elem) {
-		if (action == "su") {
-			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
-		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
