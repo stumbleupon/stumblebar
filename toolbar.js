@@ -37,8 +37,11 @@ var Toolbar = {
 		document.querySelector("#inline-info-body").innerHTML = message;
 
 		document.querySelector("#info").removeClass("on");
+		document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !url.urlid);
 		if (url.urlid) {
 			document.querySelector("#info").addClass("on");
+			document.querySelector("#domain").innerText = uriToDomain(url.url);
+			document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !uriToDomain(url.url));
 		}
 
 		if (url.hasOwnProperty('sponsored')) {
@@ -200,6 +203,8 @@ var Toolbar = {
 			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
 			//document.querySelector(".toolbar-mode").removeClass("hidden");
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
+			if (config.mode == "domain")
+				document.querySelector("#mode").innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
 		}
 
 		if (config.hasOwnProperty('numShares')) {

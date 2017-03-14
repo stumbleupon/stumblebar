@@ -211,7 +211,7 @@ StumbleUponApi.prototype = {
 	},
 
 	reportStumble: function(urlids, mode) {
-		return this.cache.mget('stumble', 'user', 'mode')
+		return this.cache.mget('stumble', 'user', 'mode', 'modeinfo')
 			.then(function (map) {
 				// FIXME double reporting/re-reporting
 				//for (var urlid in this.seen) {
@@ -220,7 +220,7 @@ StumbleUponApi.prototype = {
 				//}
 
 				var mode = mode || map.stumble.mode || map.mode;
-				var post = this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid});
+				var post = Object.assign(this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid}), map.modeinfo || {});
 				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode}; }.bind(this));
 
 				debug("Report stumble", urlids.join(','));
