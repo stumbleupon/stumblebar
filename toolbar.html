@@ -11,7 +11,7 @@
 
 				<div class="toolbar-logo-container">
 					<div class="toolbar-background-logo"></div>
-					<span class="toolbar-logo clickable"></span>
+					<span class="toolbar-logo clickable" action="su" value="profile"></span>
 					<span class="toolbar-settings-icon clickable hide-when-share-expanded" action="settings"></span>
 				</div>
 
@@ -50,7 +50,7 @@
 						</span>
 					</div>
 
-					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode">
+					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode clickable" action="info">
 						<span class="toolbar-section-sponsored hidden" id="sponsored">
 							<a class="sponsored-text" action="su" value="sponsored">Sponsored</a>
 							-
@@ -59,9 +59,6 @@
 					</div>
 
 					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode">
-						<div class="inbox-loading">
-							<span class="spinner"></span> Loading...
-						</div>
 
 						<div class="inbox-entry clickable stub" action="open-convo" id="stub-inbox-entry">
 							<span class="inbox-entry-image"></span>
@@ -73,6 +70,10 @@
 
 						<span class="inbox-container scrollable" infinite-scroll id="inbox-container">
 						</span>
+
+						<div class="inbox-loading">
+							<span class="spinner"></span> Loading...
+						</div>
 					</div>
 
 					<div class="toolbar-section toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode">
@@ -99,15 +100,12 @@
 							<input type="hidden" id="list-id">
 							<input type="text" id="list-name" placeholder="Name">
 							<br>
-							Description<br>
-							<textarea placeholder="Description" id="list-description"></textarea>
-							<br>
 							Visibilty
 							<input type="radio" name="list-visibility" value="public" checked> Public
 							<input type="radio" name="list-visibility" value="private"> Private
 							<br>
 							<span class="clickable" action="toggle" id="list-add-cancel" value="lists-create-action,lists-container,lists-create-container">Cancel</span>
-							<span class="clickable" action="add-list" id="list-send" values="name=#list-name,description=#list-description,id=#list-id,comment=#list-name">Create</span>
+							<span class="clickable" action="add-list" id="list-send" values="name=#list-name,id=#list-id,comment=#list-name">Create</span>
 						</div>
 					</div>
 

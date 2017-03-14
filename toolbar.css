@@ -703,7 +703,7 @@ button.pill.delete:before {
 	padding-right: 1em;
 }
 
-.inbox-container, .convo-container {
+.inbox-container, .convo-container, .lists-container {
 	max-height: 140px;
 	display: block;
 	overflow: auto;
@@ -795,6 +795,12 @@ button.pill.delete:before {
 	width: 16px;
 	height: 16px;
 }
+
+.lists-container {
+	white-space: normal;
+	max-width: 320px;
+}
+
 
 .convo-container {
 	white-space: normal;

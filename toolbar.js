@@ -205,7 +205,7 @@ var Toolbar = {
 
 			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
 			entryNode.querySelector('.lists-entry-title').innerText   = entry.name || 'No Title';
-			entryNode.querySelector('.lists-entry-snippet').innerText = entry.description || 'No Description';
+			entryNode.querySelector('.lists-entry-snippet').innerText = '';
 
 			document.querySelector('#lists-container').insertBefore(entryNode, null);
 		});
@@ -214,7 +214,7 @@ var Toolbar = {
 	},
 
 	handleInbox: function(inbox) {
-		if (inbox.position)
+		if (!inbox.position)
 			document.querySelector('#inbox-container').innerHTML = '';
 
 		inbox.messages.forEach(function(entry) {
@@ -240,7 +240,7 @@ var Toolbar = {
 
 			entryNode.changeClass('unread', !entry.read);
 
-			document.querySelector('#inbox-container').insertBefore(entryNode, inbox.position ? document.querySelector('#inbox-container').firstChild : null);
+			document.querySelector('#inbox-container').insertBefore(entryNode, (inbox.position == 'prepend') ? document.querySelector('#inbox-container').firstChild : null);
 		});
 
 		if (!inbox.messages.length) {
@@ -419,6 +419,9 @@ var Toolbar = {
 		if (action == 'add-list') {
 			Toolbar.handleImmediateAction('toggle', document.querySelector("#list-add-cancel").getAttribute('value'));
 		}
+		if (action == 'add-list' || action == 'add-to-list') {
+			document.querySelector(".toolbar-container").removeClass("lists-expanded");
+		}
 		if (action == 'toggle') {
 			value.split(',').forEach(function(name) {
 				Array.prototype.slice.call(document.querySelectorAll("." + name)).forEach(function(elem) { elem.toggleClass('hidden'); });
@@ -531,6 +534,7 @@ var Toolbar = {
 
 		switch (node.id) {
 			case 'convo-container':
+				document.querySelector('.convo-loading').removeClass('hidden');
 				Toolbar.dispatch('load-convo', {
 					value: document.querySelector('#convo-id').value,
 					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
@@ -542,6 +546,7 @@ var Toolbar = {
 				break;
 
 			case 'inbox-container':
+				document.querySelector('.inbox-loading').removeClass('hidden');
 				Toolbar.dispatch('inbox', {
 					// @TODO
 					// position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), 0)[0].value,
@@ -558,6 +563,7 @@ var Toolbar = {
 				return false;
 				break;
 		}
+		Toolbar.handleRedraw();
 
 		return true;
 	},
