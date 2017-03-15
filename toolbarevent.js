@@ -170,6 +170,9 @@ ToolbarEvent._generateModeInfo = function(request, sender) {
 	} else if (config.mode == 'interest') {
 		if (request.action == 'mode')
 			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { interests: [ request.data.interestid ], keyword: request.data.keyword } });
+	} else if (config.mode == 'keyword') {
+		if (request.action == 'mode')
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { keyword: request.data.keyword } });
 	} else {
 		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
 	}

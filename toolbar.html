@@ -26,10 +26,10 @@
 						</div>
 						<div class="toolbar-mode-selection primary-color show-when-mode-expanded reverse-when-top-handed">
 							<div class="default-color toolbar-entry-container" action="expand" value="mode">
-								Select...
+								Stumble...
 								<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="expand" value="mode"></span>
 							</div>
-							<div class="scrollable mode-picker hide-when-interests-expanded">
+							<div class="scrollable mode-picker hide-when-interests-expanded hide-when-keywords-expanded">
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="all">All Interests</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="following">People I Follow</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="trending">Trending</div>
@@ -37,7 +37,17 @@
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="video">Videos</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode toolbar-entry-stumble-domain hidden" action="mode" value="domain">Domain <span id="domain"></span></div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="interests">Interest</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="keywords">Tag</div>
 							</div>
+
+							<div class="show-when-keywords-expanded">
+								Tag<br>
+								<input type="text" id="stumble-keyword">
+								<br>
+								<button action="expand" value="mode">Cancel</button>
+								<button action="mode" values="value=mode,keyword=#stumble-keyword" mode="keyword">Stumble</button>
+							</div>
+
 							<div class="show-when-interests-expanded">
 								<div class="interests-loading">
 									<span class="spinner"></span> Loading...

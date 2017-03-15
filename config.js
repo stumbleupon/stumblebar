@@ -10,7 +10,7 @@ var config = {
 //  }
 }
 config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed', 'interests', 'stayExpanded'];
-	
+
 config.baseUrl   = 'www.stumbleupon.com';
 config.baseProto = 'https';
 
@@ -48,6 +48,7 @@ config.modes = {
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
 	domain:    { name: 'Domain'         , post: { domains: [ 'wikiepdia.com' ] } },
 	interest:  { name: 'Interest'       , post: { } },
+	keyword:   { name: 'Tag'            , post: { keyword: 'Photos' } },
 }
 
 

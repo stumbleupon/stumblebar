@@ -244,6 +244,8 @@ var Toolbar = {
 				document.querySelector("#mode").innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
 			if (config.mode == "interest")
 				document.querySelector("#mode").innerText = config.modeinfo.keyword;
+			if (config.mode == "keyword")
+				document.querySelector("#mode").innerText = config.modeinfo.keyword;
 		}
 
 		if (config.hasOwnProperty('numShares')) {
@@ -467,6 +469,9 @@ var Toolbar = {
 		}
 		if (action == 'interests') {
 			document.querySelector(".toolbar-container").toggleClass("interests-expanded");
+		}
+		if (action == 'keywords') {
+			document.querySelector(".toolbar-container").toggleClass("keywords-expanded");
 		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
