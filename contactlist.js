@@ -1,10 +1,12 @@
 /**
  * Data model for a list of contacts
  * @param {Array<Contact>} contacts
+ * @param {string|number} ownerContactId -- id of the owner of the list, owner can not be added to their own list
  * @constructor
  */
-function ContactList(contacts) {
-	this.contacts = {};
+function ContactList(ownerContactId, contacts) {
+	this.ownerContactId = ownerContactId;
+	this.contacts = [];
 	if(contacts) {
 		this.addMultiple(contacts);
 	}
@@ -33,8 +35,19 @@ ContactList.prototype = {
 	 * @param name
 	 * @returns {Contact}
 	 */
-	add: function addContact(contactId, name, isParticipant) {
-		return this.contacts[contactId] = new Contact(contactId, name, isParticipant);
+	add: function addContact(contactId, name, isParticipant, overwrite) {
+		console.log(arguments);
+		if(contactId == this.ownerContactId) {
+			return false;
+		}
+		if(this.get(contactId)) {
+			if(!overwrite) {
+				return false;
+			} else {
+				this.remove(contactId);
+			}
+		}
+		return this.contacts.push(new Contact(contactId, name, isParticipant));
 	},
 	/**
 	 * add contacts from an array of contact-like objects.  preserves existing contacts by default
@@ -45,10 +58,9 @@ ContactList.prototype = {
 			contacts.forEach(function(contact) {
 				var name = contact.name ? contact.name + " (" + contact.username + ")" : contact.username,
 					isParticipant = !!contact.isParticipant;
-				if(!!overwrite || !this.contacts[contact.userid]) {
-					this.add(contact.userid, name, isParticipant);
-				}
+				this.add(contact.userid, name, isParticipant, overwrite);
 			}.bind(this));
+			this.sort();
 		}
 	},
 	/**
@@ -57,14 +69,18 @@ ContactList.prototype = {
 	 * @returns {Contact}
 	 */
 	get: function getContact(contactId) {
-		return this.contacts[contactId];
+		return this.contacts.find(function(contact) {
+			return contact.userid == contactId;
+		});
 	},
 	/**
 	 * Remove a contact from the list
 	 * @param contactId
 	 */
 	remove: function removeContact(contactId) {
-		delete this.contacts[contactId];
+		this.contacts.splice(this.contacts.findIndex(function(contact) {
+			return contact.userid == contactId;
+		}), 1);
 	},
 	/**
 	 * return an array of contacts
@@ -78,8 +94,7 @@ ContactList.prototype = {
 		if(filter.contactIds)  {
 			filter.contactIds.forEach(function(contactId) {
 				include = false;
-				contact = this.contacts[contactId];
-
+				contact = this.get(contactId);
 				if(!contact) {
 					return;
 				} else if(typeof(filter.isParticipant) === 'undefined') {
@@ -92,14 +107,34 @@ ContactList.prototype = {
 				}
 			}.bind(this));
 		} else if(typeof(filter.isParticipant) !== 'undefined') {
-			for(var id in this.contacts) {
-				contact = this.contacts[id];
+			for(var i = 0; i < this.contacts.length; i++) {
+				contact = this.contacts[i];
 				if(filter.isParticipant === contact.isParticipant()) {
 					contacts.push(contact);
 				}
 			}
 		}
 		return contacts;
+	},
+	/**
+	 * sort the array
+	 */
+	sort: function sortContacts() {
+		this.contacts.sort(this.newer);
+	},
+	/**
+	 * a comparator for sorting by most recently contacted first, then by name for contacts with same last access.
+	 * @param oneContact
+	 * @param anotherContact
+	 * @returns {number}
+	 */
+	newer: function(oneContact, anotherContact) {
+		if(oneContact.lastAccess === anotherContact.lastAccess) {
+			return (oneContact.name.toUpperCase() < anotherContact.name.toUpperCase()) ? -1 : 1;
+		} else {
+			return (oneContact.lastAccess < anotherContact.lastAccess) ? -1 : 1;
+		}
+		return 0;
 	},
 	/**
 	 * use a given stub to render the selected contacts to an element in the dom
@@ -109,7 +144,6 @@ ContactList.prototype = {
 	 * @param {ContactFilter} filter Optional
 	 */
 	render: function renderContactList(stubId, attributeMappings, appendToElementId, filter) {
-		console.log("rendering", arguments);
 		var appendToElement = document.getElementById(appendToElementId);
 		if(!appendToElement) {
 			return false;
@@ -122,8 +156,8 @@ ContactList.prototype = {
 				contact.render(stubId, attributeMappings, appendToElementId);
 			});
 		} else {
-			for(id in this.contacts) {
-				var contact = this.contacts[id];
+			for(var i = 0; i < this.contacts.length; i++) {
+				var contact = this.contacts[i];
 				contact.render(stubId, attributeMappings, appendToElementId);
 			}
 		}
@@ -132,15 +166,19 @@ ContactList.prototype = {
 
 /**
  * Data model for a contact
- * @param id
- * @param name
+ * @param {string} id -- userId of the contact
+ * @param {string} name -- user's name for display purposes
+ * @param {boolean} isParticipant -- a flag to identify participants in a given context for filtering.
+ * @param {number} lastAccess -- timestamp of the last access, intended to persist across sessions via cache
  * @constructor
  */
-function Contact(id, name, isParticipant) {
+function Contact(id, name, isParticipant, source, lastAccess) {
 	this.id = id;
 	this.userid = id;
 	this.name = name;
 	this.participant = !!isParticipant;
+	this.source = source || 'unknown';
+	this.lastAccess = lastAccess || 0;
 }
 
 Contact.prototype = {
@@ -176,5 +214,19 @@ Contact.prototype = {
 			}
 		}
 		newFromTemplate(stubId, attributes, appendToElementId);
+	},
+	/**
+	 * update the lastAccessed property of the contact.  this property is intended to be persisted across
+	 * sessions in the cache and used for sorting
+	 * @param timestamp
+	 */
+	touch: function touchContact(timestamp) {
+		var lastAccessed;
+		if(typeof timestamp === "number") {
+			lastAccessed = timestamp;
+		} else {
+			lastAccessed = Date.now();
+		}
+		this.lastAccess = lastAccessed;
 	}
 };
