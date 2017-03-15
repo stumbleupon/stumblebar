@@ -484,11 +484,12 @@ var Toolbar = {
 			return this.getNewConvoParticipantData(value);
 		}
 		if (action == 'save-share') {
-			document.querySelector('.toolbar-share-sending-container').removeClass('hidden');
 			if(this.validateShare()) {
+				document.querySelector('.toolbar-share-sending-container').removeClass('hidden');
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
 				document.querySelector(".toolbar-container").toggleClass("share-expanded");
+				Toolbar.handleRedraw();
 				return this.getShareData();
 			} else {
 				return false;
