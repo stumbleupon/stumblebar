@@ -76,7 +76,8 @@ var Toolbar = {
 	},
 
 	handleShare: function(shareResponse) {
-		this.shareContactList = new ContactList(shareResponse.contacts.values);
+		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
+		this.shareContactList = new ContactList(Toolbar.config.authed, shareResponse.contacts.values);
 		this.updateShare();
 	},
 
@@ -87,6 +88,7 @@ var Toolbar = {
 	},
 
 	handleConvo: function(convo) {
+		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').removeClass('hidden');
 
@@ -177,8 +179,8 @@ var Toolbar = {
 				name: participant.name
 			};
 		});
-		this.convoContactList = this.convoContactList || new ContactList();
-		this.convoContactList.addMultiple(participants);
+		this.convoContactList = this.convoContactList || new ContactList(Toolbar.config.authed);
+		this.convoContactList.addMultiple(participants, true);
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
@@ -197,7 +199,7 @@ var Toolbar = {
 	},
 
 	handleConvoContacts: function(convoContacts) {
-		this.convoContactList = this.convoContactList || new ContactList();
+		this.convoContactList = this.convoContactList || new ContactList(Toolbar.config.authed);
 		this.convoContactList.addMultiple(convoContacts.contacts.values);
 		this.updateConvoParticipants();
 	},
@@ -366,7 +368,12 @@ var Toolbar = {
 			Toolbar.handleConvo({events:[r.comment]}, 'append');
         if (r && r.contacts && r.requestedAction === 'convo-show-contacts')
             Toolbar.handleConvoContacts(r.contacts);
+		 if (r && r.requestedAction === 'convo-add-recipient') {
+		 // expect the background to set conversationId on the response
+		 Toolbar.dispatch('loadConvo', {value: r.response.conversationId});
+		 }
 		*/
+
 		if (!r || r.from != 'bar')
 			Toolbar.handleRedraw();
 		return true;
@@ -563,9 +570,9 @@ var Toolbar = {
 		inMiniMode:    false,
 	},
 	addParticipant: function toolbarAddParticipant(value, sourceEl) {
-		var id = sourceEl.getAttribute('value');
-		console.log('adding participant', id);
-		this.shareContactList.get(id).setParticipant(true);
+		var id = sourceEl.getAttribute('value'),
+			contact = this.shareContactList.get(id);
+			contact.setParticipant(true);
 		this.updateShare();
 	},
 	deleteParticipant: function toolbarDeleteParticipant(value, sourceEl) {

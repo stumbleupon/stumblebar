@@ -86,13 +86,13 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 }
 
 ToolbarEvent.convoAddRecipient = function(request, sender) {
-	return Promise.resolve(ToolbarEvent.api.convoAddRecipient(request.data))
-		.then(function(response) {
-			if(typeof response === "string") {
-				response = {response: response};
-			}
-			return ToolbarEvent._buildResponse({response: response}, false)
+	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
+	return Promise.resolve(convo.addRecipient(request.data))
+		.then(convo.messages.bind(convo))
+		.then(function(convo) {
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: 'append'})});
 		});
+	;
 }
 
 ToolbarEvent.convoShowContacts = function(request, sender) {
