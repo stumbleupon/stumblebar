@@ -628,6 +628,7 @@ ToolbarEvent.signout = function(request, sender) {
 		chrome.tabs.onUpdated.addListener(function(tabId , info) {
 			if (info.status == "complete" && tabId == tab.id) {
 				setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
+				ToolbarEvent.cache.mset({ authed: false, user: {} })
 			}
 		});
 	});
