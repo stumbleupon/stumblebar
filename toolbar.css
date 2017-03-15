@@ -949,4 +949,6 @@ button.pill.delete:before {
 .scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
+	max-width: 356px;
+	display: inline-block;
 }
