@@ -13,7 +13,7 @@
 				<div class="toolbar-logo-container">
 					<div class="toolbar-background-logo"></div>
 					<span class="toolbar-logo clickable" action="su" value="profile"></span>
-					<span class="toolbar-settings-icon clickable hide-when-share-expanded" action="settings"></span>
+					<span class="toolbar-settings-icon clickable hide-when-share-expanded" action="expand" value="settings"></span>
 				</div>
 
 				<div class="toolbar-section-container handed reverse-when-top-handed">
@@ -239,7 +239,7 @@
 
 
 
-					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hidden hide-when-share-expanded">
+					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hide-when-share-expanded show-when-settings-expanded">
 						<div class="toolbar-entry-container">
 							Theme
 							<ul>
@@ -258,6 +258,7 @@
 							<span class="toolbar-version-container">Version <span id="toolbar-version"></span></span>
 							<div class="toolbar-action toolbar-entry-list-item action-hide clickable" action="hide-toolbar">Hide Extension</div> 
 						</div>
+						<span style="position: absolute; left: 0;" class="clickable close-icon show-settings-expanded" action="expand" value="settings"></span>
 					</div>
 
 					<div class="toolbar-section-footer"></div>

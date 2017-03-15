@@ -285,6 +285,7 @@ button.pill.delete:before {
 .toolbar:not(.mini-mode) .toolbar-settings-icon.enabled {
 	background-image: url("asset/Close.svg") !important;
 	background-color: #444;
+	display: none;
 }
 
 .close-icon {
@@ -323,7 +324,7 @@ button.pill.delete:before {
 }
 
 .toolbar-settings-container {
-	background-color: #444;
+	background-color: #888;
 	margin-left: 0;
 	padding-left: 44px !important;
 	color: white;
@@ -641,6 +642,10 @@ button.pill.delete:before {
 	display: inline-block !important;
 }
 
+.toolbar-container:not(.settings-expanded) .show-when-settings-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.inline-info-expanded) .show-when-inline-info-expanded:not(.enabled) {
 	display: none;
 }
@@ -670,6 +675,10 @@ button.pill.delete:before {
 }
 
 .toolbar-container.keywords-expanded .hide-when-keywords-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container.settings-expanded .hide-when-settings-expanded:not(.enabled) {
 	display: none;
 }
 
