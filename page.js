@@ -133,6 +133,7 @@ Page.getUrl = function(tabid) {
  * A cache of fetched SuUrls
  */
 Page.urlCache = [];
+Page.urlMap   = {};
 
 
 /**
@@ -142,7 +143,7 @@ Page.urlCache = [];
  * @return {Object}
  */
 Page.getUrlByHref = function(href) {
-	return Page.urlCache[href];
+	return Page.urlMap[href];
 }
 
 /**
@@ -154,7 +155,7 @@ Page.getUrlByHref = function(href) {
  * @return {SuUrl}
  */
 Page.getUrlByUrlid = function(urlid, mode) {
-	return Page.urlCache[mode + ':' + urlid] || Page.urlCache[urlid];
+	return Page.urlMap[mode + ':' + urlid] || Page.urlMap[urlid];
 }
 
 /**
@@ -162,7 +163,8 @@ Page.getUrlByUrlid = function(urlid, mode) {
  */
 Page.cleanupUrlCache = function() {
 	if (Page.urlCache.length >= 1e3) {
-		Page.removeUrlFromUrlCache(Page.urlCache.splice(0, 1));
+		var errantUrl = Page.urlCache.splice(0, 1)[0];
+		Page.removeUrlFromUrlCache(errantUrl);
 	}
 }
 
@@ -172,10 +174,14 @@ Page.cleanupUrlCache = function() {
 Page.removeUrlFromUrlCache = function(url) {
 	if (!url)
 		return;
-	delete Page.urlCache[url.urlid];
-	delete Page.urlCache[url.mode + ':' + url.urlid];
-	delete Page.urlCache[url.url];
-	delete Page.urlCache[url.finalUrl];
+	if (url.urlid && url.mode)
+		delete Page.urlMap[url.urlid];
+	if (url.urlid)
+		delete Page.urlMap[url.mode + ':' + url.urlid];
+	if (url.url)
+		delete Page.urlMap[url.url];
+	if (url.finalUrl)
+		delete Page.urlMap[url.finalUrl];
 }
 
 
@@ -191,13 +197,13 @@ Page.note = function(tabid, url) {
 		Page.tab[tabid] = {};
 
 	if (url.urlid && url.mode)
-		Page.urlCache[url.mode + ':' + url.urlid] = url;
+		Page.urlMap[url.mode + ':' + url.urlid] = url;
 	if (url.urlid)
-		Page.urlCache[url.urlid] = url;
+		Page.urlMap[url.urlid] = url;
 	if (url.url)
-		Page.urlCache[url.url] = url;
+		Page.urlMap[url.url] = url;
 	if (url.finalUrl)
-		Page.urlCache[url.finalUrl] = url;
+		Page.urlMap[url.finalUrl] = url;
 
 	if (Page.urlCache.indexOf(url) == -1)
 		Page.urlCache.push(url);
