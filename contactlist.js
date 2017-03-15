@@ -161,6 +161,19 @@ ContactList.prototype = {
 				contact.render(stubId, attributeMappings, appendToElementId);
 			}
 		}
+	},
+	/**
+	 * perform a case-insensitive pattern match against the names in the contact list, returning an array of the userids
+	 * @param {string} searchText -- the text to search
+	 * @returns {Array<number>} -- array of user ids
+	 */
+	search: function searchContacts(searchText) {
+		var searchRegEx =  new RegExp(searchText, "i");
+		return this.contacts.filter(function(contact) {
+			return searchRegEx.test(contact.name);
+		}).map(function(contact) {
+			return parseInt(contact.userid);
+		});
 	}
 };
 
@@ -169,6 +182,7 @@ ContactList.prototype = {
  * @param {string} id -- userId of the contact
  * @param {string} name -- user's name for display purposes
  * @param {boolean} isParticipant -- a flag to identify participants in a given context for filtering.
+ * @param {string} source -- source of the contact (email -> cached email contacts, mutual -> mutual followers api endpoint)
  * @param {number} lastAccess -- timestamp of the last access, intended to persist across sessions via cache
  * @constructor
  */

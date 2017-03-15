@@ -766,6 +766,32 @@ var Toolbar = {
 				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
 		});
 
+		// share contacts search
+		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
+			console.log(e.target.value);
+			if(this.shareContactList) {
+				var contactIds = this.shareContactList.search(e.target.value),
+					attributeMap = [
+						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+					];
+				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {contactIds: contactIds, isParticipant: false});
+			}
+		}.bind(this));
+
+		// convo contacts search
+		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
+			console.log(e.target.value);
+			if(this.convoContactList) {
+				var contactIds = this.convoContactList.search(e.target.value),
+					attributeMap = [
+						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+					];
+				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {contactIds: contactIds, isParticipant: false});
+			}
+		}.bind(this));
+
 		// Redraw
 		//Toolbar.handleRedraw();
 		//Toolbar._events.forEach(function(entry) {
