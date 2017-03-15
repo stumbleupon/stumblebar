@@ -1,6 +1,7 @@
-function StumbleUponApi(config, cache) {
+function StumbleUponApi(config, cache, userCache) {
 	this.config = config;
 	this.cache = cache;
+	this.userCache = userCache || null;
 	this.state = {
 		loggedIn: false,
 		accessToken: null,
@@ -22,6 +23,10 @@ StumbleUponApi.prototype = {
 			.then(this._extractAccessToken.bind(this));
 	},
 
+	setUserCache: function setUserCache(userCache) {
+		this.userCache = userCache;
+	},
+
 	rate: function(urlid, score) {
 		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' });
 	},
@@ -39,26 +44,27 @@ StumbleUponApi.prototype = {
 	},
 
 	getContacts: function apiGetContacts() {
-		var cacheKey = 'my-contacts',
+		var userCache = ToolbarEvent.userCache,
+			cacheKey = 'my-contacts',
 			cacheTtl = 300000,
 			dataNode = 'mutual';
-		return this.cache.get(cacheKey)
+		return userCache.get(cacheKey)
 			.then(function(contacts) {
 				debug(contacts);
 				if(contacts) {
 					return contacts;
 				} else {
-                    return this.getUser()
-                        .then(function(user) {
-                            return user.userid;
-                        }.bind(this))
-                        .then(function(userid) {
-                            return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
-                        }.bind(this))
-                        .then(function(contacts) {
-                            this.cache.set(cacheKey, contacts[dataNode], cacheTtl);
-                            return contacts[dataNode];
-                        }.bind(this));
+					return this.getUser()
+						.then(function(user) {
+							return user.userid;
+						}.bind(this))
+						.then(function(userid) {
+							return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
+						}.bind(this))
+						.then(function(contacts) {
+							userCache.set(cacheKey, contacts[dataNode], cacheTtl);
+							return contacts[dataNode];
+						}.bind(this));
 				}
 			}.bind(this));
 	},
@@ -168,7 +174,7 @@ StumbleUponApi.prototype = {
 	getUser: function() {
 		return this.api.req(this.config.endpoint.user)
 			.then(function(result) {
-			    var loggedIn = false, user = {};
+				var loggedIn = false, user = {};
 			  	if (result && result._success && result.user) {
 			  		loggedIn = true;
 			  		user = result.user;
@@ -305,6 +311,7 @@ StumbleUponApi.prototype = {
 		return this.cache.mset({
 			accessToken: null,
 		});
+		this.userCache = null;
 		this.flushStumbles();
 	},
 

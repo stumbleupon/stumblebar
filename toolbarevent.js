@@ -55,7 +55,11 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.share = function handleShare(request, sender) {
-	return Promise.resolve(ToolbarEvent.api.getContacts())
+	return ToolbarEvent
+		._sanity()
+		.then(function() {
+			return ToolbarEvent.api.getContacts();
+		})
 		.then(function(contacts) {
 			return ToolbarEvent._buildResponse({share: { contacts: contacts}}, false);
 		});
@@ -719,6 +723,8 @@ ToolbarEvent.ping = function() {
 		.then(function(user) {
 			debug('Login success for user', user.username);
 			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
+			ToolbarEvent.userCache = new Cache({prefix: user.userid + '-'});
+			ToolbarEvent.api.setUserCache(ToolbarEvent.userCache);
 			ToolbarEvent.interests();
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
@@ -785,6 +791,8 @@ ToolbarEvent._sanity = function() {
 	return ToolbarEvent.cache.get('user')
 		.then(function(user) {
 			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
+			ToolbarEvent.userCache = new Cache({prefix: user.userid + '-'});
+			ToolbarEvent.api.setUserCache(ToolbarEvent.userCache);
 			if (!user.userid)
 				return ToolbarEvent.ping();
 			ToolbarEvent.api.getPendingUnread().then(function(info) {
