@@ -74,6 +74,14 @@ StumbleUponApi.prototype = {
 			.then(function (result) { return result.url; });
 	},
 
+	getInterests: function() {
+		return this.cache.get('user')
+			.then(function(user) {
+				return this.api.get(this.config.endpoint.interests.form({ userid: user.userid }), { userid: user.userid })
+					.then(function (result) { return result.interests.values; });
+			}.bind(this));
+	},
+
 	getUrlByHref: function(url) {
 		return this.api.get(this.config.endpoint.url, { url: url })
 			.then(function (result) { return result.url; });
