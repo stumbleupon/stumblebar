@@ -202,8 +202,10 @@ button.pill.delete:before {
 	width: auto;
 	font-size: 20px;
 	top: 0px;
-	margin-top: -10px;
-	margin-left: -2px;
+}
+.dislike-menu-icon {
+	margin-top: -5px;
+	display: inline-block;
 }
 .toolbar-action-icons {
 	margin-right: 8px;
