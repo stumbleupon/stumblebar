@@ -736,6 +736,8 @@ var Toolbar = {
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
+		if (!e.data.action)
+			return false;
 		if (e.data.action == 'mouse') {
 			var data = e.data.data;
 			var hover = data && data.iframe && ( // We can do mini mode if the mouse isn't hovering over the frame
@@ -752,7 +754,7 @@ var Toolbar = {
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);
-		window.addEventListener("message", Toolbar.handleIframeEvent, false);
+		window.addEventListener("message", Toolbar.handleIframeEvent, true);
 
 		// Toolbar initialization
 		Toolbar.dispatch('init');
@@ -760,12 +762,12 @@ var Toolbar = {
 		window.setInterval(Toolbar.tryMiniMode, 1000);
 
 		// Drag-n-drop logic
-		document.addEventListener("mousedown",      Toolbar.handleMouseDown);
-		document.addEventListener("mousemove",      Toolbar.handleMouseMove);
-		document.addEventListener("mouseup",        Toolbar.handleMouseUp);
-		document.addEventListener("mousewheel",     Toolbar.handleMouseWheel);
-		document.addEventListener("wheel",          Toolbar.handleMouseWheel);
-		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel);
+		document.addEventListener("mousedown",      Toolbar.handleMouseDown,  true);
+		document.addEventListener("mousemove",      Toolbar.handleMouseMove,  true);
+		document.addEventListener("mouseup",        Toolbar.handleMouseUp,    true);
+		document.addEventListener("mousewheel",     Toolbar.handleMouseWheel, true);
+		document.addEventListener("wheel",          Toolbar.handleMouseWheel, true);
+		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel, true);
 
 		// Enter-on-send
 		document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
