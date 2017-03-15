@@ -120,10 +120,18 @@ button.pill.delete:before {
 	background-color: yellow;
 	*/
 }
-.action-theme.enabled {
+.toolbar-settings-container .enabled {
 	background-color: yellow;
 	border-radius: 4px;
 	color: black;
+}
+.toolbar-settings-container .toolbar-entry-list-item {
+	padding: 0.25em !important;
+	margin-top: 0;
+}
+.toolbar-settings-container .toolbar-entry-container {
+	padding: 0.25em !important;
+	margin: 0 !important;
 }
 
 .toolbar-separator {

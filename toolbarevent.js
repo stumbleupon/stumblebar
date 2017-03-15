@@ -129,6 +129,18 @@ ToolbarEvent.discover = function(request, sender) {
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  */
+ToolbarEvent.stayExpanded = function(request, sender) {
+	ToolbarEvent.cache.mset({ stayExpanded: config.stayExpanded = !config.stayExpanded });
+	return ToolbarEvent._buildResponse({ stayExpanded: config.stayExpanded }, true);
+};
+
+
+/**
+ * Open an SU page
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
 ToolbarEvent.su = function(request, sender) {
 	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
 };

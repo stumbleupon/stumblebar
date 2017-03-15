@@ -231,6 +231,8 @@ var Toolbar = {
 			document.querySelector("#theme-" + config.theme).addClass('enabled');
 		}
 
+		document.querySelector('.action-stay-expanded').changeClass('enabled', config.stayExpanded);
+
 		if (config.interests && config.interests.length)
 			Toolbar.handleInterests(config.interests);
 
@@ -700,7 +702,7 @@ var Toolbar = {
 		window.top.postMessage({ type: "up", message: { screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
 	tryMiniMode: function(e) {
-		if (Toolbar.state.canMiniMode && !Toolbar.state.inMiniMode && Toolbar.state.lastMouse && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
+		if (Toolbar.state.canMiniMode && !Toolbar.config.stayExpanded && !Toolbar.state.inMiniMode && Toolbar.state.lastMouse && Date.now() - Toolbar.state.lastMouse >= (Toolbar.config.miniModeTimeout || 10)) {
 			Toolbar.handleMiniMode(e);
 		}
 	},
