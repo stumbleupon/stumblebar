@@ -334,6 +334,10 @@ var Toolbar = {
 		Toolbar.handleLists({ lists: [ r.list ], position: 'append' });
 	},
 
+	handleHash: function(hash) {
+		Toolbar.state.hash = hash;
+	},
+
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
 		if (r && r.config)
@@ -736,6 +740,8 @@ var Toolbar = {
 		} } }, "*");
 	},
 	handleIframeEvent: function(e) {
+		if (e.data.hash != Toolbar.state.hash)
+			return false;
 		if (!e.data.action)
 			return false;
 		if (e.data.action == 'mouse') {

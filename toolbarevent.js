@@ -668,7 +668,12 @@ ToolbarEvent.urlChange = function(request, sender) {
  */
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id), version: chrome.runtime.getManifest().version });
+	return ToolbarEvent._buildResponse({
+		url: Page.lastUrl(sender.tab.id),
+		state: Page.lastState(sender.tab.id),
+		version: chrome.runtime.getManifest().version,
+		hash: Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
+	}, sender.tab.id);
 }
 
 /**

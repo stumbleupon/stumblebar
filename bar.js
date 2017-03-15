@@ -68,10 +68,10 @@
 				this.document = this.getDocument();
 				if (!this.document)
 					return false;
+				this.registerPingListener();
 				this.iframe = this.createIframe();
 				this.document.adoptNode(this.iframe);
-				this.registerPingListener();
-				this.drag = new DragNDrop(this.iframe, this.origin);
+				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
 				this.attemptInjection();
 			}
 		},
@@ -79,10 +79,14 @@
 		registerPingListener: function() {
 			IframeBar.pingListener = chrome.runtime.onMessage.addListener(
 				function(request, sender, sendResponse) {
-					if (request.type == "ping")
+					if (request.type == "ping") {
 						sendResponse({type: "pong"});
+					}
+					if (request.hash) {
+						this.drag.updateHash(this.hash = request.hash);
+					}
 					return true;
-				}
+				}.bind(this)
 			);
 		},
 

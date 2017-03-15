@@ -1,6 +1,7 @@
-function DragNDrop(elem, origin) {
+function DragNDrop(elem, origin, hash) {
 	this.elem = elem;
 	this.origin = origin;
+	this.hash = hash;
 	this.init();
 }
 
@@ -14,6 +15,9 @@ DragNDrop.prototype = {
 		bottom: 'top',
 	},
 
+	updateHash: function(hash) {
+		this.hash = hash;
+	},
 
 	init: function() {
 		this.communicateMouseMove = debounce(function() {
@@ -27,6 +31,7 @@ DragNDrop.prototype = {
 
 
 	sendToIframe: function(msg, bg) {
+		msg.hash = this.hash;
 		try {
 			if (this.elem.contentWindow) {
 				this.elem.contentWindow.postMessage(msg, this.origin);
