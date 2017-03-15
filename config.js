@@ -9,7 +9,7 @@ var config = {
 //		}.bind(this));
 //  }
 }
-config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed'];
+config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed', 'interests'];
 	
 config.baseUrl   = 'www.stumbleupon.com';
 config.baseProto = 'https';
@@ -24,7 +24,10 @@ config.defaults = {
 	theme: '',
 	user: 0,
 	stumble: { list: [], pos: -1, mode: 'all' },
+	interests: [],
 };
+
+config.interests = [];
 
 config.miniModeTimeout = 500;
 config.suPages = {
@@ -93,6 +96,7 @@ config.api.stumbleupon = {
 		lists:       '/user/:userid/lists',
 		addtolist:   '/list/:listid/items',
 		blocksite:   '/domain/:urlid/block',
+		interests:   '/user/:userid/interests',
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: config.defaults,

@@ -13,6 +13,7 @@ body {
 	font-size: 13px;
 	zoom: initial;
 	zoom: reset !important;
+	max-width: 400px;
 }
 .toolbar-container {
   vertical-align: middle;

@@ -47,6 +47,8 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	return true;
 }
 
+
+
 /**
  *
  * @param {MessageRequest} request
@@ -693,12 +695,26 @@ ToolbarEvent.ping = function() {
 		.then(function(user) {
 			debug('Login success for user', user.username);
 			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
+			ToolbarEvent.getInterests();
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
 		})
 		.catch(ToolbarEvent.needsLogin);
 }
+
+
+
+ToolbarEvent.getInterests = function() {
+	ToolbarEvent.api.getInterests()
+		.then(function(interests) {
+			// Cache interests for an hour
+			ToolbarEvent.cache.set(interests, config.interests = interests, 60 * 60 * 1000);
+			ToolbarEvent._buildResponse({ interests: interests }, true);
+		});
+}
+
+
 
 /**
  * Builds a response to send back to the iframe'd toolbar
@@ -762,6 +778,8 @@ ToolbarEvent._init = function() {
 		 .then(function (map) {
 			 Object.assign(config, map);
 		 });
+	if (!config.interests || !config.interests.length)
+		ToolbarEvent.getInterests();
 
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 
