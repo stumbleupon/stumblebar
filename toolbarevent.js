@@ -738,7 +738,7 @@ ToolbarEvent._buildResponse = function(change, tabid) {
 ToolbarEvent._sanity = function() {
 	return ToolbarEvent.cache.get('user')
 		.then(function(user) {
-			ToolbarEvent.cache.mset({ authed: config.authed = !!user.userid });
+			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
 			if (!user.userid)
 				return ToolbarEvent.ping();
 			ToolbarEvent.api.getPendingUnread().then(function(info) {
