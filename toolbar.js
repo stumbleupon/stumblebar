@@ -4,6 +4,8 @@ var Toolbar = {
 	},
 
 	handleInterests: function(interests) {
+		document.querySelector('#interests-container').innerHTML = '';
+
 		interests.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-interests-entry").cloneNode('deep');
 
