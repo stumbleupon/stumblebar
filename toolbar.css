@@ -195,12 +195,15 @@ button.pill.delete:before {
 	position: relative;
 }
 .toolbar-action.action-dislike-menu {
+	/*
 	position: absolute;
 	right: -3px;
+	*/
 	width: auto;
 	font-size: 20px;
 	top: 0px;
-	margin-top: -5px;
+	margin-top: -10px;
+	margin-left: -2px;
 }
 .toolbar-action-icons {
 	margin-right: 8px;
