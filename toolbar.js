@@ -304,8 +304,12 @@ var Toolbar = {
 
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
+		if (r && r.config)
+			Toolbar.handleConfig(r.config);
+		if (r && r.url)
+			Toolbar.handleUrl(r.url);
 		Object.keys(r || {}).forEach(function(key) {
-			if (['all', 'data', 'event'].includes(key))
+			if (['config', 'url', 'all', 'data', 'event'].includes(key))
 				return;
 			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
