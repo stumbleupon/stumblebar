@@ -456,8 +456,8 @@ var Toolbar = {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
 		}
-		if (action == 'expand' && value == 'inline-info') {
-			document.querySelector(".toolbar-container").toggleClass("inline-info-expanded");
+		if (action == 'expand') {
+			document.querySelector(".toolbar-container").toggleClass(value + "-expanded");
 		}
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
@@ -474,7 +474,6 @@ var Toolbar = {
 			document.querySelector(".toolbar-container").toggleClass("keywords-expanded");
 		}
 		if (action == 'expand' && value == 'mode') {
-			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
 			document.querySelector(".toolbar-container").removeClass("interests-expanded");
 		}
 		if (action == 'expand' && value == 'social') {

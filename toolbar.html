@@ -102,6 +102,7 @@
 					</div>
 
 					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode hide-when-share-expanded">
+						<span class="clickable close-icon show-when-inbox-expanded" action="expand" value="inbox"></span>
 
 						<div class="inbox-entry clickable stub" action="open-convo" id="stub-inbox-entry">
 							<span class="inbox-entry-image"></span>
@@ -131,6 +132,8 @@
 							<span class="lists-entry-date"></span>
 							<span class="lists-entry-snippet"></span>
 						</div>
+
+						<span class="clickable close-icon show-when-lists-expanded" action="expand" value="lists"></span>
 
 						<div class="lists-entry lists-create-action clickable" action="toggle" value="lists-container,lists-create-action,lists-create-container" style="font-size: 16px;">
 							[+] Create new list
@@ -186,7 +189,7 @@
 							</ul>
 						</div>
 
-						<span class="clickable close-icon float-right show-when-convo-expanded" action="close-convo"></span>
+						<span class="clickable close-icon show-when-convo-expanded" action="expand" value="convo"></span>
 					</div>
 					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<li class="stub toolbar-action action-theme clickable" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></li>
