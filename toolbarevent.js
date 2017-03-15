@@ -155,6 +155,9 @@ ToolbarEvent._generateModeInfo = function(request, sender) {
 	if (config.mode == 'domain') {
 		if (request.action == 'mode' || !(config.modeinfo || {}).domains)
 			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ uriToDomain(sender.tab.url) ] } });
+	} else if (config.mode == 'interest') {
+		if (request.action == 'mode')
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { interests: [ request.data.interestid ], keyword: request.data.keyword } });
 	} else {
 		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
 	}
@@ -695,7 +698,7 @@ ToolbarEvent.ping = function() {
 		.then(function(user) {
 			debug('Login success for user', user.username);
 			ToolbarEvent.cache.mset({ authed: config.authed = user.userid });
-			ToolbarEvent.getInterests();
+			ToolbarEvent.interests();
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
 				.catch(function(e) {warning('Expected to preload next url', e);});
@@ -705,12 +708,18 @@ ToolbarEvent.ping = function() {
 
 
 
-ToolbarEvent.getInterests = function() {
-	ToolbarEvent.api.getInterests()
+ToolbarEvent.interests = function() {
+	return ToolbarEvent.cache.get('interests')
 		.then(function(interests) {
-			// Cache interests for an hour
-			ToolbarEvent.cache.set(interests, config.interests = interests, 60 * 60 * 1000);
-			ToolbarEvent._buildResponse({ interests: interests }, true);
+			return (interests && interests.length && interests) || ToolbarEvent.api.getInterests()
+				.then(function(interests) {
+					// Cache interests for an hour
+					ToolbarEvent.cache.set(interests, config.interests = interests, 60 * 60 * 1000);
+					return interests;
+				});
+		})
+		.then(function(interests) {
+			return ToolbarEvent._buildResponse({ interests: interests }, true);
 		});
 }
 
@@ -778,8 +787,9 @@ ToolbarEvent._init = function() {
 		 .then(function (map) {
 			 Object.assign(config, map);
 		 });
+
 	if (!config.interests || !config.interests.length)
-		ToolbarEvent.getInterests();
+		ToolbarEvent.interests();
 
 	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 

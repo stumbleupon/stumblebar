@@ -644,7 +644,15 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.interests-expanded) .show-when-interests-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container.interests-expanded .hide-when-interests-expanded:not(.enabled) {
 	display: none;
 }
 
@@ -737,7 +745,7 @@ button.pill.delete:before {
 	padding-right: 1em;
 }
 
-.inbox-container, .convo-container, .lists-container {
+.inbox-container, .convo-container, .lists-container, .interests-container {
 	max-height: 140px;
 	display: block;
 	overflow: auto;
@@ -783,6 +791,60 @@ button.pill.delete:before {
 	margin-right: 8px;
 	float: left;
 }
+
+
+
+.interests-entry {
+	border-bottom: 1px solid #888;
+}
+
+.interests-entry.unread {
+	background-color: blue;
+}
+
+.interests-container SPAN {
+	margin: 4px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.interests-container .interests-entry-date {
+	float: right;
+	display: none;
+}
+
+.interests-container .interests-entry-title {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.interests-container .interests-entry-snippet {
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 1em;
+	font-style: italic;
+}
+
+.interests-container .interests-entry-image {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-size: cover;
+	margin-right: 8px;
+	float: left;
+}
+
+.interests-container .list-create-action .interests-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.interests-container {
+	white-space: normal;
+	max-width: 320px;
+}
+
 
 .lists-entry {
 	border-bottom: 1px solid #888;

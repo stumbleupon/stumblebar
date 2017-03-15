@@ -47,6 +47,7 @@ config.modes = {
 	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
 	domain:    { name: 'Domain'         , post: { domains: [ 'wikiepdia.com' ] } },
+	interest:  { name: 'Interest'       , post: { } },
 }
 
 

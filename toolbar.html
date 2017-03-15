@@ -29,13 +29,30 @@
 								Select...
 								<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="expand" value="mode"></span>
 							</div>
-							<div class="scrollable">
+							<div class="scrollable mode-picker hide-when-interests-expanded">
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="all">All Interests</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="following">People I Follow</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="trending">Trending</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="photo">Photos</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="video">Videos</div>
 								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode toolbar-entry-stumble-domain hidden" action="mode" value="domain">Domain <span id="domain"></span></div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="interests">Interest</div>
+							</div>
+							<div class="show-when-interests-expanded">
+								<div class="interests-loading">
+									<span class="spinner"></span> Loading...
+								</div>
+
+								<div class="interests-entry clickable stub" action="mode" values="value=mode,interestid=interestid,keyword=keyword" mode="interest" id="stub-interests-entry">
+									<span class="interests-entry-image"></span>
+									<span class="interests-entry-title"></span>
+									<span class="interests-entry-user"></span>
+									<span class="interests-entry-date"></span>
+									<span class="interests-entry-snippet"></span>
+								</div>
+
+								<span class="interests-container scrollable" id="interests-container">
+								</span>
 							</div>
 						</div>
 					</div>

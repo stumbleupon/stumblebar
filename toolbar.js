@@ -3,6 +3,24 @@ var Toolbar = {
 		document.querySelector("#toolbar-version").innerText = version;
 	},
 
+	handleInterests: function(interests) {
+		interests.forEach(function(entry) {
+			var entryNode = document.querySelector("#stub-interests-entry").cloneNode('deep');
+
+			entryNode.id = entry.id;
+			entryNode.removeClass('stub');
+			entryNode.setAttribute("interestid", entry.id);
+			entryNode.setAttribute("keyword",    entry.name);
+
+			entryNode.querySelector('.interests-entry-image').style       = "background-image: url(" + entry.pic_thumb + ")";
+			entryNode.querySelector('.interests-entry-title').innerText   = entry.name || '???';
+
+			document.querySelector('#interests-container').insertBefore(entryNode, null);
+		});
+
+		document.querySelector('.interests-loading').addClass('hidden');
+	},
+
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
@@ -208,12 +226,18 @@ var Toolbar = {
 			});
 			document.querySelector("#theme-" + config.theme).addClass('enabled');
 		}
+
+		if (config.interests && config.interests.length)
+			Toolbar.handleInterests(config.interests);
+
 		if (config.mode && config.mode != Toolbar.config.mode) {
 			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
 			//document.querySelector(".toolbar-mode").removeClass("hidden");
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
 			if (config.mode == "domain")
 				document.querySelector("#mode").innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
+			if (config.mode == "interest")
+				document.querySelector("#mode").innerText = config.modeinfo.keyword;
 		}
 
 		if (config.hasOwnProperty('numShares')) {
@@ -430,8 +454,12 @@ var Toolbar = {
 			document.querySelector(".toolbar-container").toggleClass("lists-expanded");
 			document.querySelector('.lists-loading').removeClass('hidden');
 		}
+		if (action == 'interests') {
+			document.querySelector(".toolbar-container").toggleClass("interests-expanded");
+		}
 		if (action == 'expand' && value == 'mode') {
 			document.querySelector(".toolbar-container").toggleClass("mode-expanded");
+			document.querySelector(".toolbar-container").removeClass("interests-expanded");
 		}
 		if (action == 'expand' && value == 'social') {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
