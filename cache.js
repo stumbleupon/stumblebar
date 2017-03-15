@@ -45,6 +45,7 @@ Cache.prototype = {
 			});
 	},
 	get: function(key, fallback) {
+		key = this.defaults.prefix + key;
 		return new Promise(function (resolve, reject) {
 			return chrome.storage.local.get(key, function(result) {
 				if (!key)
@@ -54,7 +55,6 @@ Cache.prototype = {
 					if(typeof val === 'object') {
 						// see if it has an expiration
 						if(val.hasOwnProperty(('_expires')) && typeof val._expires === "number" && val._expires <= Date.now()) {
-							console.log(typeof val._expires, val._expires);
 							return resolve(null);
 						}
 						// if it has a value set, return it
@@ -89,16 +89,17 @@ Cache.prototype = {
 	 */
 	set: function(key, value, msTtl) {
 		var obj = new Object(),
-			expires = null;
+			obj = {[this.defaults.prefix + key]: value}
 		if((typeof msTtl === "number")) {
-			expires = Date.now() + msTtl;
+			var expires = Date.now() + msTtl;
+			obj[this.defaults.prefix + key] = {_setValue: value, _expires: expires};
 		}
-		obj[key] = {_setValue: value, _expires: expires};
 		return this.mset(obj);
 	},
 
 	init: function(kvpairs) {
 		this.defaults = kvpairs
+		this.defaults.prefix = this.defaults.prefix || '';
 	}
 }
 
