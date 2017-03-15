@@ -9,7 +9,7 @@ var config = {
 //		}.bind(this));
 //  }
 }
-config.persist = ['rpos', 'mode', 'theme', 'hidden', 'authed'];
+config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed'];
 	
 config.baseUrl   = 'www.stumbleupon.com';
 config.baseProto = 'https';
@@ -18,6 +18,13 @@ config.webtbPath = '/su/([^/]+)(/([^/]+)/(.*))?';
 config.webtbPathNames = { path: 0, urlid: 1, socialid: 3, vanityurl: 4 }
 config.convoPath = '/convo/([^/]+)(/([^/]+))?';
 config.convoPathNames = { path: 0, convoid: 1, stateId: 3 }
+
+config.defaults = {
+	mode: 'all',
+	theme: '',
+	user: 0,
+	stumble: { list: [], pos: -1, mode: 'all' },
+};
 
 config.miniModeTimeout = 500;
 config.suPages = {
@@ -36,6 +43,7 @@ config.modes = {
 	trending:  { name: 'Trending'        },
 	photo:     { name: 'Photos'         , mode: 'interest', post: { interests: [302], keyword: 'Photos' } },
 	video:     { name: 'Videos'         , post: { keyword: 'Video' } },
+	domain:    { name: 'Domain'         , post: { domains: [ 'wikiepdia.com' ] } },
 }
 
 
@@ -84,14 +92,10 @@ config.api.stumbleupon = {
 		unread:      '/activities/snapshot',
 		lists:       '/user/:userid/lists',
 		addtolist:   '/list/:listid/items',
+		blocksite:   '/domain/:urlid/block',
 	},
 	defaultHeaders: config.defaultHeaders,
-	defaults: {
-		mode: 'all',
-		theme: '',
-		user: 0,
-		stumble: { list: [], pos: -1, mode: 'all' },
-	},
+	defaults: config.defaults,
 	post: {
 		stumble: {
 			guesses: 10,

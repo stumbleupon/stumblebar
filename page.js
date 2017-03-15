@@ -114,17 +114,18 @@ Page.getUrlId = function(tabid) {
  * @return {SuUrl}
  */
 Page.getUrl = function(tabid) {
-	return new Promise(function (resolve, reject) {
-		var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
-			   || Page.tab[tabid] && Page.tab[tabid].info && Page.tab[tabid].info.url;
-		;
-		if (url)
-			return resolve(url);
+	var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
+		   || Page.tab[tabid] && Page.tab[tabid].info && Page.tab[tabid].info.url;
+	;
 
-		chrome.tabs.get(tabid, function(tab) {
-			resolve(tab.url);
-		});
-	});
+	if (!url)
+		return Promise.reject({});
+
+	return Promise.resolve(url);
+
+//		chrome.tabs.get(tabid, function(tab) {
+//			resolve(tab.url);
+//		});
 }
 
 
@@ -132,6 +133,7 @@ Page.getUrl = function(tabid) {
  * A cache of fetched SuUrls
  */
 Page.urlCache = [];
+Page.urlMap   = {};
 
 
 /**
@@ -141,7 +143,7 @@ Page.urlCache = [];
  * @return {Object}
  */
 Page.getUrlByHref = function(href) {
-	return Page.urlCache[href];
+	return Page.urlMap[href];
 }
 
 /**
@@ -153,15 +155,16 @@ Page.getUrlByHref = function(href) {
  * @return {SuUrl}
  */
 Page.getUrlByUrlid = function(urlid, mode) {
-	return Page.urlCache[mode + ':' + urlid] || Page.urlCache[urlid];
+	return Page.urlMap[mode + ':' + urlid] || Page.urlMap[urlid];
 }
 
 /**
  * Cleans up url cache by trimming the cache down to 1000 urls
  */
 Page.cleanupUrlCache = function() {
-	while (Page.urlCache.length >= 1e3) {
-		Page.removeUrlFromUrlCache(Page.urlCache.splice(0, 1));
+	if (Page.urlCache.length >= 1e3) {
+		var errantUrl = Page.urlCache.splice(0, 1)[0];
+		Page.removeUrlFromUrlCache(errantUrl);
 	}
 }
 
@@ -171,10 +174,14 @@ Page.cleanupUrlCache = function() {
 Page.removeUrlFromUrlCache = function(url) {
 	if (!url)
 		return;
-	delete Page.urlCache[url.urlid];
-	delete Page.urlCache[url.mode + ':' + url.urlid];
-	delete Page.urlCache[url.url];
-	delete Page.urlCache[url.finalUrl];
+	if (url.urlid && url.mode)
+		delete Page.urlMap[url.urlid];
+	if (url.urlid)
+		delete Page.urlMap[url.mode + ':' + url.urlid];
+	if (url.url)
+		delete Page.urlMap[url.url];
+	if (url.finalUrl)
+		delete Page.urlMap[url.finalUrl];
 }
 
 
@@ -189,20 +196,17 @@ Page.note = function(tabid, url) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
-	if (url.urlid) {
-		if (url.mode)
-			Page.urlCache[url.mode + ':' + url.urlid] = url;
-		Page.urlCache[url.urlid] = url;
-		Page.urlCache.push(url);
-	}
+	if (url.urlid && url.mode)
+		Page.urlMap[url.mode + ':' + url.urlid] = url;
+	if (url.urlid)
+		Page.urlMap[url.urlid] = url;
+	if (url.url)
+		Page.urlMap[url.url] = url;
+	if (url.finalUrl)
+		Page.urlMap[url.finalUrl] = url;
 
-	// We need url-by-url to handle page-reloads because we don't fetch the page info again
-	if (url.url) {
-		Page.urlCache[url.url] = url;
-		if (url.finalUrl)
-			Page.urlCache[url.finalUrl] = url;
+	if (Page.urlCache.indexOf(url) == -1)
 		Page.urlCache.push(url);
-	}
 
 	Page.cleanupUrlCache();
 

@@ -36,21 +36,34 @@ Cache.prototype = {
 			reqs.push(null);
 		}
 		return Promise.all(reqs)
-		    .then(function(r) {
+			.then(function(r) {
 				var retval = {};
 				r.forEach(function(v, k) {
 					retval[keys[k]] = v;
 				})
 				return retval;
-		    });
+			});
 	},
 	get: function(key, fallback) {
 		return new Promise(function (resolve, reject) {
 			return chrome.storage.local.get(key, function(result) {
 				if (!key)
 					resolve(result);
-				else if (result.hasOwnProperty(key))
-					resolve(result[key])
+				else if (result.hasOwnProperty(key)) {
+					var val = result[key];
+					if(typeof val === 'object') {
+						// see if it has an expiration
+						if(val.hasOwnProperty(('_expires')) && typeof val._expires === "number" && val._expires <= Date.now()) {
+							console.log(typeof val._expires, val._expires);
+							return resolve(null);
+						}
+						// if it has a value set, return it
+						if(val.hasOwnProperty('_setValue')) {
+							val = val._setValue;
+						}
+					}
+					resolve(val);
+				}
 				else if (typeof fallback != 'undefined')
 					resolve(fallback)
 				else if (typeof this.defaults[key] != 'undefined')
@@ -67,9 +80,20 @@ Cache.prototype = {
 		});
 	},
 
-	set: function(key, value) {
-		var obj = new Object();
-		obj[key] = value;
+	/**
+	 *
+	 * @param key
+	 * @param value
+	 * @param msTtl -- time to live in milliseconds
+	 * @returns {*}
+	 */
+	set: function(key, value, msTtl) {
+		var obj = new Object(),
+			expires = null;
+		if((typeof msTtl === "number")) {
+			expires = Date.now() + msTtl;
+		}
+		obj[key] = {_setValue: value, _expires: expires};
 		return this.mset(obj);
 	},
 

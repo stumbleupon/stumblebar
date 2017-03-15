@@ -2,7 +2,8 @@
 	<head>
 		<link rel="stylesheet" href="reset.css" type="text/css" />
 		<link rel="stylesheet" href="toolbar.css" type="text/css" />
-		<link rel="prerender"  href="" id="prerender">
+		<link rel="prerender"  href="" id="prerender" />
+		<meta charset="UTF-8" />
 	</head>
 	<body class="stop-flashing">
 		<div class="toolbar-container">
@@ -28,21 +29,26 @@
 								Select...
 								<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="expand" value="mode"></span>
 							</div>
-							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="all">All Interests</div>
-							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="following">People I Follow</div>
-							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="trending">Trending</div>
-							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="photo">Photos</div>
-							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="video">Videos</div>
+							<div class="scrollable">
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="all">All Interests</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="following">People I Follow</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="trending">Trending</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="photo">Photos</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode" action="mode" value="video">Videos</div>
+								<div class="toolbar-action toolbar-entry-container toolbar-border-top action-mode toolbar-entry-stumble-domain hidden" action="mode" value="domain">Domain <span id="domain"></span></div>
+							</div>
 						</div>
 					</div>
 
 					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed hide-when-share-expanded">
 						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
 						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
-						<span class="hide-in-mini-mode handed reverse-when-right-handed">
+						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">
 							<span class="toolbar-action action-like   " action="like"    id="like"></span>
 							<span class="toolbar-action action-share  " action="share"   id="share"></span>
-							<span class="toolbar-action action-dislike" action="dislike" id="dislike"></span>
+							<span class="toolbar-action action-dislike" action="dislike" id="dislike">
+								<span class="toolbar-action action-dislike-menu primary-color" action="dislike-menu" id="dislike-menu">⌄</span>
+							</span>
 							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" action="inbox" raction="inbox" id="inbox"><span class="badge"></span></span>
 							<span class="toolbar-action action-lists  show-when-inline-info-expanded" action="lists"  id="lists"></span>
 							<span class="toolbar-action action-info   show-when-inline-info-expanded" action="info"  id="info"></span>
@@ -50,7 +56,17 @@
 						</span>
 					</div>
 
-					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode clickable" action="info">
+					<div class="toolbar-section toolbar-dislike-menu-container show-when-dislike-menu-expanded toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
+						<div class="toolbar-mode-selection primary-color reverse-when-top-handed">
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-spam">Report: Spam</div>
+							<!--
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-miscat">Report: Wrong Topic</div>
+							-->
+							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="block-site">Block Site</div>
+						</div>
+					</div>
+
+					<div class="toolbar-section toolbar-inline-info-container toolbar-border-top show-when-inline-info-expanded hide-in-mini-mode clickable hide-when-share-expanded" action="info">
 						<span class="toolbar-section-sponsored hidden" id="sponsored">
 							<a class="sponsored-text" action="su" value="sponsored">Sponsored</a>
 							-
@@ -58,7 +74,7 @@
 						<span class="inline-info-body" id="inline-info-body"></span>
 					</div>
 
-					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode">
+					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode hide-when-share-expanded">
 
 						<div class="inbox-entry clickable stub" action="open-convo" id="stub-inbox-entry">
 							<span class="inbox-entry-image"></span>
@@ -76,7 +92,7 @@
 						</div>
 					</div>
 
-					<div class="toolbar-section toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode">
+					<div class="toolbar-section toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode hide-when-share-expanded">
 						<div class="lists-loading">
 							<span class="spinner"></span> Loading...
 						</div>
@@ -148,7 +164,16 @@
 
 
 
+					<div class="toolbar-section toolbar-share-sending-container toolbar-border-top hidden">
+						<div class="share-sending">
+							<span class="spinner"></span> Sending...
+						</div>
+					</div>
+
 					<div class="toolbar-section toolbar-share-container show-when-share-expanded toolbar-border-top hidden">
+						<div class="share-loading hidden">
+							<span class="spinner"></span> Loading...
+						</div>
 						<div class="toolbar-share-container-section toolbar-share-comment-container">
 							<!-- a message to send with the share -->
 							<label for="toolbar-share-comment">Say something</label><br>
@@ -193,6 +218,7 @@
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-signout  clickable" action="signout">Sign Out</div> 
 						</div>
 						<div class="toolbar-entry-container toolbar-border-top">
+							<span class="toolbar-version-container">Version <span id="toolbar-version"></span></span>
 							<div class="toolbar-action action-hide clickable" action="hide-toolbar">Hide Extension</div> 
 						</div>
 					</div>

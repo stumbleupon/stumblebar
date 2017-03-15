@@ -1,4 +1,8 @@
 var Toolbar = {
+	handleVersion: function(version) {
+		document.querySelector("#toolbar-version").innerText = version;
+	},
+
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
@@ -33,8 +37,11 @@ var Toolbar = {
 		document.querySelector("#inline-info-body").innerHTML = message;
 
 		document.querySelector("#info").removeClass("on");
+		document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !url.urlid);
 		if (url.urlid) {
 			document.querySelector("#info").addClass("on");
+			document.querySelector("#domain").innerText = uriToDomain(url.url);
+			document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !uriToDomain(url.url));
 		}
 
 		if (url.hasOwnProperty('sponsored')) {
@@ -56,6 +63,7 @@ var Toolbar = {
 	},
 
 	handleNewConvo: function(newConvo) {
+		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
 		var convo = newConvo.convo;
 		return this.handleConvo(convo);
 	},
@@ -67,19 +75,35 @@ var Toolbar = {
 		if (!convo.position)
 			document.querySelector('#convo-container').innerHTML = '';
 
+		var currentOffset = document.querySelector('#convo-container').scrollHeight - document.querySelector('#convo-container').scrollTop;
+
+		var personMap = {};
+		var myConvoId = false;
+		(convo.participants || []).forEach(function(person) {
+			var name = "";
+			var suname = ( person.suUserName || person.suUserId || person.email );
+			if (person.name)
+				name = person.name + ' (' + suname + ')';
+			else
+				name = suname;
+			personMap[person.id] = name;
+			if (person.suUserID == Toolbar.config.authed)
+				myConvoId = person.id;
+		});
+
+		var added = 0;
 		convo.events.forEach(function(entry) {
 			var entryNode = document.querySelector('#conv-' + entry.id) || document.querySelector("#stub-convo-entry").cloneNode('deep');
 
+			added += !entryNode.id;
+
 			entryNode.removeClass('stub');
 
-			(convo.participants || []).forEach(function(person) {
-				if (person.id == entry.createdBy) {
-					entryNode.querySelector('.convo-entry-user').innerText = person.name || person.email;
-					if (person.id == Toolbar.config.authed)
-						entryNode.addClass('.convo-me');
-				}
-			});
+			var poster = null;
+			entryNode.querySelector('.convo-entry-user').innerText = personMap[entry.createdBy];
+			entryNode.changeClass('.convo-me', entry.createdBy == myConvoId);
 			if (!convo.participants) {
+				poster = 'You';
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
 				entryNode.addClass('.convo-me');
 			}
@@ -87,6 +111,19 @@ var Toolbar = {
 			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;
 			entryNode.querySelector('.convo-entry-date').value     = entry.createdAt;
 			entryNode.querySelector('.convo-entry-body').innerText = entry.message;
+			if (entry.type == 'invite') {
+				var newppl = [];
+				entry.invitedParticipants.forEach(function(id) {
+					newppl.push(personMap[id]);
+				});
+				if (newppl.length <= 1)
+					newppl = newppl.join(' and ');
+				else {
+					newppl[newppl.length - 1] = 'and ' + newppl[newppl.length - 1];
+					newppm = newppl.join(', ');
+				}
+				entryNode.querySelector('.convo-entry-body').innerText = 'Invited ' + newppl;
+			}
 			entryNode.id = 'conv-' + entry.id;
 
 			if (!entryNode.parentNode) {
@@ -105,11 +142,14 @@ var Toolbar = {
 
 			Toolbar.listenConvoHelper();
 		}
-		if (convo.position == 'prepend' && !convo.events.length) {
+
+		// @TODO FIXME
+		//if (convo.position == 'prepend' && !convo.events.length) {
+		if (convo.position == 'prepend' && !added) {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
-		var participants = convo.participants.filter(function(participant) {
+		var participants = (convo.participants || []).filter(function(participant) {
 			return participant.suUserId != Toolbar.config.authed;
 		}).map(function(participant) {
 			return {
@@ -124,7 +164,10 @@ var Toolbar = {
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
-		document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+		if (convo.position) // Remember scroll position
+			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight - currentOffset;
+		else // Scroll to the bottom
+			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
 	},
 	updateConvoParticipants: function updateConvoParticipants() {
 		var attributeMap = [
@@ -169,6 +212,8 @@ var Toolbar = {
 			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
 			//document.querySelector(".toolbar-mode").removeClass("hidden");
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
+			if (config.mode == "domain")
+				document.querySelector("#mode").innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
 		}
 
 		if (config.hasOwnProperty('numShares')) {
@@ -196,7 +241,6 @@ var Toolbar = {
 
 		lists.entries.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
-			console.log(entry);
 
 			entryNode.id = entry.id;
 			entryNode.removeClass('stub');
@@ -251,7 +295,7 @@ var Toolbar = {
 	},
 
 	handleComment: function(comment) {
-		Toolbar.handleComment({ events:[ comment ], position: 'append' });
+		Toolbar.handleConvo({ events:[ comment ], position: 'append' });
 	},
 
 	handleList: function(list) {
@@ -260,8 +304,12 @@ var Toolbar = {
 
 	_handleResponse: function(r) {
 		console.log('Toolbar.handleResponse', r);
+		if (r && r.config)
+			Toolbar.handleConfig(r.config);
+		if (r && r.url)
+			Toolbar.handleUrl(r.url);
 		Object.keys(r || {}).forEach(function(key) {
-			if (['all', 'data', 'event'].includes(key))
+			if (['config', 'url', 'all', 'data', 'event'].includes(key))
 				return;
 			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
@@ -372,9 +420,6 @@ var Toolbar = {
 	 *                              OR return an Object to replace the data object sent to dispatch.
 	 */
 	handleImmediateAction: function(action, value, elem) {
-		if (action == "su") {
-			chrome.tabs.create({ url: Toolbar.config.suPages[value].form(Toolbar.config) });
-		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector(".action-stumble").toggleClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
@@ -397,8 +442,10 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
+		if (['dislike-menu', 'report-spam', 'report-miscat', 'block-site'].includes(action)) {
+			document.querySelector(".toolbar-container").toggleClass("dislike-menu-expanded");
+		}
 		if (action == 'share') {
-			elem.toggleClass("enabled");
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");
 			document.querySelector(".toolbar-container").toggleClass("share-expanded");
 		}
@@ -443,9 +490,11 @@ var Toolbar = {
 		}
 		if (action == 'save-share') {
 			if(this.validateShare()) {
+				document.querySelector('.toolbar-share-sending-container').removeClass('hidden');
 				document.querySelector("[action=share]").toggleClass("enabled");
 				document.querySelector(".toolbar-share-container").toggleClass("hidden");
 				document.querySelector(".toolbar-container").toggleClass("share-expanded");
+				Toolbar.handleRedraw();
 				return this.getShareData();
 			} else {
 				return false;

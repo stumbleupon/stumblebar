@@ -40,6 +40,7 @@ StumbleUponApi.prototype = {
 
 	getContacts: function apiGetContacts() {
 		var cacheKey = 'my-contacts',
+			cacheTtl = 300000,
 			dataNode = 'mutual';
 		return this.cache.get(cacheKey)
 			.then(function(contacts) {
@@ -55,7 +56,7 @@ StumbleUponApi.prototype = {
                             return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
                         }.bind(this))
                         .then(function(contacts) {
-                            this.cache.set(cacheKey, contacts[dataNode]);
+                            this.cache.set(cacheKey, contacts[dataNode], cacheTtl);
                             return contacts[dataNode];
                         }.bind(this));
 				}
@@ -84,6 +85,10 @@ StumbleUponApi.prototype = {
 					return Promise.reject(info);
 				return info;
 			})
+	},
+
+	blockSite: function(urlid) {
+		return this.api.req(this.config.endpoint.blocksite.form({ urlid: urlid }));
 	},
 
 	getConversations: function(start, limit, type) {
@@ -167,10 +172,10 @@ StumbleUponApi.prototype = {
 
 	getStumbles: function() {
 		var mode = null;
-		return this.cache.mget('mode', 'user')
+		return this.cache.mget('mode', 'user', 'modeinfo')
 			.then(function(map) {
 				mode = map.mode;
-				var post = this._buildPost("stumble", {userid: map.user.userid});
+				var post = Object.assign(this._buildPost("stumble", {userid: map.user.userid}), map.modeinfo || {});
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
@@ -205,7 +210,7 @@ StumbleUponApi.prototype = {
 	},
 
 	reportStumble: function(urlids, mode) {
-		return this.cache.mget('stumble', 'user', 'mode')
+		return this.cache.mget('stumble', 'user', 'mode', 'modeinfo')
 			.then(function (map) {
 				// FIXME double reporting/re-reporting
 				//for (var urlid in this.seen) {
@@ -214,7 +219,7 @@ StumbleUponApi.prototype = {
 				//}
 
 				var mode = mode || map.stumble.mode || map.mode;
-				var post = this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid});
+				var post = Object.assign(this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid}), map.modeinfo || {});
 				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode}; }.bind(this));
 
 				debug("Report stumble", urlids.join(','));
@@ -280,13 +285,19 @@ StumbleUponApi.prototype = {
 			}.bind(this));
 	},
 
+	_flushStumbles: function() {
+		return this.cache.mset({
+			stumbles: [],
+			stumblePos: -1,
+		});
+	},
+
 	_flush: function() {
 		this.api.addHeaders({[this.config.accessTokenHeader]: null});
 		return this.cache.mset({
 			accessToken: null,
-			stumbles: [],
-			stumblePos: -1,
 		});
+		this.flushStumbles();
 	},
 
 	_buildPost: function(type, remap) {
@@ -300,8 +311,8 @@ StumbleUponApi.prototype = {
 		return post;
 	},
 
-	_mode: function(mode) {
-		this.cache.mset({mode: mode});
+	_mode: function(mode, info) {
+		this.cache.mset({mode: mode, modeinfo: info});
 		return this;
 	},
 

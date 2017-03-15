@@ -34,6 +34,11 @@ body {
 	cursor: pointer;
 }
 
+.toolbar-version-container {
+	font-size: 0.8em;
+	float: right;
+}
+
 .stub {
 	display: none;
 }
@@ -176,6 +181,18 @@ button.pill.delete:before {
 	cursor: pointer;
 	content: "";
 	display: inline-block;
+	position: relative;
+}
+.toolbar-action.action-dislike-menu {
+	position: absolute;
+	right: -3px;
+	width: auto;
+	font-size: 20px;
+	top: 0px;
+	margin-top: -5px;
+}
+.toolbar-action-icons {
+	margin-right: 8px;
 }
 .toolbar-action {
 	position: relative;
@@ -201,7 +218,7 @@ button.pill.delete:before {
     filter: grayscale(100%) brightness(150%);
 	
 }
-.toolbar-action-container .action-info.on {
+#info.on {
 	-webkit-filter: none !important;
     filter: none !important;
 }
@@ -234,9 +251,6 @@ button.pill.delete:before {
 }
 .toolbar-action-container .action-share {
 	background-image: url("asset/Icon/Share.svg");
-}
-.toolbar-action-container .action-share.enabled {
-	background-image: url("asset/Icon/Share-enabled.svg");
 }
 .toolbar-expand-icon {
 	background-image: url("asset/Expand.svg");
@@ -428,6 +442,10 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 }
+.theme-dark-sidebar .close-icon {
+	background-color: #666;
+	border-radius: 4px;
+}
 .theme-dark-sidebar .toolbar-background {
 	background-color: white;
 	opacity: 0.777;
@@ -482,6 +500,10 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 */
+}
+.theme-all-light .close-icon {
+	background-color: #666;
+	border-radius: 4px;
 }
 .theme-all-light .toolbar-background {
 	background-color: white;
@@ -609,6 +631,10 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.dislike-menu-expanded) .show-when-dislike-menu-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
 }
@@ -624,6 +650,11 @@ button.pill.delete:before {
 .toolbar-container.share-expanded .hide-when-share-expanded:not(.enabled) {
 	display: none;
 }
+
+.toolbar-container.dislike-menu-expanded .hide-when-dislike-menu-expanded:not(.enabled) {
+	display: none;
+}
+
 
 .toolbar-container:not(.share-expanded) .show-when-share-expanded:not(.enabled) {
 	display: none;
@@ -695,6 +726,8 @@ button.pill.delete:before {
 	height: 17px;
 	display: inline-block;
 	background-position: center;
+	background-color: #666;
+	border-radius: 8px;
 
 	-webkit-animation: rotation 2s infinite linear;
 }

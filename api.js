@@ -19,19 +19,24 @@ Api.prototype = {
 					   .using(this.opts)
 					   .using(opts);
 
-			httpRequest = new XMLHttpRequest();
+			var httpRequest = new XMLHttpRequest();
 
-			httpRequest.onload = function() {
+			httpRequest.addEventListener("load", function() {
 				if (this.status >= 200 && this.status <= 299)
 					resolve(this.response);
 				else
 					reject(this.statusText);
-			},
+			});
 
-			httpRequest.onerror = function() {
+			httpRequest.addEventListener("error", function() {
 				console.log("ERR");
 				reject(this.statusText);
-			},
+			});
+
+			httpRequest.addEventListener("abort", function() {
+				console.log("ABT");
+				reject(this.statusText);
+			});
 
 			data = data || null;
 			if (typeof data == 'object')

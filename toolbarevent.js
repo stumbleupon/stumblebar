@@ -65,11 +65,22 @@ ToolbarEvent.share = function handleShare(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
-	return Promise.resolve(ToolbarEvent.api.saveShare(request.data))
-		.then(function(convo) {
-			Page.state[sender.tab.id] = { convo: convo.id };
-			return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
-		});
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return request.data.contentId || Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) {
+			return urlid || ToolbarEvent.discover(request, sender)
+				.then(function(url) { return url.urlid; });
+		})
+		.then(function(urlid) {
+			request.data.contentId = urlid;
+			return ToolbarEvent.api.saveShare(request.data)
+				.then(function(convo) {
+					Page.state[sender.tab.id] = { convo: convo.id };
+					return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
+				});
+		})
+		.catch(ToolbarEvent._error);
 }
 
 ToolbarEvent.convoAddRecipient = function(request, sender) {
@@ -99,15 +110,26 @@ ToolbarEvent.convoShowContacts = function(request, sender) {
  */
 ToolbarEvent.discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
-	.then(function(url) {
-		return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
-	})
-	.then(function(url) { 
-		Page.note(sender.tab.id, url); 
-		return url;
-	});
+		.then(function(url) {
+			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
+		})
+		.then(function(url) { 
+			Page.note(sender.tab.id, url); 
+			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
+			return url;
+		});
 }
 
+
+/**
+ * Open an SU page
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.su = function(request, sender) {
+	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+};
 
 
 /**
@@ -119,8 +141,22 @@ ToolbarEvent.discover = function(request, sender) {
  */
 ToolbarEvent.mode = function(request, sender) {
 	ToolbarEvent.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
+	ToolbarEvent._generateModeInfo(request, sender);
+	ToolbarEvent.api._flushStumbles();
 	ToolbarEvent.stumble(request, sender);
-	return ToolbarEvent._buildResponse({}, true);
+	return ToolbarEvent._buildResponse({ mode: config.mode, modeinfo: config.modeinfo }, true);
+}
+
+
+
+ToolbarEvent._generateModeInfo = function(request, sender) {
+	if (config.mode == 'domain') {
+		if (request.action == 'mode' || !(config.modeinfo || {}).domains)
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ uriToDomain(sender.tab.url) ] } });
+	} else {
+		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
+	}
+	return config.modeinfo;
 }
 
 
@@ -197,14 +233,45 @@ ToolbarEvent.repos = function(request, sender) {
 
 
 /**
+ * Blocks the current site
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.blockSite = function(request, sender) {
+	ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.resolve(request);
+			}
+			return ToolbarEvent.api.blockSite(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		})
+		.catch(ToolbarEvent._error);
+
+	request.url.userRating = { type: -1, subtype: 0 };
+	return Promise.resolve(request);
+}
+
+
+
+
+/**
  * Dislikes the current url
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
+ToolbarEvent.reportSpam =
 ToolbarEvent.dislike = function(request, sender) {
-	if ((request.url && request.url.userRating && request.url.userRating.type) == -1)
+	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
 
 	ToolbarEvent
@@ -412,7 +479,7 @@ ToolbarEvent.stumble = function(request, sender) {
 		return ToolbarEvent._buildResponse({ }, true);
 	});
 	return ToolbarEvent.api
-		._mode(config.mode || config.defaults.mode)
+		._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
 		.nextUrl()
 		.then(function(url) {
 			ToolbarEvent.api
@@ -478,7 +545,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.resolve(convo.messages(request.data.stamp, request.data.type))
 		.then(function(convo) {
-			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: request.data.stamp ? 'append' : null })});
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) })});
 		});
 }
 
@@ -581,7 +648,7 @@ ToolbarEvent.urlChange = function(request, sender) {
  */
 ToolbarEvent.init = function(request, sender) {
 	request.config = config;
-	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id) });
+	return ToolbarEvent._buildResponse({ url: Page.lastUrl(sender.tab.id), state: Page.lastState(sender.tab.id), version: chrome.runtime.getManifest().version });
 }
 
 /**
@@ -637,17 +704,21 @@ ToolbarEvent.ping = function() {
  * Builds a response to send back to the iframe'd toolbar
  *
  * @param {object} change Object to merge into response
- * @param {boolean} all Send to all iframes
+ * @param {boolean} tabid Push immediately to tabid.  Use true or '*' to push to all tabs.
  * @return {Promise} toolbar config response
  */
-ToolbarEvent._buildResponse = function(change, all) {
-	var response = Object.assign({all: all}, { config: config }, change);
-	if (response.all) {
-		chrome.tabs.query({}, function(tabs) {
-			tabs.forEach(function (tab) {
-				chrome.tabs.sendMessage(tab.id, response);
+ToolbarEvent._buildResponse = function(change, tabid) {
+	var response = Object.assign({}, { config: config }, change);
+	if (tabid) {
+		if (tabid === true || tabid === '*') {
+			chrome.tabs.query({}, function(tabs) {
+				tabs.forEach(function (tab) {
+					chrome.tabs.sendMessage(tab.id, response);
+				});
 			});
-		});
+		} else {
+			chrome.tabs.sendMessage(tabid, response);
+		}
 	}
 	return Promise.resolve(response);
 }
