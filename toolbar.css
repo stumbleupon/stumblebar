@@ -443,10 +443,6 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 }
-.theme-dark-sidebar .close-icon {
-	background-color: #666;
-	border-radius: 4px;
-}
 .theme-dark-sidebar .toolbar-background {
 	background-color: white;
 	opacity: 0.777;
@@ -484,6 +480,9 @@ button.pill.delete:before {
 	background-repeat: no-repeat;
 	background-position: center; 
 }
+.theme-dark-sidebar .close-icon {
+	background-image: url("asset/Close Dark.svg") !important;
+}
 
 
 
@@ -501,10 +500,6 @@ button.pill.delete:before {
 	bottom: 0;
 	opacity: 0.777;
 */
-}
-.theme-all-light .close-icon {
-	background-color: #666;
-	border-radius: 4px;
 }
 .theme-all-light .toolbar-background {
 	background-color: white;
@@ -554,6 +549,9 @@ button.pill.delete:before {
 }
 .theme-all-light .toolbar-settings-icon.enabled {
 	filter: none;
+}
+.theme-all-light .close-icon {
+	background-image: url("asset/Close Dark.svg") !important;
 }
 
 
@@ -940,10 +938,12 @@ button.pill.delete:before {
 	clear: both;
 }
 
-.convo-response-container .close-icon {
-	float: right;
-	width: 24px;
-	height: 24px;
+.close-icon {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 36px;
+	height: 36px;
 }
 
 .scrollable {
