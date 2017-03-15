@@ -99,9 +99,11 @@ button.pill.delete:before {
 }
 .icon.show-contacts {
 	display: inline-block;
+	/*
 	position: absolute;
 	right: 0;
 	bottom: 0;
+	*/
 	width: 24px;
 	height: 24px;
 	background-image: url('asset/Icon/add-participants.png');
