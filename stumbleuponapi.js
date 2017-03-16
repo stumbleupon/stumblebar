@@ -45,7 +45,7 @@ StumbleUponApi.prototype = {
 	},
 
 	reportSpam: function(urlid, catid, note) {
-		return this.rate(urlid, -5);
+		return this.rate(urlid, -1, -5);
 	},
 
 	reportMiscat: function(urlid, catid, note) {
@@ -53,8 +53,8 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess);
 	},
 
-	rate: function(urlid, score) {
-		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' })
+	rate: function(urlid, score, subtype) {
+		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score, subtype: subtype }, { method: 'POST' })
 			.then(StumbleUponApi.expectSuccess);
 	},
 
