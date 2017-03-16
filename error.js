@@ -1,8 +1,10 @@
-function Error(type, name, message, code) {
+function ToolbarError(type, name, error, context) {
 	this.type = type;
 	this.name = name;
 	this.message = message;
 	this.code = code;
+
+	this.stack = (new Error).stack;
 }
 
-var NOERR = new Error('NOERR');
+var NOERR = new ToolbarError('NOERR');

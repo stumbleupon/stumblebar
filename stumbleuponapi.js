@@ -17,7 +17,7 @@ function StumbleUponApi(config, cache, userCache) {
 
 StumbleUponApi.expectSuccess = function(result) {
 	if (!result || !result._success || result._error)
-		return Promise.reject(new Error("SUAPI", "error", result && result._error, result && result._code));
+		return Promise.reject(new ToolbarError("SUAPI", "error", result && result._error, result && result._code));
 	return result;
 }
 
@@ -164,7 +164,7 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess)
 			.then(function(res) {
 				if (!res.discovery.url.publicid)
-					return Promise.reject(new Error("SUAPI", "share", res));
+					return Promise.reject(new ToolbarError("SUAPI", "share", res));
 				if (!nolike)
 					this.like(res.discovery.url.publicid);
 				return res.discovery.url;
@@ -176,7 +176,7 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess)
 			.catch(function(result) {
 			  	this.cache.mset({ loggedIn: false, user: {} });
-				return Promise.reject(new Error("SUAPI", "getUser", result));
+				return Promise.reject(new ToolbarError("SUAPI", "getUser", result));
 			}.bind(this))
 			.then(function(result) {
 			  	this.cache.mset({ loggedIn: !!result.user, user: result.user });
@@ -256,7 +256,7 @@ StumbleUponApi.prototype = {
 					return this.getStumbles().then(function (r) {
 						if (retry >= map.maxRetries) {
 							warning("Too many retries");
-							return Promise.reject(new Error('SUAPI', 'nextUrl', 'runout'));
+							return Promise.reject(new ToolbarError('SUAPI', 'nextUrl', 'runout'));
 						}
 						return this.nextUrl(peek ? 1 : 0, retry + 1);
 					}.bind(this));
@@ -324,7 +324,7 @@ StumbleUponApi.prototype = {
 		return this.cookie.get('su_accesstoken')
 			.then(function(accessToken) {
 				if (!accessToken || !accessToken.value)
-					return Promise.reject(new Error('SUAPI', 'notoken', accessToken));
+					return Promise.reject(new ToolbarError('SUAPI', 'notoken', accessToken));
 
 				debug("Extracted auth token", accessToken.value);
 				this.cache.mset({accessToken: accessToken.value});
