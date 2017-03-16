@@ -134,13 +134,37 @@ ToolbarEvent.blockSite = function(request, sender) {
 }
 
 /**
+ * Marks the current url as Not Available
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.reportMissing = function(request, sender) {
+	request.url.userRating = { type: -1, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject(new ToolbarError("TBEV", "missing", "nourl"));
+			}
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.reportMissing(urlid); });
+}
+
+
+/**
  * Dislikes the current url
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
-ToolbarEvent.reportSpam =
 ToolbarEvent.dislike = function(request, sender) {
 	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
@@ -158,10 +182,7 @@ ToolbarEvent.dislike = function(request, sender) {
 			}
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
-		.then(function() {
-			return !!Page.note(sender.tab.id, response.url);
-		});
+		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); });
 }
 
 /**

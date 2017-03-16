@@ -34,6 +34,10 @@ StumbleUponApi.prototype = {
 		this.userCache = userCache;
 	},
 
+	reportMissing: function(urlid) {
+		return this.api.req(this.config.endpoint.report.form({ report: 'notAvailable' }), { urlid: urlid });
+	},
+
 	rate: function(urlid, score) {
 		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' });
 	},

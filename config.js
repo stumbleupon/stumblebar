@@ -99,6 +99,7 @@ config.api.stumbleupon = {
 		addtolist:   '/list/:listid/items',
 		blocksite:   '/domain/:urlid/block',
 		interests:   '/user/:userid/interests',
+		report:      '/report/:report',
 	},
 	defaultHeaders: config.defaultHeaders,
 	defaults: config.defaults,
