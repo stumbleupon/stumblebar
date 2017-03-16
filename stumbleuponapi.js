@@ -201,9 +201,10 @@ StumbleUponApi.prototype = {
 				results.guesses.values.forEach(function(stumble) {
 					stumble.mode = mode;
 				});
-				return this.cache.mset({
+				this.cache.mset({
 					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
 				});
+				return results;
 			}.bind(this));
 	},
 
@@ -256,19 +257,16 @@ StumbleUponApi.prototype = {
 	nextUrl: function(peek, retry) {
 		peek = peek || 0;
 		retry = retry || 0;
-		return Promise.resolve(this.config.maxRetries)
-			.then(function(maxRetries) {
-				if (maxRetries < retry) {
-					debug("Too many retries");
-					return Promise.reject('Too many retries');
-				}
-			})
-			.then(this.cache.map('stumble', 'mode'))
+		return this.cache.mget(['stumble', 'mode', 'maxRetries'])
 			.then(function (map) {
-				var stumblePos = map.stumble.pos || 0, stumbles = map.stumble.list;
+				var stumblePos = (map.stumble && map.stumble.pos) || 0, stumbles = (map.stumble || {}).list || [];
 				if ((stumblePos + peek) >= stumbles.length - 1 || map.mode != map.stumble.mode) {
 					debug('Buffer refill from NextUrl', stumbles.length, stumblePos + peek);
 					return this.getStumbles().then(function (r) {
+						if (retry >= map.maxRetries) {
+							warning("Too many retries");
+							return Promise.reject('RUNOUT');
+						}
 						return this.nextUrl(peek ? 1 : 0, retry + 1);
 					}.bind(this));
 				}

@@ -41,13 +41,20 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	}
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
-			console.log("ToolbarEvent.sendResponse", request, response);
-			sendResponse(response);
+			if (response && response !== true) {
+				console.log("ToolbarEvent.sendResponse", request, response);
+				sendResponse(response);
+			}
+		})
+		.catch(function(error) {
+			ToolbarEvent._error(request, sender);
 		});
 	return true;
 }
 
 
+
+/*************** START SHARE *****************/
 
 /**
  *
@@ -75,7 +82,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 		._sanity()
 		.then(function() { return request.data.contentId || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) {
-			return urlid || ToolbarEvent.discover(request, sender)
+			return urlid || ToolbarEvent._discover(request, sender)
 				.then(function(url) { return url.urlid; });
 		})
 		.then(function(urlid) {
@@ -85,70 +92,234 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 					Page.state[sender.tab.id] = { convo: convo.id };
 					return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
 				});
-		})
-		.catch(ToolbarEvent._error);
-}
-
-ToolbarEvent.convoAddRecipient = function(request, sender) {
-	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
-	return Promise.resolve(convo.addRecipient(request.data))
-		.then(convo.messages.bind(convo))
-		.then(function(convo) {
-			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: 'append'})});
-		});
-	;
-}
-
-ToolbarEvent.convoShowContacts = function(request, sender) {
-	return Promise.resolve(ToolbarEvent.api.getContacts())
-		.then(function(contacts) {
-			return ToolbarEvent._buildResponse({convoContacts: { contacts:  contacts}}, false);
 		});
 }
+
+/*************** END SHARE *****************/
+
+
+
+
+/*************** START RATINGS *****************/
 
 /**
- * Discover a new url.  This is usually not called directly.  
- * This is usually a side-effect of submit
+ * Blocks the current site
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
-ToolbarEvent.discover = function(request, sender) {
-	return Page.getUrl(sender.tab.id)
-		.then(function(url) {
-			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
+ToolbarEvent.blockSite = function(request, sender) {
+	request.url.userRating = { type: -1, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject("URL_DOES_NOT_EXIST");
+			}
+			return ToolbarEvent.api.blockSite(urlid)
+				.then(function(response) {
+					Page.note(sender.tab.id, response.url);
+					return Promise.resolve(true);
+				});
+		});
+}
+
+/**
+ * Dislikes the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.reportSpam =
+ToolbarEvent.dislike = function(request, sender) {
+	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
+		return ToolbarEvent.unrate(request, sender);
+
+	request.url.userRating = { type: -1, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject("URL_DOES_NOT_EXIST");;
+			}
+			return ToolbarEvent.api.dislike(urlid)
+				.then(function(response) {
+					Page.note(sender.tab.id, response.url);
+					return Promise.resolve(true);
+				});
+		});
+}
+
+/**
+ * Unrates the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.unrate = function(request, sender) {
+	request.url.userRating = { type: 0, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+	
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to unrate url that doesn't exist", request);
+				return Promise.reject('NO_URL');
+			}
+			return ToolbarEvent.api.unrate(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		});
+
+	return Promise.resolve(request);
+}
+
+/**
+ * Likes the current url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.like = function(request, sender) {
+	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
+		return ToolbarEvent.unrate(request, sender);
+
+	ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			return urlid || ToolbarEvent._discover(request, sender)
+				.then(function(url) { return url.urlid; });
 		})
-		.then(function(url) { 
-			Page.note(sender.tab.id, url); 
-			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
-			return url;
+		.then(function(urlid) { 
+			return ToolbarEvent.api.like(urlid)
+				.then(function(response) {
+					return Page.note(sender.tab.id, response.url);
+				});
+		})
+		.catch(ToolbarEvent._error);
+
+	request.url.userRating = { type: 1, subtype: 0 };
+	return Promise.resolve(request);
+}
+
+/*************** END RATINGS *****************/
+
+
+
+/*************** START LISTS *****************/
+
+/**
+ * Adds an item to a list
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.addToList = function(request, sender) {
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			request.nolike = false;
+			return urlid || ToolbarEvent._discover(request, sender)
+				.then(function(url) { return url.urlid; });
+		})
+		.then(function(urlid) { 
+			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid)
+				.then(function(item) {
+					return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
+				});
 		});
 }
 
 
 /**
- * Open an SU page
+ * Adds a list
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
  */
-ToolbarEvent.stayExpanded = function(request, sender) {
-	ToolbarEvent.cache.mset({ stayExpanded: config.stayExpanded = !config.stayExpanded });
-	return ToolbarEvent._buildResponse({ stayExpanded: config.stayExpanded }, true);
-};
+ToolbarEvent.addList = function(request, sender) {
+	return ToolbarEvent
+		.api.addList(request.data.name, request.data.description, request.data.visibility)
+		.then(function(list) {
+			return ToolbarEvent.addToList({ data: { list: list } }, sender)
+		});
+}
 
 
 /**
- * Open an SU page
+ * Gets a list of lists
  *
  * @param {MessageRequest} request
  * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
  */
-ToolbarEvent.su = function(request, sender) {
-	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
-};
+ToolbarEvent.lists = function(request, sender) {
+	return ToolbarEvent
+		.api.getLists()
+		.then(function(lists) {
+			return ToolbarEvent._buildResponse({ lists: { entries: lists } });
+		});
+}
 
+/*************** END LISTS *****************/
+
+
+
+
+/*************** START INBOX *****************/
+
+/**
+ * Gets a list of conversation threads
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.inbox = function(request, sender) {
+	return ToolbarEvent
+		.api.getConversations(request.data.position, request.data.limit, request.data.type)
+		.then(function(inbox) {
+			return ToolbarEvent.cache.get('authed')
+				.then(function(userid) {
+					return ToolbarEvent._buildResponse({inbox: { messages: inbox, position: request.data.position, type: request.data.type }});
+				});
+		});
+}
+
+
+
+ToolbarEvent.pendingUnread = function(request, sender) {
+	return ToolbarEvent.api.getPendingUnread().then(function(info) {
+		ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
+		return ToolbarEvent._buildResponse({ }, true);
+	});
+}
+
+/*************** END INBOX *****************/
+
+
+
+
+/*************** START STUMBLE *****************/
 
 /**
  * Record mode changes
@@ -166,329 +337,6 @@ ToolbarEvent.mode = function(request, sender) {
 }
 
 
-
-ToolbarEvent._generateModeInfo = function(request, sender) {
-	if (config.mode == 'domain') {
-		if (request.action == 'mode' || !(config.modeinfo || {}).domains)
-			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ uriToDomain(sender.tab.url) ] } });
-	} else if (config.mode == 'interest') {
-		if (request.action == 'mode')
-			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { interests: [ request.data.interestid ], keyword: request.data.keyword } });
-	} else if (config.mode == 'keyword') {
-		if (request.action == 'mode')
-			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { keyword: request.data.keyword } });
-	} else {
-		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
-	}
-	return config.modeinfo;
-}
-
-
-
-/**
- * Record theme changes
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.theme = function(request, sender) {
-	ToolbarEvent.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-/**
- * Record hide-toggle requests
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.toggleHidden = function(request, sender) {
-	ToolbarEvent.cache.mset({ hidden: config.hidden = !config.hidden });
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-/**
- * Record unhide requests
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.unhideToolbar = function(request, sender) {
-	ToolbarEvent.cache.mset({ hidden: config.hidden = false });
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-/**
- * Record hide requests
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.hideToolbar = function(request, sender) {
-	ToolbarEvent.cache.mset({ hidden: config.hidden = true });
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-
-/**
- * Record reposition requests
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.repos = function(request, sender) {
-	ToolbarEvent.cache.mset({ rpos: config.rpos = request.data.rpos });
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-/**
- * Blocks the current site
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.blockSite = function(request, sender) {
-	ToolbarEvent
-		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			if (!urlid) {
-				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.resolve(request);
-			}
-			return ToolbarEvent.api.blockSite(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		})
-		.catch(ToolbarEvent._error);
-
-	request.url.userRating = { type: -1, subtype: 0 };
-	return Promise.resolve(request);
-}
-
-
-
-
-/**
- * Dislikes the current url
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.reportSpam =
-ToolbarEvent.dislike = function(request, sender) {
-	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
-		return ToolbarEvent.unrate(request, sender);
-
-	ToolbarEvent
-		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			if (!urlid) {
-				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.resolve(request);
-			}
-			return ToolbarEvent.api.dislike(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		})
-		.catch(ToolbarEvent._error);
-
-	request.url.userRating = { type: -1, subtype: 0 };
-	return Promise.resolve(request);
-}
-
-
-
-
-/**
- * Loads the stumbleupon info page in a new tab
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.info = function(request, sender) {
-	if (Page.getUrlId(sender.tab.id))
-		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
-	Promise.resolve(request);
-}
-
-
-
-/**
- * Updates the active config.  Never called by the toolbar.
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.updateConfig = function(request, sender) {
-	Object.assign(config, request.data);
-	return ToolbarEvent._buildResponse({}, true);
-}
-
-
-
-/**
- * Unrates the current url
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.unrate = function(request, sender) {
-	ToolbarEvent
-		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			if (!urlid) {
-				debug("Attempt to unrate url that doesn't exist", request);
-				return Promise.resolve(request);
-			}
-			return ToolbarEvent.api.unrate(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		})
-		.catch(ToolbarEvent._error);
-
-	request.url.userRating = { type: 0, subtype: 0 };
-	return Promise.resolve(request);
-}
-
-
-/**
- * Likes the current url
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.like = function(request, sender) {
-	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
-		return ToolbarEvent.unrate(request, sender);
-
-	ToolbarEvent
-		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			return urlid || ToolbarEvent.discover(request, sender)
-				.then(function(url) { return url.urlid; });
-		})
-		.then(function(urlid) { 
-			return ToolbarEvent.api.like(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		})
-		.catch(ToolbarEvent._error);
-
-	request.url.userRating = { type: 1, subtype: 0 };
-	return Promise.resolve(request);
-}
-
-
-/**
- * Adds an item to a list
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.addToList = function(request, sender) {
-	return ToolbarEvent
-		._sanity()
-		.then(function() { return request.data.urlid || Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			request.nolike = false;
-			return urlid || ToolbarEvent.discover(request, sender)
-				.then(function(url) { return url.urlid; });
-		})
-		.then(function(urlid) { 
-			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid)
-				.then(function(item) {
-					return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
-				})
-				.catch(ToolbarEvent._error);
-		});
-}
-
-
-/**
- * Adds a list
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.addList = function(request, sender) {
-	return ToolbarEvent
-		.api.addList(request.data.name, request.data.description, request.data.visibility)
-		.then(function(list) {
-			return ToolbarEvent.addToList({ data: { list: list } }, sender)
-		})
-		.catch(ToolbarEvent._error);
-}
-
-
-/**
- * Gets a list of lists
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.lists = function(request, sender) {
-	return ToolbarEvent
-		.api.getLists()
-		.then(function(lists) {
-			return ToolbarEvent._buildResponse({ lists: { entries: lists } });
-		})
-		.catch(ToolbarEvent._error);
-}
-
-
-/**
- * Gets a list of conversation threads
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.inbox = function(request, sender) {
-	return ToolbarEvent
-		.api.getConversations(request.data.position, request.data.limit, request.data.type)
-		.then(function(inbox) {
-			return ToolbarEvent.cache.get('authed')
-				.then(function(userid) {
-					return ToolbarEvent._buildResponse({inbox: { messages: inbox, position: request.data.position, type: request.data.type }});
-				});
-		})
-		.catch(ToolbarEvent._error);
-}
-
-
-
 /**
  * Stumbles!  Preloads next url, notes the url, notes the state,
  * updates the url in the requesting frame.
@@ -498,30 +346,34 @@ ToolbarEvent.inbox = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.stumble = function(request, sender) {
-	ToolbarEvent.api.getPendingUnread().then(function(info) {
-		ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
-		return ToolbarEvent._buildResponse({ }, true);
-	});
-	return ToolbarEvent.api
-		._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
-		.nextUrl()
-		.then(function(url) {
+	return ToolbarEvent.ping()
+		.then(function() {
 			ToolbarEvent.api
-				.nextUrl(1)
-				.then(Page.preload);
-			Page.note(sender.tab.id, url);
-			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
-			ToolbarEvent.api.reportStumble([url.urlid]);
-			request.url = url;
-			console.log(url);
-			chrome.tabs.update(sender.tab.id, { url: url.url });
-			// Don't send URL now, wait for init call
-			return ToolbarEvent._buildResponse({});
-		})
-		.catch(ToolbarEvent._error);
+				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
+				.nextUrl()
+				.then(function(url) {
+					ToolbarEvent.pendingUnread();
+					ToolbarEvent.api
+						.nextUrl(1)
+						.then(Page.preload);
+					Page.note(sender.tab.id, url);
+					Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
+					ToolbarEvent.api.reportStumble([url.urlid]);
+					request.url = url;
+					console.log(url);
+					chrome.tabs.update(sender.tab.id, { url: url.url });
+					// Don't send URL now, wait for init call
+					return ToolbarEvent._buildResponse({});
+				})
+		});
 }
 
+/*************** END STUMBLE *****************/
 
+
+
+
+/*************** START CONVO *****************/
 
 /**
  * Replies to a conversation
@@ -587,12 +439,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.actionid) {
 		ToolbarEvent.api.markActivityAsRead(request.data.actionid)
-			.then(function() {
-				ToolbarEvent.api.getPendingUnread().then(function(info) {
-					ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
-					return ToolbarEvent._buildResponse({ }, true);
-				});
-			});
+			.then(ToolbarEvent.pendingUnread);
 	}
 	if (request.data.urlid && request.data.id) {
 		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
@@ -614,6 +461,32 @@ ToolbarEvent.openConvo = function(request, sender) {
 
 	return ToolbarEvent._buildResponse({});
 }
+
+
+ToolbarEvent.convoAddRecipient = function(request, sender) {
+	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
+	return Promise.resolve(convo.addRecipient(request.data))
+		.then(convo.messages.bind(convo))
+		.then(function(convo) {
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: 'append'})});
+		});
+	;
+}
+
+ToolbarEvent.convoShowContacts = function(request, sender) {
+	return Promise.resolve(ToolbarEvent.api.getContacts())
+		.then(function(contacts) {
+			return ToolbarEvent._buildResponse({convoContacts: { contacts:  contacts}}, false);
+		});
+}
+
+
+/*************** END CONVO *****************/
+
+
+
+
+/*************** START AUTH *****************/
 
 /**
  * Signs out of stumbleupon, marks as unathed
@@ -638,47 +511,6 @@ ToolbarEvent.signout = function(request, sender) {
 	});
 
 	return ToolbarEvent.needsLogin();
-}
-
-/**
- * Handles url-change events, returns the su url
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.urlChange = function(request, sender) {
-	return new Promise(function(resolve, reject) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
-			console.log(url);
-			if (url) {
-				Page.urlChange(url, tabs[0].id)
-					.then(function(url) {
-						resolve(ToolbarEvent._buildResponse({url: url}));
-					});
-			} else {
-				reject();
-			}
-		});
-	});
-}
-
-/**
- * Gets the current toolbar state and url
- *
- * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
- * @return {Promise} toolbar config response
- */
-ToolbarEvent.init = function(request, sender) {
-	request.config = config;
-	return ToolbarEvent._buildResponse({
-		url: Page.lastUrl(sender.tab.id),
-		state: Page.lastState(sender.tab.id),
-		version: chrome.runtime.getManifest().version,
-		hash: Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
-	}, sender.tab.id);
 }
 
 /**
@@ -733,6 +565,147 @@ ToolbarEvent.ping = function() {
 		.catch(ToolbarEvent.needsLogin);
 }
 
+/*************** END AUTH *****************/
+
+
+
+
+
+/*************** START STATE *****************/
+
+/**
+ * Gets the current toolbar state and url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.init = function(request, sender) {
+	request.config = config;
+	return ToolbarEvent._buildResponse({
+		url: Page.lastUrl(sender.tab.id),
+		state: Page.lastState(sender.tab.id),
+		version: chrome.runtime.getManifest().version,
+		hash: Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
+	}, sender.tab.id);
+}
+
+
+/**
+ * Record theme changes
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.theme = function(request, sender) {
+	ToolbarEvent.cache.mset({ theme: config.theme = request.data.value || config.defaults.theme });
+	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+/**
+ * Record hide-toggle requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.toggleHidden = function(request, sender) {
+	ToolbarEvent.cache.mset({ hidden: config.hidden = !config.hidden });
+	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+/**
+ * Record unhide requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.unhideToolbar = function(request, sender) {
+	ToolbarEvent.cache.mset({ hidden: config.hidden = false });
+	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+/**
+ * Record hide requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.hideToolbar = function(request, sender) {
+	ToolbarEvent.cache.mset({ hidden: config.hidden = true });
+	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+/**
+ * Record reposition requests
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.repos = function(request, sender) {
+	ToolbarEvent.cache.mset({ rpos: config.rpos = request.data.rpos });
+	return ToolbarEvent._buildResponse({}, true);
+}
+
+
+/**
+ * Handles url-change events, returns the su url
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.urlChange = function(request, sender) {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
+			console.log(url);
+			if (url) {
+				Page.urlChange(url, tabs[0].id)
+					.then(function(url) {
+						resolve(ToolbarEvent._buildResponse({url: url}));
+					});
+			} else {
+				reject();
+			}
+		});
+	});
+}
+
+
+/**
+ * Loads the stumbleupon info page in a new tab
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.info = function(request, sender) {
+	if (Page.getUrlId(sender.tab.id))
+		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
+	return Promise.resolve(true);
+}
+
+
+/**
+ * Updates the active config.  Never called by the toolbar.
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.updateConfig = function(request, sender) {
+	Object.assign(config, request.data);
+	return ToolbarEvent._buildResponse({}, true);
+}
 
 
 ToolbarEvent.interests = function() {
@@ -750,6 +723,37 @@ ToolbarEvent.interests = function() {
 		});
 }
 
+
+/**
+ * Toggle toolbar expanded state
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.stayExpanded = function(request, sender) {
+	ToolbarEvent.cache.mset({ stayExpanded: config.stayExpanded = !config.stayExpanded });
+	return ToolbarEvent._buildResponse({ stayExpanded: config.stayExpanded }, true);
+};
+
+
+/**
+ * Open an SU page
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.su = function(request, sender) {
+	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+};
+
+/*************** END STATE *****************/
+
+
+
+
+/********************
+ * Helper functions *
+ *******************/
 
 
 /**
@@ -776,12 +780,6 @@ ToolbarEvent._buildResponse = function(change, tabid) {
 }
 
 
-
-/********************
- * Helper functions *
- *******************/
-
-
 /**
  * Attempts to fetch the user from the ToolbarEvent.cache.  If the user isn't found, then we ping
  *
@@ -795,10 +793,7 @@ ToolbarEvent._sanity = function() {
 			ToolbarEvent.api.setUserCache(ToolbarEvent.userCache);
 			if (!user.userid)
 				return ToolbarEvent.ping();
-			ToolbarEvent.api.getPendingUnread().then(function(info) {
-				ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
-				return ToolbarEvent._buildResponse({ }, true);
-			});
+			ToolbarEvent.pendingUnread();
 			return user;
 		})
 }
@@ -832,10 +827,49 @@ ToolbarEvent._init = function() {
  * @return {Promise} rejection
  */
 ToolbarEvent._error = function(e) {
-	console.log(e)
-	//ToolbarEvent.loginPage();
+	error(e);
+	ToolbarEvent._buildResponse({error: e}, true);
+	ToolbarEvent.ping();
 	return Promise.reject(e);
 }
+
+
+/**
+ * Discover a new url.  This is usually not called directly.  
+ * This is usually a side-effect of submit
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent._discover = function(request, sender) {
+	return Page.getUrl(sender.tab.id)
+		.then(function(url) {
+			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
+		})
+		.then(function(url) { 
+			Page.note(sender.tab.id, url); 
+			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
+			return url;
+		});
+}
+
+ToolbarEvent._generateModeInfo = function(request, sender) {
+	if (config.mode == 'domain') {
+		if (request.action == 'mode' || !(config.modeinfo || {}).domains)
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { domains: [ uriToDomain(sender.tab.url) ] } });
+	} else if (config.mode == 'interest') {
+		if (request.action == 'mode')
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { interests: [ request.data.interestid ], keyword: request.data.keyword } });
+	} else if (config.mode == 'keyword') {
+		if (request.action == 'mode')
+			ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = { keyword: request.data.keyword } });
+	} else {
+		ToolbarEvent.cache.mset({ modeinfo: config.modeinfo = {} });
+	}
+	return config.modeinfo;
+}
+
 
 
 
