@@ -44,6 +44,10 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess);
 	},
 
+	reportSpam: function(urlid, catid, note) {
+		return this.rate(urlid, -5);
+	},
+
 	reportMiscat: function(urlid, catid, note) {
 		return this.api.req(this.config.endpoint.report.form({ report: 'misclassified' }), { urlid: urlid, catid: catid, note: note })
 			.then(StumbleUponApi.expectSuccess);

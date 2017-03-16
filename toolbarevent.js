@@ -106,6 +106,37 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 /*************** START RATINGS *****************/
 
 /**
+ * Marks the current site as spam
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.reportSpam = function(request, sender) {
+	request.url.userRating = { type: -1, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject(new ToolbarError("TBEV", "spam", "nourl"));
+			}
+			ToolbarEvent.api.dislike(urlid);
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.reportSpam(urlid); })
+		.then(function() {
+			ToolbarEvent._notify("Marked as Spam!");
+			return !!Page.note(sender.tab.id, response.url);
+		});
+}
+
+
+
+/**
  * Blocks the current site
  *
  * @param {MessageRequest} request
@@ -152,7 +183,7 @@ ToolbarEvent.miscat = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.reject(new ToolbarError("TBEV", "reportInfo", "nourl"));
+				return Promise.reject(new ToolbarError("TBEV", "miscat", "nourl"));
 			}
 			ToolbarEvent.api.dislike(urlid);
 			return urlid;
