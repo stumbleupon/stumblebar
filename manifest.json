@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "StumbleBar by StumbleUpon",
-  "version": "0.437",
+  "version": "0.439",
 
   "content_scripts": [{
     "js": ["utils.js", "dragndrop.js", "bar.js"],
