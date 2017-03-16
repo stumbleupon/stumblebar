@@ -565,7 +565,7 @@ ToolbarEvent.ping = function() {
 			ToolbarEvent.interests();
 			ToolbarEvent.pendingUnread();
 			ToolbarEvent.api
-				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
+				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo({}, {}))
 				.nextUrl(1)
 				.then(Page.preload)
 				.catch(function(e) { warning('Expected to preload next url', e); });
