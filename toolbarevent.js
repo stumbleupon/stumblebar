@@ -233,7 +233,7 @@ ToolbarEvent.addToList = function(request, sender) {
 			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
 		})
 		.then(function(item) {
-			ToolbarEvent._notify("Added to list " + request.data.listname);
+			ToolbarEvent._notify("Added to list " + request.data.listname, sender.tab.id);
 			return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
 		});
 }
@@ -250,6 +250,7 @@ ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
 		.api.addList(request.data.name, request.data.description, request.data.visibility)
 		.then(function(list) {
+			ToolbarEvent._notify("Added list " + request.data.name, sender.tab.id);
 			return ToolbarEvent.addToList({ data: { list: list } }, sender)
 		});
 }
