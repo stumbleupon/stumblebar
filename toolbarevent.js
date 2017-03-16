@@ -413,8 +413,7 @@ ToolbarEvent.loadConvo = function(request, sender) {
 			var convo = results[0],
 				contacts = results[1];
 			return ToolbarEvent._buildResponse({
-				convo: Object.assign({}, convo, {position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) }),
-				contacts: contacts
+				convo: Object.assign({}, convo, {contacts: contacts, position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) }),
 			});
 		});
 }
