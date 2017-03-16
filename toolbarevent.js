@@ -255,7 +255,7 @@ ToolbarEvent.addToList = function(request, sender) {
  */
 ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
-		.api.addList(request.data.name, request.data.description, request.data.visibility)
+		.api.addList(request.data.name, request.data.description || '', request.data.visibility)
 		.then(function(list) {
 			ToolbarEvent._notify("Added list " + request.data.name, sender.tab.id);
 			return ToolbarEvent.addToList({ data: { list: list } }, sender)
