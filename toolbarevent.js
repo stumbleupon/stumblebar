@@ -158,9 +158,11 @@ ToolbarEvent.blockSite = function(request, sender) {
 			ToolbarEvent.api.dislike(urlid);
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.blockSite(urlid); })
-		.then(function(urlid) { ToolbarEvent._notify("Blocked!"); return urlid; })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 })); });
+		.then(function(urlid) {
+			ToolbarEvent._notify("Blocked!");
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+			return ToolbarEvent.api.blockSite(urlid);
+		})
 }
 
 
