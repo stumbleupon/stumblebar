@@ -544,6 +544,7 @@ ToolbarEvent.ping = function() {
 			ToolbarEvent.userCache = new Cache({prefix: user.userid + '-'});
 			ToolbarEvent.api.setUserCache(ToolbarEvent.userCache);
 			ToolbarEvent.interests();
+			ToolbarEvent.pendingUnread();
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
 				.catch(function(e) { warning('Expected to preload next url', e); });
