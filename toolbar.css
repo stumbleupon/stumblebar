@@ -658,6 +658,11 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.miscat-expanded) .show-when-miscat-expanded:not(.enabled) {
+	display: none;
+}
+
+
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
 }
@@ -699,6 +704,10 @@ button.pill.delete:before {
 }
 
 .toolbar-container.dislike-menu-expanded .hide-when-dislike-menu-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container.miscat-expanded .hide-when-miscat-expanded:not(.enabled) {
 	display: none;
 }
 

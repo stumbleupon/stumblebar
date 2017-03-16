@@ -133,6 +133,29 @@ ToolbarEvent.blockSite = function(request, sender) {
 		});
 }
 
+
+/**
+ * Marks the current url as Not Available
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
+ToolbarEvent.reportInfo = function(request, sender) {
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject(new ToolbarError("TBEV", "reportInfo", "nourl"));
+			}
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.reportInfo(urlid); });
+}
+
+
 /**
  * Marks the current url as Not Available
  *
