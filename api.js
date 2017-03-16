@@ -55,7 +55,7 @@ Api.prototype = {
 			try {
 				var retval = httpRequest.send(data);
 			} catch (e) {
-				reject(new Error('API', 'ex', e);
+				reject(new Error('API', 'ex', e));
 			}
 		}.bind(this));
 	},

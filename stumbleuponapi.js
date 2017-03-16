@@ -15,6 +15,12 @@ function StumbleUponApi(config, cache, userCache) {
 	//					 .then(this.extractAccessToken.bind(this))
 }
 
+StumbleUponApi.expectSuccess = function(result) {
+	if (!result || !result._success || result._error)
+		return Promise.reject(new Error("SUAPI", "error", result && result._error, result && result._code));
+	return result;
+}
+
 StumbleUponApi.prototype = {
 	ping: function() {
 		return this.api
@@ -94,11 +100,7 @@ StumbleUponApi.prototype = {
 
 	getPendingUnread: function(scope) {
 		return this.api.get(this.config.endpoint.unread, { scope: scope || 'conversation' })
-			.then(function(info) {
-				if (!info._success)
-					return Promise.reject(info);
-				return info;
-			})
+			.then(StumbleUponApi.expectSuccess);
 	},
 
 	blockSite: function(urlid) {
@@ -110,44 +112,40 @@ StumbleUponApi.prototype = {
 	},
 	getNotifications: function(position, limit, scope, type) {
 		return this.api.get(this.config.endpoint.activities, { [type || 'start']: position || 0, limit: limit || 25, scope: scope || 'conversation' })
-			.then(function(convos) {
-				if (!convos._success)
-					return Promise.reject(convos);
-				return convos.activities.values;
-			});
+			.then(StumbleUponApi.expectSuccess)
+			.then(function(convos) { return convos.activities.values; });
 	},
 
 	addToList: function(listid, urlid) {
 		return this.api.req(this.config.endpoint.addtolist.form({ listid: listid }), { listId: listid, urlid: urlid })
-			.then(function(item) {
-				if (!item._success)
-					return Promise.reject(item);
-				return item.item;
-			});
+			.then(StumbleUponApi.expectSuccess)
+			.then(function(item) { return item.item; });
 	},
 
 	addList: function(name, description, visibility) {
 		return this.cache.get('user')
 			.then(function(user) {
-				return this.api.req(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, name: name, visibility: visibility || 'private', description: description || '', widgetText: name, widgetDataId: 'attribute miss', '_visible': (visibility || 'private') != 'private' })
-					.then(function(list) {
-						if (!list._success)
-							return Promise.reject(list);
-						return list.list;
-					});
-			}.bind(this));
+				return this.api.req(this.config.endpoint.lists.form({ userid: user.userid }), {
+					userid: user.userid,
+					name: name,
+					visibility: visibility || 'private',
+					description: description || '',
+					widgetText: name,
+					widgetDataId: 'attribute miss',
+					'_visible': (visibility || 'private') != 'private'
+				});
+			}.bind(this))
+			.then(StumbleUponApi.expectSuccess)
+			.then(function(list) { return list.list; });
 	},
 
 	getLists: function(unsorted) {
 		return this.cache.get('user')
 			.then(function(user) {
-				return this.api.get(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, sorted: !unsorted })
-					.then(function(lists) {
-						if (!lists._success)
-							return Promise.reject(lists);
-						return lists.lists.values;
-					});
-			}.bind(this));
+				return this.api.get(this.config.endpoint.lists.form({ userid: user.userid }), { userid: user.userid, sorted: !unsorted });
+			}.bind(this))
+			.then(StumbleUponApi.expectSuccess)
+			.then(function(lists) { return lists.lists.values; });
 	},
 
 	getConversation: function(id) {
@@ -162,8 +160,9 @@ StumbleUponApi.prototype = {
 
 	submit: function(url, nsfw, nolike) {
 		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: nsfw || false })
+			.then(StumbleUponApi.expectSuccess)
 			.then(function(res) {
-				if (!res || !res._success || !res.discovery.url.publicid)
+				if (!res.discovery.url.publicid)
 					return Promise.reject(res);
 				if (!nolike)
 					this.like(res.discovery.url.publicid);
@@ -173,14 +172,14 @@ StumbleUponApi.prototype = {
 
 	getUser: function() {
 		return this.api.req(this.config.endpoint.user)
+			.then(StumbleUponApi.expectSuccess)
+			.catch(function(result) {
+			  	this.cache.mset({ loggedIn: false, user: {} });
+				return Promise.reject(result);
+			}.bind(this))
 			.then(function(result) {
-				var loggedIn = false, user = {};
-			  	if (result && result._success && result.user) {
-			  		loggedIn = true;
-			  		user = result.user;
-			  	}
-			  	this.cache.mset({loggedIn: loggedIn, user: user});
-			  	return user;
+			  	this.cache.mset({ loggedIn: !!result.user, user: result.user });
+			  	return result.user;
 			}.bind(this));
 	},
 
@@ -193,17 +192,11 @@ StumbleUponApi.prototype = {
 				return this.api
 					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
 			}.bind(this))
-			//.then(this._syncSharesPending.bind(this))
+			.then(StumbleUponApi.expectSuccess)
 			.then(function(results) {
-				if (!results || !results._success)
-					return Promise.reject(results);
 				debug("Buffer fill", mode, results.guesses.values);
-				results.guesses.values.forEach(function(stumble) {
-					stumble.mode = mode;
-				});
-				this.cache.mset({
-					stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode },
-				});
+				results.guesses.values.forEach(function(stumble) { stumble.mode = mode; });
+				this.cache.mset({ stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode } });
 				return results;
 			}.bind(this));
 	},
@@ -238,20 +231,17 @@ StumbleUponApi.prototype = {
 				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode}; }.bind(this));
 
 				debug("Report stumble", urlids.join(','));
-				return this.api
-					.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'})
-					//.then(this._syncSharesPending.bind(this))
-					.then(function(res) {
-						if (res._success) {
-							urlids.forEach(function(urlid) { this.seen[urlid].state = 'r'; }.bind(this));
-						}
-						return res;
-					}.bind(this))
-					.catch(function(err) {
-						// Mark failed unreported so we can re-report later
-						urlids.forEach(function(urlid) { this.seen[urlid].state = 'f'; }.bind(this));
-					}.bind(this))
-			}.bind(this));
+				return this.api.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'});
+			}.bind(this))
+			.then(StumbleUponApi.expectSuccess)
+			.then(function(res) {
+				urlids.forEach(function(urlid) { this.seen[urlid].state = 'r'; }.bind(this));
+				return res;
+			}.bind(this))
+			.catch(function(err) {
+				// Mark failed unreported so we can re-report later
+				urlids.forEach(function(urlid) { this.seen[urlid].state = 'f'; }.bind(this));
+			}.bind(this))
 	},
 
 	nextUrl: function(peek, retry) {
