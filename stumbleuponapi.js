@@ -47,7 +47,7 @@ StumbleUponApi.prototype = {
 	reportMiscat: function(urlid, catid, note) {
 		return this.api.req(this.config.endpoint.report.form({ report: 'misclassified' }), { urlid: urlid, catid: catid, note: note })
 			.then(StumbleUponApi.expectSuccess);
-	}
+	},
 
 	rate: function(urlid, score) {
 		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' })
