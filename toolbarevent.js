@@ -124,6 +124,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject(new ToolbarError("TBEV", "block", "nourl"));
 			}
+			ToolbarEvent.api.dislike(urlid);
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.blockSite(urlid); })
@@ -176,6 +177,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject(new ToolbarError("TBEV", "missing", "nourl"));
 			}
+			ToolbarEvent.api.dislike(urlid);
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.reportMissing(urlid); });
