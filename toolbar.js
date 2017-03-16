@@ -466,6 +466,20 @@ var Toolbar = {
 		return value;
 	},
 
+	handleMiscatInfo: function(info) {
+		var select = document.querySelector('#miscat-suggested-interest');
+		select.innerHTML = '';
+
+		document.querySelector('#miscat-current-interest').innerText = info.current_category;
+
+		info.category_list.forEach(function(cat) {
+			var option = document.createElement('option');
+			option.value = cat.tagid;
+			option.innerText = cat.tag;
+			select.appendChild(option);
+		});
+	},
+
 	/**
 	 * Called by top-level event delegate before dispatching to background
 	 * @param {string} action -- action attribute of the source element
@@ -485,6 +499,10 @@ var Toolbar = {
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
 			document.querySelector('.inbox-loading').removeClass('hidden');
+		}
+		if (action == 'show-miscat') {
+			Toolbar.dispatch('report-info');
+			Toolbar.handleImmediateAction('expand', 'miscat');
 		}
 		if (action == 'lists') {
 			document.querySelector(".toolbar-container").toggleClass("lists-expanded");

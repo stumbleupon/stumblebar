@@ -1000,3 +1000,22 @@ button.pill.delete:before {
 	overflow-x: hidden;
 	max-width: 356px;
 }
+
+
+
+.toolbar-entry-header {
+	font-weight: bold;
+}
+
+.toolbar-entry-row .toolbar-entry-header, .toolbar-entry-row .toolbar-entry-body {
+	display: inline-block;
+	width: 50%;
+}
+
+.toolbar-entry-buttons {
+	text-align: right;
+}
+
+.toolbar-miscat-container {
+	padding: 10px;
+}

@@ -152,7 +152,8 @@ ToolbarEvent.reportInfo = function(request, sender) {
 			}
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.reportInfo(urlid); });
+		.then(function(urlid) { return ToolbarEvent.api.reportInfo(urlid); })
+		.then(function(info) { return ToolbarEvent._buildResponse({ miscatInfo: info }); });
 }
 
 
