@@ -320,6 +320,7 @@ var Toolbar = {
 			//else if (entry.conversationDetails.participants)
 			//	entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
 			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 's').text;
+			entryNode.querySelector('.inbox-entry-date').value        = entry.occurred;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
 			entryNode.changeClass('unread', !entry.read);
@@ -637,6 +638,7 @@ var Toolbar = {
 				Toolbar.dispatch('load-convo', {
 					value: document.querySelector('#convo-id').value,
 					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
+					//stamp: parseInt(new Date(Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value).getTime()/1000),
 					type: 'before'
 				})
 				.then(function() {
@@ -648,8 +650,9 @@ var Toolbar = {
 				document.querySelector('.inbox-loading').removeClass('hidden');
 				Toolbar.dispatch('inbox', {
 					// @TODO
-					// position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), 0)[0].value,
-					// type: 'before'
+					//position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), -1)[0].value,
+					//position: parseInt(new Date(Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), -1)[0].value).getTime()/1000),
+					//type: 'before'
 					position: document.querySelectorAll('#inbox-container .inbox-entry').length
 				})
 				.then(function() {
