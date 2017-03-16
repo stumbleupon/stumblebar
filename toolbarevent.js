@@ -119,7 +119,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.reject("URL_DOES_NOT_EXIST");
+				return Promise.reject(new Error("TBEV", "block", "nourl"));
 			}
 			return urlid;
 		})
@@ -148,7 +148,7 @@ ToolbarEvent.dislike = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.reject("URL_DOES_NOT_EXIST");;
+				return Promise.reject(new Error("TBEV", "dislike", "nourl"));
 			}
 		})
 		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
@@ -172,7 +172,7 @@ ToolbarEvent.unrate = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to unrate url that doesn't exist", request);
-				return Promise.reject('NO_URL');
+				return Promise.reject(new Error("TBEV", "unrate", "nourl"));
 			}
 			return urlid;
 		})

@@ -26,6 +26,7 @@ StumbleUponApi.prototype = {
 		return this.api
 			.raw(this.config.endpoint.ping, null, {proto: 'https', headers: {[this.config.accessTokenHeader]: null}})
 			.then(JSON.parse)
+			.then(StumbleUponApi.expectSuccess)
 			.then(this._extractAccessToken.bind(this));
 	},
 
@@ -163,7 +164,7 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess)
 			.then(function(res) {
 				if (!res.discovery.url.publicid)
-					return Promise.reject(res);
+					return Promise.reject(new Error("SUAPI", "share", res));
 				if (!nolike)
 					this.like(res.discovery.url.publicid);
 				return res.discovery.url;
@@ -175,7 +176,7 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess)
 			.catch(function(result) {
 			  	this.cache.mset({ loggedIn: false, user: {} });
-				return Promise.reject(result);
+				return Promise.reject(new Error("SUAPI", "getUser", result);
 			}.bind(this))
 			.then(function(result) {
 			  	this.cache.mset({ loggedIn: !!result.user, user: result.user });
@@ -255,7 +256,7 @@ StumbleUponApi.prototype = {
 					return this.getStumbles().then(function (r) {
 						if (retry >= map.maxRetries) {
 							warning("Too many retries");
-							return Promise.reject('RUNOUT');
+							return Promise.reject(new Error('SUAPI', 'nextUrl', 'runout'));
 						}
 						return this.nextUrl(peek ? 1 : 0, retry + 1);
 					}.bind(this));
@@ -320,27 +321,17 @@ StumbleUponApi.prototype = {
 	},
 
 	_extractAccessToken: function(result) {
-		if (!result || !result._success)
-			return Promise.reject(result);
-
 		return this.cookie.get('su_accesstoken')
 			.then(function(accessToken) {
 				if (!accessToken || !accessToken.value)
-					return Promise.reject(accessToken);
+					return Promise.reject(new Error('SUAPI', 'notoken', accessToken));
 
 				debug("Extracted auth token", accessToken.value);
 				this.cache.mset({accessToken: accessToken.value});
 				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
 				return accessToken.value;
 			}.bind(this));
-	},
-
-	_syncSharesPending: function(res) {
-		if (res && res.shares_pending) {
-			this.cache.mset({ numShares: res.shares_pending });
-		}
-		return res;
-	},
+	}
 
 }
 
