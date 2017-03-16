@@ -68,6 +68,7 @@
 		  "cookie.js",
 		  "api_request.js",
 		  "api.js",
+		  "contactlist.js",
 		  "conversation.js",
 		  "stumbleuponapi.js",
 		  "page.js",

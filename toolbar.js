@@ -87,7 +87,8 @@ var Toolbar = {
 
 	handleShare: function(shareResponse) {
 		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
-		this.shareContactList = new ContactList(Toolbar.config.authed, shareResponse.contacts.values);
+		this.shareContactList = new ContactList();
+		this.shareContactList.reconstitute(shareResponse.contacts);
 		this.updateShare();
 	},
 
@@ -353,7 +354,7 @@ var Toolbar = {
 			Toolbar.handleConfig(r.config);
 		if (r && r.url)
 			Toolbar.handleUrl(r.url);
-		Object.keys(r || {}).forEach(function(key) {
+		Object.keys(r || {}).forEach(function _eachResponseKey(key) {
 			if (['config', 'url', 'all', 'data', 'event'].includes(key))
 				return;
 			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });

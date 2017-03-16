@@ -52,7 +52,7 @@ Cache.prototype = {
 					resolve(result);
 				else if (result.hasOwnProperty(key)) {
 					var val = result[key];
-					if(typeof val === 'object') {
+					if(typeof val === 'object' && val) {
 						// see if it has an expiration
 						if(val.hasOwnProperty(('_expires')) && typeof val._expires === "number" && val._expires <= Date.now()) {
 							return resolve(null);

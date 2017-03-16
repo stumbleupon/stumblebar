@@ -50,27 +50,55 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' });
 	},
 
+	/**
+	 * manage the contacts. contacts consist of email contacts (stored locally) and mutual follow contacts
+	 * (stored in api and cached locally for 5 minutes) -- these heterogenous types need to sort, display,
+	 * and react to user events as if there is no difference.
+	 * @returns {Promise<ContactList>}
+	 */
 	getContacts: function apiGetContacts() {
 		var userCache = ToolbarEvent.userCache,
-			cacheKey = 'my-contacts',
-			cacheTtl = 300000,
-			dataNode = 'mutual';
-		return userCache.get(cacheKey)
-			.then(function(contacts) {
-				debug(contacts);
-				if(contacts) {
-					return contacts;
-				} else {
-					return this.getUser()
-						.then(function(user) {
-							return user.userid;
-						}.bind(this))
-						.then(function(userid) {
-							return this.api.get(this.config.endpoint.contacts.form({userid: userid}), {limit: 50, filter_spam: true })
+			contactsKey = 'contacts',
+			emailContactsKey = 'email-contacts',
+			mutualContactsKey = 'my-contacts', // key for the mutual contacts
+			mutualTtl = 300000,
+			contactList, // contactList will be used to produce the json response that will be reconstituted in the iframe context.
+			userId;
+		return this.getUser()
+			.then(function(user) {
+				return userId = user.userid;
+			}.bind(this))
+			.then(function(userid) {
+				return userCache.mget(contactsKey, emailContactsKey, mutualContactsKey)
+			}.bind(this))
+			.then(function(results) {
+				console.log(results);
+				var contactsObj = results[contactsKey],
+					emailContactsObj = results[emailContactsKey],
+					mutualContactsObj = results[mutualContactsKey],
+					mutualContactList;
+				contactList = new ContactList(userId); // contactList is in the closure scope of getContacts -- goal is to build it and return it in the final step of the promise chain
+				if(mutualContactsObj) {
+					if(contactsObj) {
+						contactList.reconstitute(JSON.parse(contactsObj));
+					}
+					if(emailContactsObj) {
+						contactList.addMultiple(emailContactsObj);
+					}
+					return contactList; // mutualContactsObj has not been updated, leave ContactList alone
+				} else { // mutualContactsObj is out of date, fetch from api and repopulate ContactList
+					return this.api.get(this.config.endpoint.contacts.form({userid: userId}), {limit: 600, filter_spam: true })
+						.then(function(contacts) {
+							return contacts['mutual'];
 						}.bind(this))
 						.then(function(contacts) {
-							userCache.set(cacheKey, contacts[dataNode], cacheTtl);
-							return contacts[dataNode];
+							userCache.set(mutualContactsKey, contacts, mutualTtl); // this can run async
+							contactList = new ContactList(userId, contacts['values']);
+							if(emailContactsObj) {
+								contactList.addMultiple(emailContactsObj);
+							}
+							userCache.set(contactsKey, JSON.stringify(contactList)); // this can run async
+							return contactList;
 						}.bind(this));
 				}
 			}.bind(this));

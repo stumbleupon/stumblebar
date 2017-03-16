@@ -36,7 +36,6 @@ ContactList.prototype = {
 	 * @returns {Contact}
 	 */
 	add: function addContact(contactId, name, isParticipant, overwrite) {
-		console.log(arguments);
 		if(contactId == this.ownerContactId) {
 			return false;
 		}
@@ -174,6 +173,20 @@ ContactList.prototype = {
 		}).map(function(contact) {
 			return parseInt(contact.userid);
 		});
+	},
+	/**
+	 * restore this ContactList by setting it's properties from an object.
+	 * @param {Object} contactsObject -- an object with name/value properties such as would result from running a Contact through a JSON stringifying/parse cycle.
+	 */
+	reconstitute: function reconstitute(contactsObject) {
+		this.ownerContactId = contactsObject.ownerContactId;
+		if(contactsObject.hasOwnProperty('contacts') && typeof contactsObject.contacts === "object" && contactsObject.contacts instanceof Array) {
+			this.contacts = contactsObject.contacts.map(function(contactObj) {
+				var contact = new Contact();
+				contact.reconstitute(contactObj);
+				return contact;
+			});
+		}
 	}
 };
 
@@ -242,5 +255,17 @@ Contact.prototype = {
 			lastAccessed = Date.now();
 		}
 		this.lastAccess = lastAccessed;
+	},
+	/**
+	 * restore this Contact by setting it's properties from an object.
+	 * @param {Object} contactObject -- an object with name/value properties such as would result from running a Contact through a JSON stringifying/parse cycle.
+	 */
+	reconstitute: function reconstitute(contactObject) {
+		this.id = contactObject.id;
+		this.userid = contactObject.id;
+		this.name = contactObject.name;
+		this.participant = contactObject.participant;
+		this.source = contactObject.source;
+		this.lastAccess = contactObject.lastAccess;
 	}
 };
