@@ -4,11 +4,11 @@
  * @param {string|number} ownerContactId -- id of the owner of the list, owner can not be added to their own list
  * @constructor
  */
-function ContactList(ownerContactId, contacts) {
+function ContactList(ownerContactId, contacts, source) {
 	this.ownerContactId = ownerContactId;
 	this.contacts = [];
 	if(contacts) {
-		this.addMultiple(contacts);
+		this.addMultiple(contacts, true, source);
 	}
 }
 
@@ -35,24 +35,28 @@ ContactList.prototype = {
 	 * @param name
 	 * @returns {Contact}
 	 */
-	add: function addContact(contactId, name, isParticipant, overwrite) {
+	add: function addContact(contactId, name, isParticipant, overwrite, source) {
+		var contact, lastAccess = Date.now();
 		if(contactId == this.ownerContactId) {
 			return false;
 		}
-		if(this.get(contactId)) {
+		if(contact = this.get(contactId)) {
 			if(!overwrite) {
 				return false;
 			} else {
+				lastAccess = contact.lastAccess; // this must be preserved in local storage
 				this.remove(contactId);
 			}
 		}
-		return this.contacts.push(new Contact(contactId, name, isParticipant));
+		return this.contacts.push(new Contact(contactId, name, isParticipant, source, lastAccess));
 	},
 	/**
 	 * add contacts from an array of contact-like objects.  preserves existing contacts by default
 	 * @param {Array<Object>} contacts
+	 * @param {boolean} overwrite -- true to update existing with new values
+	 * @param {string} source -- 'mutual' or 'email'
 	 */
-	addMultiple: function(contacts, overwrite) {
+	addMultiple: function(contacts, overwrite, source) {
 		if(contacts && contacts.forEach) {
 			contacts.forEach(function(contact) {
 				var name = contact.name ? contact.name + " (" + contact.username + ")" : contact.username,
