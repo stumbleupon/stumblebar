@@ -284,7 +284,7 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations(request.data.position, request.data.limit, request.data.type)
 		.then(function(inbox) {
-			return ToolbarEvent.cache.get('authed');
+			return ToolbarEvent.cache.get('authed')
 				.then(function(userid) {
 					return ToolbarEvent._buildResponse({inbox: { messages: inbox, position: request.data.position, type: request.data.type }});
 				});
@@ -337,7 +337,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			return ToolbarEvent.api
 				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
 				.nextUrl();
-		});
+		})
 		.then(function(url) {
 			ToolbarEvent.pendingUnread();
 			ToolbarEvent.api.nextUrl(1).then(Page.preload);
