@@ -25,17 +25,17 @@ Api.prototype = {
 				if (this.status >= 200 && this.status <= 299)
 					resolve(this.response);
 				else
-					reject(this.statusText);
+					reject(new Error('API', 'load', this.statusText, this.status));
 			});
 
 			httpRequest.addEventListener("error", function() {
 				console.log("ERR");
-				reject(this.statusText);
+				reject(new Error('API', 'error', this.statusText, this.status));
 			});
 
 			httpRequest.addEventListener("abort", function() {
 				console.log("ABT");
-				reject(this.statusText);
+				reject(new Error('API', 'abort', this.statusText, this.status));
 			});
 
 			data = data || null;
@@ -55,7 +55,7 @@ Api.prototype = {
 			try {
 				var retval = httpRequest.send(data);
 			} catch (e) {
-				reject(data);
+				reject(new Error('API', 'ex', e);
 			}
 		}.bind(this));
 	},
@@ -114,21 +114,18 @@ Api.prototype = {
 	once: function(path, data, opts) {
 		if (this.requests[path]) {
 			console.log('INFLIGHT', path);
-			return Promise.reject({});
+			return Promise.reject(NOERR);
 		}
-		if (!this.requests[path]) {
-			this.requests[path] = this.req(path, data, opts)
-				.then(function(results) {
-					if (this.requests[path])
-						delete this.requests[path];
-					return results;
-				}.bind(this), function(results) {
-					if (this.requests[path])
-						delete this.requests[path];
-					return results;
-				}.bind(this));
-		}
-		return this.requests[path];
+		return this.requests[path] = this.req(path, data, opts)
+			.then(function(results) {
+				if (this.requests[path])
+					delete this.requests[path];
+				return results;
+			}.bind(this), function(results) {
+				if (this.requests[path])
+					delete this.requests[path];
+				return Promise.reject(results);
+			}.bind(this));
 	}
 
 }

@@ -546,7 +546,7 @@ ToolbarEvent.ping = function() {
 			ToolbarEvent.interests();
 			ToolbarEvent.api.nextUrl(1)
 				.then(Page.preload)
-				.catch(function(e) {warning('Expected to preload next url', e);});
+				.catch(function(e) { warning('Expected to preload next url', e); });
 		})
 		.catch(ToolbarEvent.needsLogin);
 }

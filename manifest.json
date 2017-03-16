@@ -63,6 +63,7 @@
 		  "polyfill.js",
 		  "utils.js",
 		  "config.js",
+		  "error.js",
 		  "cache.js",
 		  "cookie.js",
 		  "api_request.js",
