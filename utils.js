@@ -46,7 +46,7 @@ function warning() {
 }
 function error() {
 	var e = new Error;
-	console.log('ERROR', arguments, e.stack);
+	console.log('%cERROR', 'color: red', arguments, e.stack);
 }
 
 String.prototype.form = function(map) {

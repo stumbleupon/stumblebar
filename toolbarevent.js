@@ -121,12 +121,10 @@ ToolbarEvent.blockSite = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject("URL_DOES_NOT_EXIST");
 			}
-			return ToolbarEvent.api.blockSite(urlid)
-				.then(function(response) {
-					Page.note(sender.tab.id, response.url);
-					return Promise.resolve(true);
-				});
-		});
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.blockSite(urlid); })
+		.then(function() { return !!Page.note(sender.tab.id, response.url); });
 }
 
 /**
@@ -152,12 +150,9 @@ ToolbarEvent.dislike = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject("URL_DOES_NOT_EXIST");;
 			}
-			return ToolbarEvent.api.dislike(urlid)
-				.then(function(response) {
-					Page.note(sender.tab.id, response.url);
-					return Promise.resolve(true);
-				});
-		});
+		})
+		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
+		.then(function() { return !!Page.note(sender.tab.id, response.url); });
 }
 
 /**
@@ -179,11 +174,10 @@ ToolbarEvent.unrate = function(request, sender) {
 				debug("Attempt to unrate url that doesn't exist", request);
 				return Promise.reject('NO_URL');
 			}
-			return ToolbarEvent.api.unrate(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		});
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.unrate(urlid); })
+		.then(function() { return !!Page.note(sender.tab.id, response.url); });
 
 	return Promise.resolve(request);
 }
@@ -199,23 +193,15 @@ ToolbarEvent.like = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
 		return ToolbarEvent.unrate(request, sender);
 
-	ToolbarEvent
-		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
-		.then(function(urlid) { 
-			return urlid || ToolbarEvent._discover(request, sender)
-				.then(function(url) { return url.urlid; });
-		})
-		.then(function(urlid) { 
-			return ToolbarEvent.api.like(urlid)
-				.then(function(response) {
-					return Page.note(sender.tab.id, response.url);
-				});
-		})
-		.catch(ToolbarEvent._error);
-
 	request.url.userRating = { type: 1, subtype: 0 };
-	return Promise.resolve(request);
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id); })
+		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
+		.then(function(urlid) { return ToolbarEvent.api.like(urlid); })
+		.then(function() { return !!Page.note(sender.tab.id, response.url); });
 }
 
 /*************** END RATINGS *****************/
@@ -241,10 +227,10 @@ ToolbarEvent.addToList = function(request, sender) {
 				.then(function(url) { return url.urlid; });
 		})
 		.then(function(urlid) { 
-			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid)
-				.then(function(item) {
-					return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
-				});
+			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
+		})
+		.then(function(item) {
+			return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
 		});
 }
 
@@ -298,7 +284,7 @@ ToolbarEvent.inbox = function(request, sender) {
 	return ToolbarEvent
 		.api.getConversations(request.data.position, request.data.limit, request.data.type)
 		.then(function(inbox) {
-			return ToolbarEvent.cache.get('authed')
+			return ToolbarEvent.cache.get('authed');
 				.then(function(userid) {
 					return ToolbarEvent._buildResponse({inbox: { messages: inbox, position: request.data.position, type: request.data.type }});
 				});
@@ -348,23 +334,23 @@ ToolbarEvent.mode = function(request, sender) {
 ToolbarEvent.stumble = function(request, sender) {
 	return ToolbarEvent.ping()
 		.then(function() {
-			ToolbarEvent.api
+			return ToolbarEvent.api
 				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
-				.nextUrl()
-				.then(function(url) {
-					ToolbarEvent.pendingUnread();
-					ToolbarEvent.api
-						.nextUrl(1)
-						.then(Page.preload);
-					Page.note(sender.tab.id, url);
-					Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
-					ToolbarEvent.api.reportStumble([url.urlid]);
-					request.url = url;
-					console.log(url);
-					chrome.tabs.update(sender.tab.id, { url: url.url });
-					// Don't send URL now, wait for init call
-					return ToolbarEvent._buildResponse({});
-				})
+				.nextUrl();
+		});
+		.then(function(url) {
+			ToolbarEvent.pendingUnread();
+			ToolbarEvent.api.nextUrl(1).then(Page.preload);
+
+			Page.note(sender.tab.id, url);
+			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
+
+			ToolbarEvent.api.reportStumble([url.urlid]);
+			request.url = url;
+
+			chrome.tabs.update(sender.tab.id, { url: url.url });
+
+			return ToolbarEvent._buildResponse({});
 		});
 }
 
