@@ -37,7 +37,7 @@ var Toolbar = {
 	handleNotify: function(message) {
 		clearTimeout(Toolbar.state.notifyMessageDisplay);
 		document.querySelector('.notify-message').removeClass('hidden');
-		document.querySelector('.notify-message').innerText = JSON.stringify(message).replace(/^{"|"}$/g, '').replace(/","/g, "\n").replace(/\\n/g, "\n       ").replace(/":"/g, " = ");
+		document.querySelector('.notify-message').innerText = message;
 		document.querySelector('.notify-message').addEventListener('mousedown', function() { document.querySelector('.notify-message').addClass('hidden') });
 		Toolbar.state.notifyMessageDisplay = setTimeout(function() { document.querySelector('.notify-message').addClass('hidden') }, 2000);
 	},
