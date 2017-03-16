@@ -646,6 +646,7 @@ var Toolbar = {
 					value: document.querySelector('#convo-id').value,
 					stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value,
 					//stamp: parseInt(new Date(Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), 0)[0].value).getTime()/1000),
+					limit: 20,
 					type: 'before'
 				})
 				.then(function() {
@@ -656,6 +657,7 @@ var Toolbar = {
 			case 'inbox-container':
 				document.querySelector('.inbox-loading').removeClass('hidden');
 				Toolbar.dispatch('inbox', {
+					limit: 20,
 					// @TODO
 					//position: Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), -1)[0].value,
 					//position: parseInt(new Date(Array.prototype.slice.call(document.querySelectorAll('#inbox-container .inbox-entry-date'), -1)[0].value).getTime()/1000),

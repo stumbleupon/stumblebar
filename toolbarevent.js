@@ -417,7 +417,7 @@ ToolbarEvent.closeConvo = function(request, sender) {
  */
 ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
-	return Promise.all([convo.messages(request.data.stamp, request.data.type), ToolbarEvent.api.getContacts()])
+	return Promise.all([convo.messages(request.data.stamp, request.data.type, request.data.limit), ToolbarEvent.api.getContacts()])
 		.then(function(results) {
 			var convo = results[0],
 				contacts = results[1];

@@ -10,8 +10,8 @@ Conversation.prototype = {
 		return this.api.get(this.config.endpoint.participants, ids);
 	},
 
-	messages: function(stamp, type) {
-		return this.api.get(this.config.endpoint.messages.form({ id: this.id }), { ['events' + (type || 'since').replace(/(^.)/, function(x) { return x.toUpperCase(); })]: stamp || '1970-01-01T00%3A00%3A00-00%3A00' });
+	messages: function(stamp, type, limit) {
+		return this.api.get(this.config.endpoint.messages.form({ id: this.id }), { ['events' + (type || 'since').replace(/(^.)/, function(x) { return x.toUpperCase(); })]: stamp || '1970-01-01T00%3A00%3A00-00%3A00', limit: limit || 20 });
 	},
 
 	comment: function(message) {
