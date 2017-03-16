@@ -209,20 +209,21 @@ StumbleUponApi.prototype = {
 	},
 
 	getStumbles: function() {
-		var mode = null;
 		return this.cache.mget('mode', 'user', 'modeinfo')
 			.then(function(map) {
-				mode = map.mode;
 				var post = Object.assign(this._buildPost("stumble", {userid: map.user.userid}), map.modeinfo || {});
 				return this.api
-					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'});
-			}.bind(this))
-			.then(StumbleUponApi.expectSuccess)
-			.then(function(results) {
-				debug("Buffer fill", mode, results.guesses.values);
-				results.guesses.values.forEach(function(stumble) { stumble.mode = mode; });
-				this.cache.mset({ stumble:	{ list: results.guesses.values || [], pos: -1, mode: mode } });
-				return results;
+					.once(this.config.endpoint.stumble.form(map), post, {method: 'POST'})
+					.then(StumbleUponApi.expectSuccess)
+					.then(function(results) {
+						results.guesses.values.forEach(function(stumble) { stumble.mode = map.mode; stumble.modeinfo = map.modeinfo; stumble.modekey = this._modeKey(map.mode, map.modeinfo); }.bind(this));
+						return results;
+					}.bind(this))
+					.then(function(results) {
+						debug("Buffer fill", [map.mode, map.modeinfo], results.guesses.values);
+						this.cache.mset({ stumble:	{ list: results.guesses.values || [], pos: -1, mode: map.mode, modeinfo: map.modeinfo, modekey: this._modeKey(map.mode, map.modeinfo) } });
+						return results;
+					}.bind(this));
 			}.bind(this));
 	},
 
@@ -242,7 +243,7 @@ StumbleUponApi.prototype = {
 		return convo.save(shareData);
 	},
 
-	reportStumble: function(urlids, mode) {
+	reportStumble: function(urlids, mode, modeinfo) {
 		return this.cache.mget('stumble', 'user', 'mode', 'modeinfo')
 			.then(function (map) {
 				// FIXME double reporting/re-reporting
@@ -252,11 +253,12 @@ StumbleUponApi.prototype = {
 				//}
 
 				var mode = mode || map.stumble.mode || map.mode;
-				var post = Object.assign(this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid}), map.modeinfo || {});
-				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode}; }.bind(this));
+				var modeinfo = modeinfo || map.stumble.modeinfo || map.modeinfo;
+				var post = Object.assign(this._buildPost("seen", {guess_urlids: urlids, userid: map.user.userid}), modeinfo);
+				urlids.forEach(function(urlid) { this.seen[urlid] = this.seen[urlid] || {state: 'u', mode: mode, modeinfo: modeinfo}; }.bind(this));
 
 				debug("Report stumble", urlids.join(','));
-				return this.api.req(this.config.endpoint.stumble.form({mode: mode || map.stumble.mode || map.mode}), post, {method: 'POST'});
+				return this.api.req(this.config.endpoint.stumble.form({mode: mode}), post, {method: 'POST'});
 			}.bind(this))
 			.then(StumbleUponApi.expectSuccess)
 			.then(function(res) {
@@ -272,10 +274,10 @@ StumbleUponApi.prototype = {
 	nextUrl: function(peek, retry) {
 		peek = peek || 0;
 		retry = retry || 0;
-		return this.cache.mget(['stumble', 'mode'])
+		return this.cache.mget(['stumble', 'mode', 'modeinfo'])
 			.then(function (map) {
 				var stumblePos = (map.stumble && map.stumble.pos) || 0, stumbles = (map.stumble || {}).list || [];
-				if ((stumblePos + peek) >= stumbles.length - 1 || map.mode != map.stumble.mode) {
+				if ((stumblePos + peek) >= stumbles.length - 1 || this._modeKey(map.mode, map.modeinfo) != map.stumble.modekey) {
 					debug('Buffer refill from NextUrl', stumbles.length, stumblePos + peek);
 					return this.getStumbles().then(function (r) {
 						if (retry >= (this.config.maxRetries || 3)) {
@@ -296,7 +298,7 @@ StumbleUponApi.prototype = {
 				// If we've seen this before, rereport and move onto the next url
 				if (this.seen[stumbles[stumblePos].urlid]) {
 					debug("Already seen", stumbles[stumblePos].urlid);
-					this.reportStumble([stumbles[stumblePos].urlid]);
+					this.reportStumble([stumbles[stumblePos].urlid], stumbles[stumblePos].mode, stumbles[stumblePos].modeinfo);
 					return this.nextUrl(peek ? peek + 1 : 0, retry);
 				}
 
@@ -342,6 +344,10 @@ StumbleUponApi.prototype = {
 	_mode: function(mode, info) {
 		this.cache.mset({mode: mode, modeinfo: info});
 		return this;
+	},
+
+	_modeKey: function(mode, info) {
+		return JSON.stringify({mode: mode, info: info});
 	},
 
 	_extractAccessToken: function(result) {

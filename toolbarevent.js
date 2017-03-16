@@ -357,7 +357,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			Page.note(sender.tab.id, url);
 			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
 
-			ToolbarEvent.api.reportStumble([url.urlid]);
+			ToolbarEvent.api.reportStumble([url.urlid], url.mode, url.modeinfo);
 			request.url = url;
 
 			chrome.tabs.update(sender.tab.id, { url: url.url });
