@@ -113,7 +113,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.reportSpam = function(request, sender) {
-	request.url.userRating = { type: -1, subtype: 0 };
+	request.url.userRating = { type: -1, subtype: -5 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
 	return ToolbarEvent
@@ -128,10 +128,8 @@ ToolbarEvent.reportSpam = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.reportSpam(urlid); })
-		.then(function() {
-			ToolbarEvent._notify("Marked as Spam!");
-			return !!Page.note(sender.tab.id, response.url);
-		});
+		.then(function(urlid) { ToolbarEvent._notify("Marked as Spam!"); return urlid; })
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 })); });
 }
 
 
@@ -159,10 +157,8 @@ ToolbarEvent.blockSite = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.blockSite(urlid); })
-		.then(function() {
-			ToolbarEvent._notify("Blocked!");
-			return !!Page.note(sender.tab.id, response.url);
-		});
+		.then(function(urlid) { ToolbarEvent._notify("Blocked!"); return urlid; })
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 })); });
 }
 
 
@@ -174,9 +170,6 @@ ToolbarEvent.blockSite = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.miscat = function(request, sender) {
-	request.url.userRating = { type: -1, subtype: 0 };
-	ToolbarEvent._buildResponse(request, sender.tab.id);
-
 	return ToolbarEvent
 		._sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id) })
@@ -192,7 +185,7 @@ ToolbarEvent.miscat = function(request, sender) {
 		.then(function(info) {
 			ToolbarEvent._notify('Misclassification reported');
 			return ToolbarEvent._buildResponse({ });
-		});
+		})
 }
 
 
@@ -227,7 +220,7 @@ ToolbarEvent.reportInfo = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.reportMissing = function(request, sender) {
-	request.url.userRating = { type: -1, subtype: 0 };
+	request.url.userRating = { type: -1, subtype: -6 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
 	return ToolbarEvent
@@ -241,7 +234,8 @@ ToolbarEvent.reportMissing = function(request, sender) {
 			ToolbarEvent.api.dislike(urlid);
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.reportMissing(urlid); });
+		.then(function(urlid) { return ToolbarEvent.api.reportMissing(urlid); })
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 })); });
 }
 
 
@@ -269,7 +263,8 @@ ToolbarEvent.dislike = function(request, sender) {
 			}
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); });
+		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 })); });
 }
 
 /**
@@ -294,9 +289,7 @@ ToolbarEvent.unrate = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.unrate(urlid); })
-		.then(function() { return !!Page.note(sender.tab.id, response.url); });
-
-	return Promise.resolve(request);
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 })); });
 }
 
 /**
@@ -318,7 +311,7 @@ ToolbarEvent.like = function(request, sender) {
 		.then(function() { return Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
 		.then(function(urlid) { return ToolbarEvent.api.like(urlid); })
-		.then(function() { return !!Page.note(sender.tab.id, response.url); });
+		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 })); });
 }
 
 /*************** END RATINGS *****************/
