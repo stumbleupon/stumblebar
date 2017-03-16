@@ -87,7 +87,7 @@ var Toolbar = {
 
 	handleShare: function(shareResponse) {
 		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
-		this.shareContactList = new ContactList();
+		this.shareContactList = new ContactList(Toolbar.config.authed);
 		this.shareContactList.reconstitute(shareResponse.contacts);
 		this.updateShare();
 	},
@@ -180,18 +180,15 @@ var Toolbar = {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
+		this.convoContactList = new ContactList(Toolbar.config.authed);
+		this.convoContactList.reconstitute(convo.contacts);
 		var participants = (convo.participants || []).filter(function(participant) {
 			return participant.suUserId != Toolbar.config.authed;
-		}).map(function(participant) {
-			return {
-				isParticipant: true,
-				userid: participant.suUserId,
-				username: participant.suUserName,
-				name: participant.name
-			};
-		});
-		this.convoContactList = this.convoContactList || new ContactList(Toolbar.config.authed);
-		this.convoContactList.addMultiple(participants, true);
+		}).forEach(function _eachParticipant(participant) {
+			var contact = this.convoContactList.get(participant.suUserId);
+			// @TODO handle contact not found
+			contact.setParticipant(true);
+		}.bind(this));
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
