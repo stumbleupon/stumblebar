@@ -176,7 +176,7 @@ StumbleUponApi.prototype = {
 			.then(StumbleUponApi.expectSuccess)
 			.catch(function(result) {
 			  	this.cache.mset({ loggedIn: false, user: {} });
-				return Promise.reject(new Error("SUAPI", "getUser", result);
+				return Promise.reject(new Error("SUAPI", "getUser", result));
 			}.bind(this))
 			.then(function(result) {
 			  	this.cache.mset({ loggedIn: !!result.user, user: result.user });
