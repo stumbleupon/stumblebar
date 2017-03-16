@@ -142,6 +142,36 @@ ToolbarEvent.blockSite = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
+ToolbarEvent.miscat = function(request, sender) {
+	request.url.userRating = { type: -1, subtype: 0 };
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function(urlid) { 
+			if (!urlid) {
+				debug("Attempt to dislike url that doesn't exist", request);
+				return Promise.reject(new ToolbarError("TBEV", "reportInfo", "nourl"));
+			}
+			ToolbarEvent.api.dislike(urlid);
+			return urlid;
+		})
+		.then(function(urlid) { return ToolbarEvent.api.reportMiscat(urlid, request.data.interest, request.data.details); })
+		.then(function(info) {
+			ToolbarEvent._notify('Misclassification reported');
+			return ToolbarEvent._buildResponse({ });
+		});
+}
+
+
+/**
+ * Marks the current url as Not Available
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ * @return {Promise} toolbar config response
+ */
 ToolbarEvent.reportInfo = function(request, sender) {
 	return ToolbarEvent
 		._sanity()
