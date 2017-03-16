@@ -150,6 +150,7 @@ ToolbarEvent.dislike = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject(new ToolbarError("TBEV", "dislike", "nourl"));
 			}
+			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
 		.then(function() { return !!Page.note(sender.tab.id, response.url); });
