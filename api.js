@@ -114,7 +114,7 @@ Api.prototype = {
 	once: function(path, data, opts) {
 		if (this.requests[path]) {
 			console.log('INFLIGHT', path);
-			return Promise.reject(NOERR);
+			return this.requests[path]; //Promise.reject(NOERR);
 		}
 		return this.requests[path] = this.req(path, data, opts)
 			.then(function(results) {
