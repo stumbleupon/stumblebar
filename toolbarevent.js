@@ -41,13 +41,15 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	}
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
+			console.log(response);
 			if (response && response !== true) {
 				console.log("ToolbarEvent.sendResponse", request, response);
 				sendResponse(response);
 			}
 		})
-		.catch(function(error) {
-			ToolbarEvent._error(request, sender);
+		.catch(function(err) {
+			console.log(err);
+			ToolbarEvent._error(request, sender, err, sender.tab.id);
 		});
 	return true;
 }
@@ -814,11 +816,10 @@ ToolbarEvent._init = function() {
  *
  * @return {Promise} rejection
  */
-ToolbarEvent._error = function(e) {
+ToolbarEvent._error = function(request, sender, e, tabid) {
 	error(e);
-	ToolbarEvent._buildResponse({error: e}, true);
 	ToolbarEvent.ping();
-	return Promise.reject(e);
+	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
 
 

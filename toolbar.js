@@ -23,6 +23,14 @@ var Toolbar = {
 		document.querySelector('.interests-loading').addClass('hidden');
 	},
 
+	handleError: function(error) {
+		clearTimeout(Toolbar.state.errorMessageDisplay);
+		document.querySelector('.error-message').removeClass('hidden');
+		document.querySelector('.error-message').innerText = "Janky error sez...\n" + JSON.stringify(error).replace(/^{"|"}$/g, '').replace(/","/g, "\n").replace(/\\n/g, "\n       ").replace(/":"/g, " = ");
+		document.querySelector('.error-message').addEventListener('mousedown', function() { document.querySelector('.error-message').addClass('hidden') });
+		//Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
+	},
+
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");

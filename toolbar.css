@@ -60,6 +60,10 @@ body {
 	display: flex;
 }
 
+.toolbar-action:hover {
+	border-radius: 4px;
+	box-shadow: 0 0 2px #888;
+}
 
 .stop-flashing {
 	-webkit-backface-visibility: hidden; -webkit-perspective: 1000; -webkit-transform:translate3d(0,0,0); -webkit-tap-highlight-color: rgba(0,0,0,0);
