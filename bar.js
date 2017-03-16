@@ -50,11 +50,11 @@
 		},
 
 		createIframe: function() {
-			try {
-				chrome.extension.getBackgroundPage().frames
-			} catch (e) {
+			//try {
+			//	//chrome.extension.getBackgroundPage().frames
+			//} catch (e) {
 				var iframe = document.createElement('iframe');
-			}
+			//}
 			iframe.src = chrome.runtime.getURL(this.theme.url);
 			iframe.style.cssText = this.theme.iframe;
 			iframe.allowTransparency = "true";
@@ -80,7 +80,7 @@
 			IframeBar.pingListener = chrome.runtime.onMessage.addListener(
 				function(request, sender, sendResponse) {
 					if (request.type == "ping") {
-						sendResponse({type: "pong"});
+						sendResponse({type: document.getElementById('discoverbar') ? "pong" : "nobar"});
 					}
 					if (request.type == "freshen") {
 						this.init();
