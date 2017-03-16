@@ -40,11 +40,13 @@ StumbleUponApi.prototype = {
 	},
 
 	reportMissing: function(urlid) {
-		return this.api.req(this.config.endpoint.report.form({ report: 'notAvailable' }), { urlid: urlid });
+		return this.api.req(this.config.endpoint.report.form({ report: 'notAvailable' }), { urlid: urlid })
+			.then(StumbleUponApi.expectSuccess);
 	},
 
 	rate: function(urlid, score) {
-		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' });
+		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score }, { method: 'POST' })
+			.then(StumbleUponApi.expectSuccess);
 	},
 
 	like: function(urlid) {
@@ -56,7 +58,8 @@ StumbleUponApi.prototype = {
 	},
 
 	unrate: function(urlid) {
-		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' });
+		return this.api.req(this.config.endpoint.unrate.form({ urlid: urlid }), {}, { method: 'DELETE' })
+			.then(StumbleUponApi.expectSuccess);
 	},
 
 	/**
@@ -116,11 +119,13 @@ StumbleUponApi.prototype = {
 
 	getUrlByUrlid: function(urlid) {
 		return this.api.get(this.config.endpoint.url, { urlid: urlid })
+			.then(StumbleUponApi.expectSuccess)
 			.then(function (result) { return result.url; });
 	},
 
 	getInterests: function() {
 		return this.cache.get('user')
+			.then(StumbleUponApi.expectSuccess)
 			.then(function(user) {
 				return this.api.get(this.config.endpoint.interests.form({ userid: user.userid }), { userid: user.userid })
 					.then(function (result) { return result.interests.values; });
@@ -129,6 +134,7 @@ StumbleUponApi.prototype = {
 
 	getUrlByHref: function(url) {
 		return this.api.get(this.config.endpoint.url, { url: url })
+			.then(StumbleUponApi.expectSuccess)
 			.then(function (result) { return result.url; });
 	},
 
@@ -138,7 +144,8 @@ StumbleUponApi.prototype = {
 	},
 
 	blockSite: function(urlid) {
-		return this.api.req(this.config.endpoint.blocksite.form({ urlid: urlid }), {});
+		return this.api.req(this.config.endpoint.blocksite.form({ urlid: urlid }), {})
+			.then(StumbleUponApi.expectSuccess);
 	},
 
 	getConversations: function(start, limit, type) {
