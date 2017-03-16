@@ -127,9 +127,11 @@ ToolbarEvent.reportSpam = function(request, sender) {
 			// No need to dislike, reportSpam auto-dislikes
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.reportSpam(urlid); })
-		.then(function(urlid) { ToolbarEvent._notify("Marked as Spam!"); return urlid; })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 })); });
+		.then(function(urlid) {
+			ToolbarEvent._notify("Marked as Spam!");
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 }));
+			return ToolbarEvent.api.reportSpam(urlid);
+		});
 }
 
 
@@ -234,8 +236,10 @@ ToolbarEvent.reportMissing = function(request, sender) {
 			ToolbarEvent.api.dislike(urlid);
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.reportMissing(urlid); })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 })); });
+		.then(function(urlid) {
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 }));
+			return ToolbarEvent.api.reportMissing(urlid);
+		})
 }
 
 
@@ -263,8 +267,10 @@ ToolbarEvent.dislike = function(request, sender) {
 			}
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 })); });
+		.then(function(urlid) {
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+			return ToolbarEvent.api.dislike(urlid);
+		});
 }
 
 /**
@@ -288,8 +294,10 @@ ToolbarEvent.unrate = function(request, sender) {
 			}
 			return urlid;
 		})
-		.then(function(urlid) { return ToolbarEvent.api.unrate(urlid); })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 })); });
+		.then(function(urlid) {
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 }));
+			return ToolbarEvent.api.unrate(urlid);
+		});
 }
 
 /**
@@ -310,8 +318,10 @@ ToolbarEvent.like = function(request, sender) {
 		._sanity()
 		.then(function() { return Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
-		.then(function(urlid) { return ToolbarEvent.api.like(urlid); })
-		.then(function(urlid) { return Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 })); });
+		.then(function(urlid) {
+			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 }));
+			return ToolbarEvent.api.like(urlid);
+		});
 }
 
 /*************** END RATINGS *****************/
