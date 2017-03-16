@@ -508,6 +508,10 @@ var Toolbar = {
 			document.querySelector(".toolbar-container").toggleClass("lists-expanded");
 			document.querySelector('.lists-loading').removeClass('hidden');
 		}
+		if (action == 'miscat') {
+			document.querySelector(".toolbar-container").removeClass("miscat-expanded");
+			document.querySelector(".toolbar-container").removeClass("dislike-menu-expanded");
+		}
 		if (action == 'interests') {
 			document.querySelector(".toolbar-container").toggleClass("interests-expanded");
 		}
