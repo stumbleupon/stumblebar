@@ -92,6 +92,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 			return ToolbarEvent.api.saveShare(request.data)
 				.then(function(convo) {
 					Page.state[sender.tab.id] = { convo: convo.id };
+					ToolbarEvent._notify("Sent!");
 					return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
 				});
 		});
@@ -126,7 +127,10 @@ ToolbarEvent.blockSite = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.blockSite(urlid); })
-		.then(function() { return !!Page.note(sender.tab.id, response.url); });
+		.then(function() {
+			ToolbarEvent._notify("Blocked!");
+			return !!Page.note(sender.tab.id, response.url);
+		});
 }
 
 /**
@@ -155,7 +159,10 @@ ToolbarEvent.dislike = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
-		.then(function() { return !!Page.note(sender.tab.id, response.url); });
+		.then(function() {
+			ToolbarEvent._notify("Marked as Spam!");
+			return !!Page.note(sender.tab.id, response.url);
+		});
 }
 
 /**
@@ -463,6 +470,7 @@ ToolbarEvent.convoAddRecipient = function(request, sender) {
 	return Promise.resolve(convo.addRecipient(request.data))
 		.then(convo.messages.bind(convo))
 		.then(function(convo) {
+			ToolbarEvent._notify("Added to Conversation!");
 			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: 'append'})});
 		});
 	;
@@ -500,6 +508,7 @@ ToolbarEvent.signout = function(request, sender) {
 		chrome.tabs.onUpdated.addListener(function(tabId , info) {
 			if (info.status == "complete" && tabId == tab.id) {
 				setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
+				ToolbarEvent._notify("Signed Out!");
 				ToolbarEvent.cache.mset({ authed: false, user: {} })
 			}
 		});
@@ -534,6 +543,7 @@ ToolbarEvent.loginPage = function(request, sender) {
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
 	ToolbarEvent.cache.mset({ authed: config.authed = false });
+	ToolbarEvent._notify("You got logged out!");
 	return ToolbarEvent._buildResponse({}, true);
 }
 
