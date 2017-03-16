@@ -233,6 +233,7 @@ ToolbarEvent.addToList = function(request, sender) {
 			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
 		})
 		.then(function(item) {
+			ToolbarEvent._notify("Added to list " + request.data.listname);
 			return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
 		});
 }
@@ -816,7 +817,7 @@ ToolbarEvent._init = function() {
 
 
 /**
- * Reject the current promise, log the message
+ * Reject the current promise, log the message, send to toolbar
  *
  * @return {Promise} rejection
  */
@@ -824,6 +825,16 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 	error(e);
 	ToolbarEvent.ping();
 	return ToolbarEvent._buildResponse({error: e}, tabid);
+}
+
+
+/**
+ * Create a notification on the toolbar
+ *
+ * @return {Promise} rejection
+ */
+ToolbarEvent._notify = function(message, tabid) {
+	return ToolbarEvent._buildResponse({notify: message}, tabid || true);
 }
 
 

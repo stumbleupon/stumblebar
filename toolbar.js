@@ -31,6 +31,14 @@ var Toolbar = {
 		//Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
 	},
 
+	handleNotify: function(message) {
+		clearTimeout(Toolbar.state.notifyMessageDisplay);
+		document.querySelector('.notify-message').removeClass('hidden');
+		document.querySelector('.notify-message').innerText = JSON.stringify(message).replace(/^{"|"}$/g, '').replace(/","/g, "\n").replace(/\\n/g, "\n       ").replace(/":"/g, " = ");
+		document.querySelector('.notify-message').addEventListener('mousedown', function() { document.querySelector('.notify-message').addClass('hidden') });
+		Toolbar.state.notifyMessageDisplay = setTimeout(function() { document.querySelector('.notify-message').addClass('hidden') }, 2000);
+	},
+
 	handleUrl: function(url) {
 		Toolbar.url = url;
 		document.querySelector("#like")   .removeClass("enabled");
@@ -282,8 +290,9 @@ var Toolbar = {
 
 			entryNode.id = entry.id;
 			entryNode.removeClass('stub');
-			entryNode.setAttribute("values", "listid")
+			entryNode.setAttribute("values", "listid,listname")
 			entryNode.setAttribute("listid", entry.id);
+			entryNode.setAttribute("listname", entry.name || 'No Title');
 
 			entryNode.querySelector('.lists-entry-image').style       = "background-image: url(" + entry.thumbnail + ")";
 			entryNode.querySelector('.lists-entry-title').innerText   = entry.name || 'No Title';
