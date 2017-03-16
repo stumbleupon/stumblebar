@@ -160,7 +160,6 @@ ToolbarEvent.dislike = function(request, sender) {
 		})
 		.then(function(urlid) { return ToolbarEvent.api.dislike(urlid); })
 		.then(function() {
-			ToolbarEvent._notify("Marked as Spam!");
 			return !!Page.note(sender.tab.id, response.url);
 		});
 }
@@ -838,7 +837,7 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 	error(e);
 	ToolbarEvent.ping();
 	if (!e)
-		e = "Unknown Error"
+		e = "Unknown Error";
 	if (e.error == 'runout')
 		e = 'Ran out of stumbles';
 	return ToolbarEvent._buildResponse({error: e}, tabid);
