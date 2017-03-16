@@ -344,7 +344,7 @@ ToolbarEvent.mode = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.stumble = function(request, sender) {
-	return ToolbarEvent.ping()
+	return ToolbarEvent._sanity()
 		.then(function() {
 			return ToolbarEvent.api
 				._mode(config.mode || config.defaults.mode, ToolbarEvent._generateModeInfo(request, sender))
