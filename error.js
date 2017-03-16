@@ -1,10 +1,10 @@
 function ToolbarError(type, name, error, context) {
-	this.type  = type;
-	this.name  = name;
-	this.error = error;
-	this.code  = code;
+	this.type    = type;
+	this.name    = name;
+	this.error   = error;
+	this.context = context;
 
-	this.stack = (new Error).stack;
+	this.stack   = (new Error).stack;
 }
 
 var NOERR = new ToolbarError('NOERR');
