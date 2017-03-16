@@ -254,7 +254,7 @@ var Toolbar = {
 			if (config.mode == "interest")
 				document.querySelector("#mode").innerText = config.modeinfo.keyword;
 			if (config.mode == "keyword")
-				document.querySelector("#mode").innerText = config.modeinfo.keyword.replace(/(^| +)/g, '\1#');
+				document.querySelector("#mode").innerText = config.modeinfo.keyword.replace(/(^| +)/g, '$1#');
 		}
 
 		if (config.hasOwnProperty('numShares')) {
