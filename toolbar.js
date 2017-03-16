@@ -503,7 +503,7 @@ var Toolbar = {
 			//document.querySelector(".toolbar-social-container .toolbar-expand-icon").toggleClass("enabled");
 			//document.querySelector(".action-inbox").toggleClass("enabled");
 		}
-		if (['dislike-menu', 'report-spam', 'report-miscat', 'block-site'].includes(action)) {
+		if (['dislike-menu', 'report-missing', 'report-spam', 'report-miscat', 'block-site'].includes(action)) {
 			document.querySelector(".toolbar-container").toggleClass("dislike-menu-expanded");
 		}
 		if (action == 'share') {
