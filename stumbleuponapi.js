@@ -272,13 +272,13 @@ StumbleUponApi.prototype = {
 	nextUrl: function(peek, retry) {
 		peek = peek || 0;
 		retry = retry || 0;
-		return this.cache.mget(['stumble', 'mode', 'maxRetries'])
+		return this.cache.mget(['stumble', 'mode'])
 			.then(function (map) {
 				var stumblePos = (map.stumble && map.stumble.pos) || 0, stumbles = (map.stumble || {}).list || [];
 				if ((stumblePos + peek) >= stumbles.length - 1 || map.mode != map.stumble.mode) {
 					debug('Buffer refill from NextUrl', stumbles.length, stumblePos + peek);
 					return this.getStumbles().then(function (r) {
-						if (retry >= map.maxRetries) {
+						if (retry >= this.config.maxRetries) {
 							warning("Too many retries");
 							return Promise.reject(new ToolbarError('SUAPI', 'nextUrl', 'runout'));
 						}
