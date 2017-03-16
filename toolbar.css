@@ -674,11 +674,19 @@ button.pill.delete:before {
 	display: none;
 }
 
+.toolbar-container:not(.interests-expanded) .show-when-interests-expanded:not(.enabled) {
+	display: none;
+}
+
 .toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
 	display: none;
 }
 
 .toolbar-container.keywords-expanded .hide-when-keywords-expanded:not(.enabled) {
+	display: none;
+}
+
+.toolbar-container.interests-expanded .hide-when-interests-expanded:not(.enabled) {
 	display: none;
 }
 
