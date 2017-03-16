@@ -84,7 +84,7 @@ Page.ping = function(tabid) {
 /**
  * The current tab info
  */
-Page.tab = [];
+Page.tab = {};
 
 /**
  * Get the last url seen by the provided tab id
@@ -249,11 +249,18 @@ Page.urlChange = function(href, tabid) {
 		}
 	}
 
+	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/logout'));
+	if (suPath) {
+		debug('LOGGING OUT');
+		return;
+	}
+
 	// If we're hitting http://su/..., revalidate our auth
-	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/'));
+	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/(.*)'));
 	if (suPath && !config.authed) {
-		ToolbarEvent._sanity();
-		debug('SUPATH SANITY CHECK');
+		if (path)
+			ToolbarEvent._sanity();
+		debug('SUPATH SANITY CHECK ' + href);
 	}
 
 	// If we're hitting http://su/convo/..., set the conversation id on the page state

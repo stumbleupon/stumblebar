@@ -611,22 +611,14 @@ ToolbarEvent.convoShowContacts = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.signout = function(request, sender) {
-	ToolbarEvent.api._flush();
-
-	chrome.tabs.create({
-		"url": config.suPages.signout.form(config),
-		active: false
-	}, function(tab) {
-		chrome.tabs.onUpdated.addListener(function(tabId , info) {
-			if (info.status == "complete" && tabId == tab.id) {
-				setTimeout(function() { chrome.tabs.remove(tabId); }, 2000);
-				ToolbarEvent._notify("Signed Out!");
-				ToolbarEvent.cache.mset({ authed: false, user: {} })
-			}
+	chrome.cookies.getAll({ domain: 'stumbleupon.com' }, function(cookies) {
+		cookies.forEach(function(cookie) {
+			chrome.cookies.remove({ url: 'https://' + cookie.domain + cookie.path, name: cookie.name });
 		});
 	});
-
-	return ToolbarEvent.needsLogin();
+	ToolbarEvent._notify("Signed Out!");
+	ToolbarEvent.cache.mset({ authed: config.authed = false, user: {} });
+	return ToolbarEvent._buildResponse({}, true);
 }
 
 /**
