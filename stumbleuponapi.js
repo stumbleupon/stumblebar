@@ -278,7 +278,7 @@ StumbleUponApi.prototype = {
 				if ((stumblePos + peek) >= stumbles.length - 1 || map.mode != map.stumble.mode) {
 					debug('Buffer refill from NextUrl', stumbles.length, stumblePos + peek);
 					return this.getStumbles().then(function (r) {
-						if (retry >= this.config.maxRetries) {
+						if (retry >= (this.config.maxRetries || 3)) {
 							warning("Too many retries");
 							return Promise.reject(new ToolbarError('SUAPI', 'nextUrl', 'runout'));
 						}
