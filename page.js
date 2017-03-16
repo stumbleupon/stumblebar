@@ -339,6 +339,16 @@ Page.handleZoom = function(zoom) {
 	chrome.tabs.sendMessage(zoom.tabId, { zoom: zoom.newZoomFactor });
 }
 
+Page.handleFreshen = function() {
+	chrome.tabs.query({}, function(tabs) {
+		tabs.forEach(function(tab) {
+			try {
+				chrome.tabs.executeScript(tab.id, {code: "document.getElementById('discoverbar') && document.documentElement.removeChild(document.getElementById('discoverbar'), document.documentElement)"});
+			} catch(e) {}
+		});
+	});
+}
+
 /**
  * Initialize page handlers
  */
@@ -354,6 +364,8 @@ Page.init = function() {
 	chrome.tabs.onZoomChange.addListener(Page.handleZoom);
 
 	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
+
+	chrome.runtime.onInstalled.addListener(Page.handleFreshen);
 
 
 	Page._prerender  = document.createElement('link');

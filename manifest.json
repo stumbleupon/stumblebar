@@ -45,7 +45,7 @@
     "bookmarks",
     "tabs",
     "cookies",
-    "*://*.stumbleupon.com/*",
+    "<all_urls>",
     "storage"
   ], 
 

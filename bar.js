@@ -82,6 +82,9 @@
 					if (request.type == "ping") {
 						sendResponse({type: "pong"});
 					}
+					if (request.type == "freshen") {
+						this.init();
+					}
 					if (request.hash) {
 						this.drag.updateHash(this.hash = request.hash);
 					}
