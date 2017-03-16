@@ -54,7 +54,7 @@ StumbleUponApi.prototype = {
 	},
 
 	rate: function(urlid, score, subtype) {
-		return this.api.req(this.config.endpoint.rate, { urlid: urlid, type: score, subtype: subtype }, { method: 'POST' })
+		return this.api.req(this.config.endpoint.rate, Object.assign({ urlid: urlid, type: score }, subtype && { subtype: subtype }), { method: 'POST' })
 			.then(StumbleUponApi.expectSuccess);
 	},
 

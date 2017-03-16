@@ -124,7 +124,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 				debug("Attempt to dislike url that doesn't exist", request);
 				return Promise.reject(new ToolbarError("TBEV", "spam", "nourl"));
 			}
-			ToolbarEvent.api.dislike(urlid);
+			// No need to dislike, reportSpam auto-dislikes
 			return urlid;
 		})
 		.then(function(urlid) { return ToolbarEvent.api.reportSpam(urlid); })
