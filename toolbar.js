@@ -77,7 +77,7 @@ var Toolbar = {
 			message = "Be the first to like this!"
 		}
 		var messageElem = document.createElement('span');
-		msessageElem.innerText = message;
+		messageElem.innerText = message;
 		document.querySelector("#inline-info-body").appendChild(messageElem);
 
 		document.querySelector("#info").removeClass("on");
