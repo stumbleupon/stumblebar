@@ -474,7 +474,7 @@ input:invalid {
 .theme-dark-sidebar .toolbar-border-bottom {
 	border-bottom: 1px;
 	border-style: solid !important;
-	border-color: #ccc; !important
+	border-color: #ccc !important;
 }
 .theme-dark-sidebar .toolbar-border-top {
 	border-top: 1px;

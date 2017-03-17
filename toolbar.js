@@ -821,7 +821,7 @@ var Toolbar = {
 		// Toolbar initialization
 		Toolbar.dispatch('init');
 		Toolbar.dispatch('urlChange');
-		window.setInterval(Toolbar.tryMiniMode, 1000);
+		window.setInterval(function(e) { Toolbar.tryMiniMode(e); }, 1000);
 
 		// Drag-n-drop logic
 		document.addEventListener("mousedown",      Toolbar.handleMouseDown,  true);

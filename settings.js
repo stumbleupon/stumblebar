@@ -18,9 +18,13 @@ var Settings = {
 				tr.appendChild(name);
 				var val = document.createElement('td');
 				//if (isScalar)
-					val.innerHTML = '<input data-type="' + (isScalar ? 'scalar' : 'object') + '" name="' + p + '" id="' + p + '" type="text" style="max-width: 100%; width: 640px">';
-				//else
-				//	val.innerHTML = '<textarea name="' + p + '" id="' + p + '" cols=80>' + JSON.stringify(config[p]) + '</textarea>';
+				var input = document.createElement('input');
+				input.setAttribute('data-type', isScalar ? 'scalar' : 'object');
+				input.setAttribute('name', p);
+				input.setAttribute('id', p);
+				input.setAttribute('type', text);
+				input.style = 'max-width: 100%; width: 640px';
+				val.appendChild(input);
 				tr.appendChild(val);
 				body.appendChild(tr);
 				elem = document.getElementById(p);

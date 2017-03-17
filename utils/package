@@ -10,6 +10,7 @@ mkdir -p artifact
 
 git ls-tree -r master --name-only | while read FILE; do
 	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
+	if [[ "$(dirname "$FILE")" == "utils" ]]; then continue; fi
 	cp -rp {,target/}"$FILE"
 done
 
