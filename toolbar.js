@@ -56,7 +56,10 @@ var Toolbar = {
 
 		var message = "";
 		if (url.friend) {
-			message += '<img src="' + url.friend.thumbnail + '" class="inline-info-thumb"> ';
+			var img = document.createElement('img');
+			img.src = url.friend.thumbnail;
+			img.className = "inline-info-thumb";
+			document.querySelector("#inline-info-body").appendChild(img);
 			// @TODO "Discovered by X + Y Others" sounds bad
 			//if (url.firstrater == url.friend.username)
 			//	message += "Discovered";
@@ -73,7 +76,9 @@ var Toolbar = {
 		if (!message) {
 			message = "Be the first to like this!"
 		}
-		document.querySelector("#inline-info-body").innerHTML = message;
+		var messageElem = document.createElement('span');
+		msessageElem.innerText = message;
+		document.querySelector("#inline-info-body").appendChild(messageElem);
 
 		document.querySelector("#info").removeClass("on");
 		document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !url.urlid);
