@@ -13,8 +13,6 @@
 	"run_at": "document_start"
   }],
 
-//  "externally_connectable": true,
-
   "web_accessible_resources": [
     "*://*.stumbleupon.com/*",
     "bar.html",
@@ -54,7 +52,6 @@
      "32" : "asset/Logo.png"
     },
     "default_title": "StumbleBar by StumbleUpon"
-    //"default_popup": "content/discover.html"
   },
 
   "background": {
