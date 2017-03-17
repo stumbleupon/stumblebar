@@ -628,6 +628,17 @@ var Toolbar = {
 			contact.setParticipant(true);
 		this.updateShare();
 	},
+	addShareEmail: function _addShareEmail(emailAddress) {
+		Toolbar.dispatch('newEmailContact', emailAddress); // signal the background to add this asynchronously to the cached contacts list
+		var contact = this.shareContactList.add(encodeURIComponent(emailAddress), emailAddress, true, 'email');
+		contact.setParticipant(true);
+		this.updateShare();
+	},
+	/**
+	 * delete a participant from the 'share' contact list -- the list of contacts for a sharing
+	 * @param value
+	 * @param sourceEl
+	 */
 	deleteParticipant: function toolbarDeleteParticipant(value, sourceEl) {
 		var id = sourceEl.getAttribute('value');
 		console.log('deleting participant', id);
@@ -850,6 +861,17 @@ var Toolbar = {
 						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 					];
 				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {contactIds: contactIds, isParticipant: false});
+			}
+		}.bind(this));
+
+		// share contacts new email
+		document.querySelector('#toolbar-share-new-email').addEventListener('keyup', function(e) {
+			if(e.keyCode === 13) {
+				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
+					// @TODO set up validation feedback to user here
+					return false;
+				}
+				this.addShareEmail(e.target.value);
 			}
 		}.bind(this));
 

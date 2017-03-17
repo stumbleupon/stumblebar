@@ -223,7 +223,7 @@
 						<span class="clickable close-icon show-when-convo-expanded" action="close-convo"></span>
 					</div>
 					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
-					<li class="stub toolbar-action action-theme clickable" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></li>
+					<button class="stub toolbar-action action-theme clickable add-contact" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></button>
 
 
 
@@ -254,6 +254,8 @@
 							<label for="toolbar-share-contacts-list">Contacts</label><br>
 							<ul id="toolbar-share-contacts-list" class="scrollable">
 							</ul>
+							<label for="toolbar-share-new-email">New email recipient</label><br>
+							<input type="email" id="toolbar-share-new-email" class="add-email-contact share" required>
 						</div>
 						<div class="toolbar-share-container-section toolbar-share-buttons-container">
 							<!-- buttons to initiate actions -->
@@ -261,7 +263,7 @@
 							<span class="toolbar-action action-stumble btn primary-background primary-border" action="save-share" id="save-share">Save</span>
 						</div>
 					</div>
-					<li class="stub toolbar-action action-theme clickable" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></li>
+					<button class="stub toolbar-action action-theme clickable add-contact" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></button>
 					<button class="stub btn pill delete secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<div class="invalid stub" id="toolbar-share-empty-recipient" hidden>add recipients by clicking in the list below.</div>
 

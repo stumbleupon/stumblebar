@@ -35,7 +35,7 @@ ContactList.prototype = {
 	 * @param name
 	 * @returns {Contact}
 	 */
-	add: function addContact(contactId, name, isParticipant, overwrite, source) {
+	add: function addContact(contactId, name, overwrite, source) {
 		var contact, lastAccess = Date.now();
 		if(contactId == this.ownerContactId) {
 			return false;
@@ -48,7 +48,9 @@ ContactList.prototype = {
 				this.remove(contactId);
 			}
 		}
-		return this.contacts.push(new Contact(contactId, name, isParticipant, source, lastAccess));
+		contact = new Contact(contactId, name, source, lastAccess);
+		this.contacts.push(contact);
+		return contact;
 	},
 	/**
 	 * add contacts from an array of contact-like objects.  preserves existing contacts by default
@@ -183,6 +185,7 @@ ContactList.prototype = {
 	 * @param {Object} contactsObject -- an object with name/value properties such as would result from running a Contact through a JSON stringifying/parse cycle.
 	 */
 	reconstitute: function reconstitute(contactsObject) {
+		console.log(contactsObject);
 		this.ownerContactId = contactsObject.ownerContactId;
 		if(contactsObject.hasOwnProperty('contacts') && typeof contactsObject.contacts === "object" && contactsObject.contacts instanceof Array) {
 			this.contacts = contactsObject.contacts.map(function(contactObj) {
@@ -207,7 +210,7 @@ function Contact(id, name, isParticipant, source, lastAccess) {
 	this.id = id;
 	this.userid = id;
 	this.name = name;
-	this.participant = !!isParticipant;
+	this.participant = false; // always when creating -- participant status is used only on front-end
 	this.source = source || 'unknown';
 	this.lastAccess = lastAccess || 0;
 }
@@ -268,7 +271,7 @@ Contact.prototype = {
 		this.id = contactObject.id;
 		this.userid = contactObject.id;
 		this.name = contactObject.name;
-		this.participant = contactObject.participant;
+		this.participant = false; // always ignore what comes in -- participant status is for front-end only
 		this.source = contactObject.source;
 		this.lastAccess = contactObject.lastAccess;
 	}

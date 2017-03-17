@@ -539,6 +539,20 @@ ToolbarEvent.loadConvo = function(request, sender) {
 		});
 }
 
+/**
+ * add a new email contact to the cache and respond with the updated list
+ * @param request
+ * @param sender
+ */
+ToolbarEvent.newEmailContact = function _newEmailContact(request, sender) {
+	var emailAddress = request.data;
+	return ToolbarEvent.api.newEmailContact(emailAddress)
+		.then(function(contacts) {
+			return ToolbarEvent._buildResponse({
+				contactsRefresh: contacts
+			});
+		});
+}
 
 /**
  * Changes the current tab to the url related to the provided conversation

@@ -78,15 +78,15 @@ StumbleUponApi.prototype = {
 	 * @returns {Promise<ContactList>}
 	 */
 	getContacts: function apiGetContacts() {
-		var userCache = ToolbarEvent.userCache,
+		var userCache = this.userCache,
 			contactsKey = 'contacts',
 			mutualRefreshFlag = 'mutalIsCurrent',
 			mutualTtl = 300000,
 			contactList, // contactList will be used to produce the json response that will be reconstituted in the iframe context.
 			userId;
 		return this.getUser()
-			.then(function(user) {
-				return userId = user.userid;
+			.then(function _getUser(user) {
+				return userId = user.userid; // stash userid in the userId var of the closure
 			}.bind(this))
 			.then(function(userid) {
 				return userCache.mget(contactsKey, mutualRefreshFlag)
@@ -94,9 +94,10 @@ StumbleUponApi.prototype = {
 			.then(function(results) {
 				console.log(results);
 				var contactsObj = results[contactsKey],
-					mutualNeedsUpdate = !results[mutualRefreshFlag];
+					mutualNeedsUpdate = (!results[mutualRefreshFlag] || !!contactsObj);
 				contactList = new ContactList(userId); // contactList is in the closure scope of getContacts -- goal is to build it and return it in the final step of the promise chain
 				if(contactsObj) {
+					contactsObj = JSON.parse(contactsObj);
 					contactList.reconstitute(contactsObj);
 				};
 				if(mutualNeedsUpdate) {
@@ -111,14 +112,20 @@ StumbleUponApi.prototype = {
 							userCache.set(contactsKey, JSON.stringify(contactList)); // this can run async
 							return contactList;
 						}.bind(this));
-				} else {
-					// mutualContactsObj is ok, leave ContactList alone
-					if(contactsObj) {
-						contactList.reconstitute(JSON.parse(contactsObj));
-					}
-					return contactList;
 				}
 			}.bind(this));
+	},
+
+	newEmailContact: function _newEmailContact(emailAddress) {
+		var userCache = ToolbarEvent.userCache,
+			contactsKey = 'contacts';
+		return this.getContacts()
+			.then(function _gotContactList(contactList) {
+				contactList.add(encodeURIComponent(emailAddress), emailAddress, true, 'email');
+				contactList.sort();
+				userCache.set(contactsKey, JSON.stringify(contactList)); // this can run async
+				return contactList;
+			});
 	},
 
 	convoAddRecipient: function(convoRecipientData) {

@@ -95,7 +95,11 @@ button.pill.delete:before {
 	background-size: 13px 13px;
 	cursor: pointer;
 }
-.invalid {
+button.add-contact:not(.stub) {
+	display: list-item;
+}
+.invalid,
+input:invalid {
 	color: red;
 	background-color: transparent;
 	white-space: pre-line;
