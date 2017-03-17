@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+pushd "$(dirname "$0")/../"
+
+rm -rf target
+mkdir -p target
+mkdir -p artifact
+
+git ls-tree -r master --name-only | while read FILE; do
+	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
+	cp -rp {,target/}"$FILE"
+done
+
+
+# Firefox
+echo -e "\n\n\n========= START Firefox"
+cd target
+zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
+echo -e "========= END Firefox\n\n\n"
+
+# Chrome
+echo -e "========= START Chrome"
+cd ..
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > target/manifest.json
+rm -rf StumbleBar
+cp -rp target StumbleBar
+zip -r artifact/StumbleBar\ Chrome\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip StumbleBar
+rm -rf target StumbleBar
+echo -e "========= END Chrome\n\n\n"
+
+popd
+
