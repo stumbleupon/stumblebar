@@ -198,13 +198,6 @@ var Toolbar = {
 
 		this.convoContactList = new ContactList(Toolbar.config.authed);
 		this.convoContactList.reconstitute(convo.contacts);
-		var participants = (convo.participants || []).filter(function(participant) {
-			return participant.suUserId != Toolbar.config.authed;
-		}).forEach(function _eachParticipant(participant) {
-			var contact = this.convoContactList.get(participant.suUserId);
-			// @TODO handle contact not found
-			contact.setParticipant(true);
-		}.bind(this));
 		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
@@ -218,8 +211,8 @@ var Toolbar = {
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
-		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', {isParticipant: true});
-		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {isParticipant: false});
+		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {return contact.isParticipant();});
+		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {return !contact.isParticipant();});
 	},
 
 	handleConvoContacts: function(convoContacts) {
@@ -591,10 +584,19 @@ var Toolbar = {
 		return true;
 	},
 	getNewConvoParticipantData: function getNewConvoParticipantData(userid) {
-		var data = {
-			conversationId:document.querySelector('#convo-id').value,
-			suUserIds:[userid]
-		};
+		var data = null,
+			contact = this.convoContactList.get(userid)
+		if(contact && contact.source === "mutual") {
+			data = {
+				conversationId:document.querySelector('#convo-id').value,
+				suUserIds:[userid]
+			};
+		} else if(contact && contact.source === "email") {
+			data = {
+				conversationId:document.querySelector('#convo-id').value,
+				emails:[contact.name]
+			};
+		}
 		return data;
 	},
 	getShareData: function getShareData() {
@@ -605,15 +607,18 @@ var Toolbar = {
 			initialMessage:null
 		};
 		data.contentId = Toolbar.url.urlid;
-		data.suUserIds = this.shareContactList.find({isParticipant: true}).map(function(contact) {
+		data.suUserIds = this.shareContactList.find(function(contact) {return contact.participant && contact.source === "mutual"}).map(function(contact) {
 			return contact.userid;
+		});
+		data.emails = this.shareContactList.find(function(contact) {return contact.participant && contact.source === "email"}).map(function(contact) {
+			return contact.name;
 		});
 		data.initialMessage = document.querySelector('#toolbar-share-comment').value;
 		return data;
 	},
 	validateShare: function validateShare() {
 		// make sure there are some recipients
-		var recipients = this.shareContactList.find({isParticipant: true});
+		var recipients = this.shareContactList.find(function(contact) {return contact.isParticipant();});
 		if(recipients.length === 0) {
 			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
 			return false;
@@ -639,6 +644,12 @@ var Toolbar = {
 		contact.setParticipant(true);
 		this.updateShare();
 	},
+	addConvoEmail: function _addConvoEmail(emailAddress) {
+		Toolbar.dispatch('newEmailContact', emailAddress); // signal the background to add this asynchronously to the cached contacts list
+		var contact = this.convoContactList.add(encodeURIComponent(emailAddress), emailAddress, true, 'email');
+		contact.setParticipant(true);
+		this.updateConvoParticipants();
+	},
 	/**
 	 * delete a participant from the 'share' contact list -- the list of contacts for a sharing
 	 * @param value
@@ -658,8 +669,8 @@ var Toolbar = {
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
-		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {isParticipant: false});
-		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', {isParticipant: true});
+		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {return !contact.isParticipant();});
+		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {return contact.isParticipant();});
 	},
 	handleMouseDown: function(e) {
 		if (e.target) {
@@ -852,7 +863,7 @@ var Toolbar = {
 						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 					];
-				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', {contactIds: contactIds, isParticipant: false});
+				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant();});
 			}
 		}.bind(this));
 
@@ -865,7 +876,7 @@ var Toolbar = {
 						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 					];
-				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', {contactIds: contactIds, isParticipant: false});
+				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant();});
 			}
 		}.bind(this));
 
@@ -877,6 +888,23 @@ var Toolbar = {
 					return false;
 				}
 				this.addShareEmail(e.target.value);
+			}
+		}.bind(this));
+
+		// share contacts new email
+		document.querySelector('#toolbar-convo-new-email').addEventListener('keyup', function(e) {
+			if(e.keyCode === 13) {
+				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
+					// @TODO set up validation feedback to user here
+					return false;
+				}
+				var email = e.target.value;
+				this.addConvoEmail(email);
+				var data = {
+					conversationId:document.querySelector('#convo-id').value,
+					emails:[email]
+				};
+				Toolbar.dispatch('convo-add-participant', data);
 			}
 		}.bind(this));
 

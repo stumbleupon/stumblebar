@@ -531,10 +531,14 @@ ToolbarEvent.loadConvo = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.value)
 	return Promise.all([convo.messages(request.data.stamp, request.data.type, request.data.limit), ToolbarEvent.api.getContacts()])
 		.then(function(results) {
-			var convo = results[0],
+			var conversation = results[0],
 				contacts = results[1];
+			conversation.participants && conversation.participants.forEach(function(participant) {
+				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+				contact && contact.setParticipant(true);
+			});
 			return ToolbarEvent._buildResponse({
-				convo: Object.assign({}, convo, {contacts: contacts, position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) }),
+				convo: Object.assign({}, conversation, {contacts: contacts, position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) }),
 			});
 		});
 }

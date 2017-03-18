@@ -63,7 +63,7 @@ ContactList.prototype = {
 			contacts.forEach(function(contact) {
 				var name = contact.name ? contact.name + " (" + contact.username + ")" : contact.username,
 					isParticipant = !!contact.isParticipant;
-				this.add(contact.userid, name, isParticipant, overwrite);
+				this.add(contact.userid, name, overwrite, source);
 			}.bind(this));
 			this.sort();
 		}
@@ -89,37 +89,17 @@ ContactList.prototype = {
 	},
 	/**
 	 * return an array of contacts
-	 * @param {ContactFilter} filter
+	 * @param {Function} filter -- a function that accepts a contact object and returns true to include it
 	 * @return {Array<Contact>}
 	 */
-	find: function findContacts(filter) {
+	find: function _findContacts(filter) {
 		var contacts = [],
 			include = false,
 			contact;
-		if(filter.contactIds)  {
-			filter.contactIds.forEach(function(contactId) {
-				include = false;
-				contact = this.get(contactId);
-				if(!contact) {
-					return;
-				} else if(typeof(filter.isParticipant) === 'undefined') {
-					include = true;
-				} else {
-					include = (filter.isParticipant === contact.isParticipant());
-				}
-				if(include) {
-					contacts.push(contact);
-				}
-			}.bind(this));
-		} else if(typeof(filter.isParticipant) !== 'undefined') {
-			for(var i = 0; i < this.contacts.length; i++) {
-				contact = this.contacts[i];
-				if(filter.isParticipant === contact.isParticipant()) {
-					contacts.push(contact);
-				}
-			}
+		if(typeof filter === "function") {
+			return this.contacts.filter(filter);
 		}
-		return contacts;
+		// @TODO: Throw an error here or something
 	},
 	/**
 	 * sort the array
@@ -146,7 +126,7 @@ ContactList.prototype = {
 	 * @param {string} stubId
 	 * @param {Array<AttributeMap>} attributeMappings what are the attribute keys to be applied
 	 * @param {string} appendToElementId
-	 * @param {ContactFilter} filter Optional
+	 * @param {Function} filter -- Optional -- a function that accepts a contact object and returns true to include it
 	 */
 	render: function renderContactList(stubId, attributeMappings, appendToElementId, filter) {
 		var appendToElement = document.getElementById(appendToElementId);
@@ -206,7 +186,7 @@ ContactList.prototype = {
  * @param {number} lastAccess -- timestamp of the last access, intended to persist across sessions via cache
  * @constructor
  */
-function Contact(id, name, isParticipant, source, lastAccess) {
+function Contact(id, name, source, lastAccess) {
 	this.id = id;
 	this.userid = id;
 	this.name = name;
@@ -271,7 +251,7 @@ Contact.prototype = {
 		this.id = contactObject.id;
 		this.userid = contactObject.id;
 		this.name = contactObject.name;
-		this.participant = false; // always ignore what comes in -- participant status is for front-end only
+		this.participant = contactObject.participant;
 		this.source = contactObject.source;
 		this.lastAccess = contactObject.lastAccess;
 	}

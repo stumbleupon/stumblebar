@@ -85,16 +85,16 @@ StumbleUponApi.prototype = {
 			contactList, // contactList will be used to produce the json response that will be reconstituted in the iframe context.
 			userId;
 		return this.getUser()
-			.then(function _getUser(user) {
+			.then(function _gotUser(user) {
 				return userId = user.userid; // stash userid in the userId var of the closure
 			}.bind(this))
-			.then(function(userid) {
+			.then(function _getCachedContacts(userid) {
 				return userCache.mget(contactsKey, mutualRefreshFlag)
 			}.bind(this))
-			.then(function(results) {
+			.then(function _gotCachedContacts(results) {
 				console.log(results);
 				var contactsObj = results[contactsKey],
-					mutualNeedsUpdate = (!results[mutualRefreshFlag] || !!contactsObj);
+					mutualNeedsUpdate = (!results[mutualRefreshFlag] || !contactsObj);
 				contactList = new ContactList(userId); // contactList is in the closure scope of getContacts -- goal is to build it and return it in the final step of the promise chain
 				if(contactsObj) {
 					contactsObj = JSON.parse(contactsObj);
@@ -113,6 +113,7 @@ StumbleUponApi.prototype = {
 							return contactList;
 						}.bind(this));
 				}
+				return contactList;
 			}.bind(this));
 	},
 
@@ -264,16 +265,26 @@ StumbleUponApi.prototype = {
 	 * @typedef {Object} ShareData
 	 * @property {string} contentType
 	 * @property {string} contentId
-	 * @property {Array<number>} suUserIds
+	 * @property {Array<string>} suUserIds
+	 * @property {Array<string>} emails
 	 * @property {string} initialMessage
 
 	/**
 	 * @param {ShareData} shareData
 	 */
 	saveShare: function(shareData) {
-		var convo = new Conversation(this.config.conversationsAPI, null);
-		convo.api.addHeaders(this.api.getHeaders());
-		return convo.save(shareData);
+		var convo = this.getConversation(null); // build the saveShare response -- the conversation with contacts attached
+		return Promise.all([convo.save(shareData), this.getContacts()])
+			.then(function _savedConvo(results) {
+				var conversation = results[0],
+					contacts = results[1];
+				conversation.participants && conversation.participants.forEach(function(participant) {
+					var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+					contact && contact.setParticipant(true);
+				});
+				conversation.contacts = contacts;
+				return conversation;
+			})
 	},
 
 	reportStumble: function(urlids, mode, modeinfo) {
