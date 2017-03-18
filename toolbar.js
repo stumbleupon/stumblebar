@@ -494,6 +494,10 @@ var Toolbar = {
 		if (action == 'expand') {
 			document.querySelector(".toolbar-container").toggleClass(value + "-expanded");
 		}
+		if (action == 'toggle-class') {
+			elem.toggleClass(value);
+			return false;
+		}
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
 			document.querySelector('.inbox-loading').removeClass('hidden');
@@ -856,7 +860,6 @@ var Toolbar = {
 
 		// share contacts search
 		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
-			console.log(e.target.value);
 			if(this.shareContactList) {
 				var contactIds = this.shareContactList.search(e.target.value),
 					attributeMap = [
@@ -869,7 +872,6 @@ var Toolbar = {
 
 		// convo contacts search
 		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
-			console.log(e.target.value);
 			if(this.convoContactList) {
 				var contactIds = this.convoContactList.search(e.target.value),
 					attributeMap = [
