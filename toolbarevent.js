@@ -621,12 +621,39 @@ ToolbarEvent.openConvo = function(request, sender) {
 ToolbarEvent.convoAddRecipient = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
 	return Promise.resolve(convo.addRecipient(request.data))
-		.then(convo.messages.bind(convo))
-		.then(function(convo) {
+		.then(Promise.all([convo.messages.bind(convo), ToolbarEvent.api.getContacts()]))
+		.then(function(results) {
+			var conversation = results[0],
+				contacts = results[1];
 			ToolbarEvent._notify("Added to Conversation!");
-			return ToolbarEvent._buildResponse({convo: Object.assign({}, convo, {position: 'append'})});
+			conversation.participants && conversation.participants.forEach(function _touchOrInsertContact(participant) {
+				// @TODO this code is repeated in stumbleuponapi.js -- refactor to some common place
+				// update the last-accessed time for sorting purposes -- this must be persisted
+				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+				if(contact) {
+					contact.touch(now);
+				} else { // this participant isn't in our cached contact list, so insert them
+					if(participant.email) {
+						contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+					} else if(participant.suUserId) {
+						contacts.add(
+							participant.suUserId,
+							participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
+							false,
+							"mutual"
+						);
+					}
+				}
+			});
+			contacts.sort();
+			this.userCache.set(contactsKey, JSON.stringify(contacts)); // this can run async
+			conversation.participants && conversation.participants.forEach(function _setParticipant(participant) {
+				// set the participant flag for the front-end
+				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+				contact && contact.setParticipant(true);
+			});
+			return ToolbarEvent._buildResponse({convo: Object.assign({}, conversation, {contacts: contacts, position: 'append'})});
 		});
-	;
 }
 
 ToolbarEvent.convoShowContacts = function(request, sender) {
