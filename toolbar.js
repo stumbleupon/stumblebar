@@ -635,7 +635,7 @@ var Toolbar = {
 	addParticipant: function toolbarAddParticipant(value, sourceEl) {
 		var id = sourceEl.getAttribute('value'),
 			contact = this.shareContactList.get(id);
-			contact.setParticipant(true);
+		contact.setParticipant(true);
 		this.updateShare();
 	},
 	addShareEmail: function _addShareEmail(emailAddress) {

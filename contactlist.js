@@ -105,7 +105,7 @@ ContactList.prototype = {
 	 * sort the array
 	 */
 	sort: function sortContacts() {
-		this.contacts.sort(this.newer);
+		this.contacts.sort(this.compare);
 	},
 	/**
 	 * a comparator for sorting by most recently contacted first, then by name for contacts with same last access.
@@ -113,11 +113,11 @@ ContactList.prototype = {
 	 * @param anotherContact
 	 * @returns {number}
 	 */
-	newer: function(oneContact, anotherContact) {
+	compare: function(oneContact, anotherContact) {
 		if(oneContact.lastAccess === anotherContact.lastAccess) {
 			return (oneContact.name.toUpperCase() < anotherContact.name.toUpperCase()) ? -1 : 1;
 		} else {
-			return (oneContact.lastAccess < anotherContact.lastAccess) ? -1 : 1;
+			return (oneContact.lastAccess < anotherContact.lastAccess) ? 1 : -1;
 		}
 		return 0;
 	},

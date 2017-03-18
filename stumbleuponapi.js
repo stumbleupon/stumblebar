@@ -11,6 +11,7 @@ function StumbleUponApi(config, cache, userCache) {
 	this.seen = {};
 	this.cookie = new Cookie(config);
 	this.api = new Api(config);
+	this.contactsKey = 'contacts';
 	//this.cookie.get('su_accesstoken')
 	//					 .then(this.extractAccessToken.bind(this))
 }
@@ -79,7 +80,6 @@ StumbleUponApi.prototype = {
 	 */
 	getContacts: function apiGetContacts() {
 		var userCache = this.userCache,
-			contactsKey = 'contacts',
 			mutualRefreshFlag = 'mutalIsCurrent',
 			mutualTtl = 300000,
 			contactList, // contactList will be used to produce the json response that will be reconstituted in the iframe context.
@@ -89,11 +89,11 @@ StumbleUponApi.prototype = {
 				return userId = user.userid; // stash userid in the userId var of the closure
 			}.bind(this))
 			.then(function _getCachedContacts(userid) {
-				return userCache.mget(contactsKey, mutualRefreshFlag)
+				return userCache.mget(this.contactsKey, mutualRefreshFlag)
 			}.bind(this))
 			.then(function _gotCachedContacts(results) {
 				console.log(results);
-				var contactsObj = results[contactsKey],
+				var contactsObj = results[this.contactsKey],
 					mutualNeedsUpdate = (!results[mutualRefreshFlag] || !contactsObj);
 				contactList = new ContactList(userId); // contactList is in the closure scope of getContacts -- goal is to build it and return it in the final step of the promise chain
 				if(contactsObj) {
@@ -109,7 +109,7 @@ StumbleUponApi.prototype = {
 						}.bind(this))
 						.then(function(contacts) {
 							contactList.addMultiple(contacts['values'], true, 'mutual');
-							userCache.set(contactsKey, JSON.stringify(contactList)); // this can run async
+							userCache.set(this.contactsKey, JSON.stringify(contactList)); // this can run async
 							return contactList;
 						}.bind(this));
 				}
@@ -118,13 +118,12 @@ StumbleUponApi.prototype = {
 	},
 
 	newEmailContact: function _newEmailContact(emailAddress) {
-		var userCache = ToolbarEvent.userCache,
-			contactsKey = 'contacts';
+		var userCache = this.userCache;
 		return this.getContacts()
 			.then(function _gotContactList(contactList) {
 				contactList.add(encodeURIComponent(emailAddress), emailAddress, true, 'email');
 				contactList.sort();
-				userCache.set(contactsKey, JSON.stringify(contactList)); // this can run async
+				userCache.set(this.contactsKey, JSON.stringify(contactList)); // this can run async
 				return contactList;
 			});
 	},
@@ -277,14 +276,23 @@ StumbleUponApi.prototype = {
 		return Promise.all([convo.save(shareData), this.getContacts()])
 			.then(function _savedConvo(results) {
 				var conversation = results[0],
-					contacts = results[1];
-				conversation.participants && conversation.participants.forEach(function(participant) {
+					contacts = results[1],
+					now = Date.now();
+				conversation.participants && conversation.participants.forEach(function _touchContact(participant) {
+					// update the last-accessed time for sorting purposes -- this must be persisted
+					var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+					contact && contact.touch(now);
+				});
+				contacts.sort();
+				this.userCache.set(this.contactsKey, JSON.stringify(contacts)); // this can run async
+				conversation.participants && conversation.participants.forEach(function _setParticipant(participant) {
+					// set the participant flag for the front-end
 					var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
 					contact && contact.setParticipant(true);
 				});
 				conversation.contacts = contacts;
 				return conversation;
-			})
+			}.bind(this));
 	},
 
 	reportStumble: function(urlids, mode, modeinfo) {

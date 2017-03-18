@@ -528,19 +528,29 @@ ToolbarEvent.closeConvo = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.loadConvo = function(request, sender) {
-	var convo = ToolbarEvent.api.getConversation(request.data.value)
+	var convo = ToolbarEvent.api.getConversation(request.data.value),
+		contactsKey = 'contacts';
 	return Promise.all([convo.messages(request.data.stamp, request.data.type, request.data.limit), ToolbarEvent.api.getContacts()])
 		.then(function(results) {
 			var conversation = results[0],
-				contacts = results[1];
-			conversation.participants && conversation.participants.forEach(function(participant) {
+				contacts = results[1],
+				now = Date.now();
+			conversation.participants && conversation.participants.forEach(function _touchContact(participant) {
+				// update the last-accessed time for sorting purposes -- this must be persisted
+				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
+				contact && contact.touch(now);
+			});
+			contacts.sort();
+			this.userCache.set(contactsKey, JSON.stringify(contacts)); // this can run async
+			conversation.participants && conversation.participants.forEach(function _setParticipant(participant) {
+				// set the participant flag for the front-end
 				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
 				contact && contact.setParticipant(true);
 			});
 			return ToolbarEvent._buildResponse({
 				convo: Object.assign({}, conversation, {contacts: contacts, position: (request.data.type == 'before') ? 'prepend' : (request.data.stamp ? 'append' : null) }),
 			});
-		});
+		}.bind(this));
 }
 
 /**
