@@ -92,7 +92,6 @@ StumbleUponApi.prototype = {
 				return userCache.mget(this.contactsKey, mutualRefreshFlag)
 			}.bind(this))
 			.then(function _gotCachedContacts(results) {
-				console.log(results);
 				var contactsObj = results[this.contactsKey],
 					mutualNeedsUpdate = (!results[mutualRefreshFlag] || !contactsObj);
 				contactList = new ContactList(userId); // contactList is in the closure scope of getContacts -- goal is to build it and return it in the final step of the promise chain
@@ -278,10 +277,24 @@ StumbleUponApi.prototype = {
 				var conversation = results[0],
 					contacts = results[1],
 					now = Date.now();
-				conversation.participants && conversation.participants.forEach(function _touchContact(participant) {
+				conversation.participants && conversation.participants.forEach(function _touchOrInsertContact(participant) {
+					// @TODO this code is repeated in toolbarevent.js -- refactor to some common place
 					// update the last-accessed time for sorting purposes -- this must be persisted
 					var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
-					contact && contact.touch(now);
+					if(contact) {
+						contact.touch(now);
+					} else { // this participant isn't in our cached contact list, so insert them
+						if(participant.email) {
+							contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+						} else if(participant.suUserId) {
+							contacts.add(
+								participant.suUserId,
+								participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
+								false,
+								"mutual"
+							);
+						}
+					}
 				});
 				contacts.sort();
 				this.userCache.set(this.contactsKey, JSON.stringify(contacts)); // this can run async

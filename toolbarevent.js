@@ -41,7 +41,6 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	}
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
-			console.log(response);
 			if (response && response !== true) {
 				console.log("ToolbarEvent.sendResponse", request, response);
 				sendResponse(response);
@@ -535,10 +534,24 @@ ToolbarEvent.loadConvo = function(request, sender) {
 			var conversation = results[0],
 				contacts = results[1],
 				now = Date.now();
-			conversation.participants && conversation.participants.forEach(function _touchContact(participant) {
+			conversation.participants && conversation.participants.forEach(function _touchOrInsertContact(participant) {
+				// @TODO this code is repeated in stumbleuponapi.js -- refactor to some common place
 				// update the last-accessed time for sorting purposes -- this must be persisted
 				var contact = contacts.get(participant.suUserId || encodeURIComponent(participant.email));
-				contact && contact.touch(now);
+				if(contact) {
+					contact.touch(now);
+				} else { // this participant isn't in our cached contact list, so insert them
+					if(participant.email) {
+						contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+					} else if(participant.suUserId) {
+						contacts.add(
+							participant.suUserId,
+							participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
+							false,
+							"mutual"
+						);
+					}
+				}
 			});
 			contacts.sort();
 			this.userCache.set(contactsKey, JSON.stringify(contacts)); // this can run async

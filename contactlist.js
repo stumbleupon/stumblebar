@@ -165,7 +165,6 @@ ContactList.prototype = {
 	 * @param {Object} contactsObject -- an object with name/value properties such as would result from running a Contact through a JSON stringifying/parse cycle.
 	 */
 	reconstitute: function reconstitute(contactsObject) {
-		console.log(contactsObject);
 		this.ownerContactId = contactsObject.ownerContactId;
 		if(contactsObject.hasOwnProperty('contacts') && typeof contactsObject.contacts === "object" && contactsObject.contacts instanceof Array) {
 			this.contacts = contactsObject.contacts.map(function(contactObj) {
