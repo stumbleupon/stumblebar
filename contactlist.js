@@ -35,7 +35,7 @@ ContactList.prototype = {
 	 * @param name
 	 * @returns {Contact}
 	 */
-	add: function addContact(contactId, name, overwrite, source) {
+	add: function addContact(contactId, name, overwrite, source, thumbnail) {
 		var contact, lastAccess = Date.now();
 		if(contactId == this.ownerContactId) {
 			return false;
@@ -48,7 +48,7 @@ ContactList.prototype = {
 				this.remove(contactId);
 			}
 		}
-		contact = new Contact(contactId, name, source, lastAccess);
+		contact = new Contact(contactId, name, source, lastAccess, thumbnail);
 		this.contacts.push(contact);
 		return contact;
 	},
@@ -62,8 +62,9 @@ ContactList.prototype = {
 		if(contacts && contacts.forEach) {
 			contacts.forEach(function(contact) {
 				var name = contact.name ? contact.name + " (" + contact.username + ")" : contact.username,
-					isParticipant = !!contact.isParticipant;
-				this.add(contact.userid, name, overwrite, source);
+					isParticipant = !!contact.isParticipant,
+					thumbnail = contact.thumbnail || null;
+				this.add(contact.userid, name, overwrite, source, thumbnail);
 			}.bind(this));
 			this.sort();
 		}
@@ -185,13 +186,14 @@ ContactList.prototype = {
  * @param {number} lastAccess -- timestamp of the last access, intended to persist across sessions via cache
  * @constructor
  */
-function Contact(id, name, source, lastAccess) {
+function Contact(id, name, source, lastAccess, thumbnail) {
 	this.id = id;
 	this.userid = id;
 	this.name = name;
 	this.participant = false; // always when creating -- participant status is used only on front-end
 	this.source = source || 'unknown';
 	this.lastAccess = lastAccess || 0;
+	this.thumbnail = thumbnail;
 }
 
 Contact.prototype = {
@@ -216,7 +218,7 @@ Contact.prototype = {
 	 * @param {HTMLElement} appendToElementId
 	 */
 	render: function renderContact(stubId, attributeMappings, appendToElementId) {
-		var attributes = {};
+		var el, attributes = {};
 		attributeMappings.forEach(function(attributeMap) {
 			attributes[attributeMap.attributeName] = this[attributeMap.propertyName];
 		}.bind(this));
@@ -226,7 +228,8 @@ Contact.prototype = {
 				return false;
 			}
 		}
-		newFromTemplate(stubId, attributes, appendToElementId);
+		el = newFromTemplate(stubId, attributes, appendToElementId);
+		this.addThumbnail(el);
 	},
 	/**
 	 * update the lastAccessed property of the contact.  this property is intended to be persisted across
@@ -253,5 +256,18 @@ Contact.prototype = {
 		this.participant = contactObject.participant;
 		this.source = contactObject.source;
 		this.lastAccess = contactObject.lastAccess;
+		this.thumbnail = contactObject.thumbnail;
+	},
+	addThumbnail: function _addThumbnail(el) {
+		var span = document.createElement('span');
+		span.addClass('contact-thumbnail');
+		if(this.thumbnail) {
+			span.style.backgroundImage = "url('" + this.thumbnail + "')";
+		} else {
+			span.style.backgroundColor = "rgb(" + parseInt(Math.random() * 128) + "," + parseInt(Math.random() * 128) + "," + parseInt(Math.random() * 128) + ")";
+			span.innerText = this.name[0].toUpperCase();
+		}
+		el.appendChild(span);
+
 	}
 };

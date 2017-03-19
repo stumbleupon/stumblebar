@@ -97,6 +97,16 @@ button.pill.delete:before {
 }
 button.add-contact:not(.stub) {
 	display: list-item;
+	line-height: 19px;
+}
+button.add-contact:not(.stub) .contact-thumbnail {
+	display: block;
+	float: left;
+	margin-right: 5px;
+	height: 19px;
+	width: 19px;
+	border-radius: 9px;
+	color: white;
 }
 .invalid,
 input:invalid {
@@ -355,7 +365,6 @@ input:invalid {
 .toolbar-share-container .toolbar-share-buttons-container {
 	line-height: 26px;
 }
-
 .toolbar-settings-container {
 	background-color: #888;
 	margin-left: 0;
