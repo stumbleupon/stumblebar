@@ -76,9 +76,14 @@ var Toolbar = {
 		if (!message) {
 			message = "Be the first to like this!"
 		}
-		var messageElem = document.createElement('span');
-		messageElem.innerText = message;
-		document.querySelector("#inline-info-body").appendChild(messageElem);
+		var messageElem = document.querySelector("#inline-info-body span");
+		if(messageElem) {
+			messageElem.innerText = message;
+		} else {
+			messageElem = document.createElement('span');
+			messageElem.innerText = message;
+			document.querySelector("#inline-info-body").appendChild(messageElem);
+		}
 
 		document.querySelector("#info").removeClass("on");
 		document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !url.urlid);
