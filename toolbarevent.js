@@ -1013,6 +1013,8 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 		e = "Unknown Error";
 	if (e.error == 'runout')
 		e = 'Ran out of stumbles';
+	if (e.error == 'nourl' && ['dislike', 'reportSpam', 'reportInfo', 'blockSite', 'reportMissing', 'miscat', 'unrate'].indexOf(e.name) != -1)
+		e = 'Page not found on StumbleUpon';
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
 
