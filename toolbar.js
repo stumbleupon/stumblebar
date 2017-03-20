@@ -212,7 +212,13 @@ var Toolbar = {
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
+		var participantsCsv = this.convoContactList.find(function(contact) {
+			return contact.isParticipant();
+		}).map(function(contact) {
+			return contact.name;
+		}).join(', ');
 		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {return contact.isParticipant();});
+		newFromTemplate('convo-recipients-csv-stub', {innerText: participantsCsv}, 'convo-recipients-list');
 		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {return !contact.isParticipant();});
 	},
 

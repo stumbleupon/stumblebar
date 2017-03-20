@@ -330,26 +330,23 @@ input:invalid {
 	max-width: 320px;
 	overflow: hidden;
 }
-#convo-recipients-list:not(.expanded):after {
-	position: absolute;
-	right: 0;
-	text-align: right;
-	content: "...";
-	width: 10%;
-	color: inherit;
-	background: linear-gradient(90deg, transparent, white, white);
-}
 #convo-recipients-list:not(.expanded) button.pill {
-	display: inline;
-	float: none;
-	background: inherit;
-	color: inherit;
-	border: 0;
-	margin: 0;
-	padding: 0;
+	display: none;
 }
-#convo-recipients-list:not(.expanded) button.pill:after{
-	content: ", "
+#convo-recipients-list .convo-recipients-csv {
+	display: none;
+}
+#convo-recipients-list:not(.expanded) .convo-recipients-csv {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.inline-info-expanded #convo-recipients-list:not(.expanded) .convo-recipients-csv {
+	width: 356px;
+}
+#convo-recipients-list button.pill .contact-thumbnail{
+	display: none;
 }
 .toolbar-share-recipients-container,
 .convo-recipients-container {
