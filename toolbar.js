@@ -625,6 +625,7 @@ var Toolbar = {
 		// make sure there are some recipients
 		var recipients = this.shareContactList.find(function(contact) {return contact.isParticipant();});
 		if(recipients.length === 0) {
+			document.getElementById('toolbar-share-recipients-list').innerText = '';
 			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
 			return false;
 		}
