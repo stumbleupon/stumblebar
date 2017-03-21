@@ -219,10 +219,10 @@ StumbleUponApi.prototype = {
 		return this.api.req(this.config.endpoint.submit, { url: url, nsfw: nsfw || false })
 			.then(function(r) { return StumbleUponApi.expectSuccess(r); })
 			.then(function(res) {
-				if (!res.discovery.url.publicid)
-					return Promise.reject(new ToolbarError("SUAPI", "share", res));
+				if (!res.discovery.publicid && !res.discovery.url.publicid)
+					return Promise.reject(new ToolbarError("SUAPI", "submit", res));
 				if (!nolike)
-					this.like(res.discovery.url.publicid);
+					this.like(res.discovery.publicid || res.discovery.url.publicid);
 				return res.discovery.url;
 			}.bind(this));
 	},
