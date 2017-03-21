@@ -283,11 +283,11 @@ Page.urlChange = function(href, tabid) {
 		})
 		.then(function(url) {
 			Page.note(tabid, url, Page.tab[tabid].status.url == href);
-			if (Page.tab[tabid].status.url == href)
+			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
-			if (Page.tab[tabid].status.url == href)
+			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
