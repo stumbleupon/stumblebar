@@ -192,7 +192,7 @@ Page.removeUrlFromUrlCache = function(url) {
  * @param {SuUrl} url An SuUrl object
  * @return {SuUrl}
  */
-Page.note = function(tabid, url) {
+Page.note = function(tabid, url, onlynote) {
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {};
 
@@ -210,7 +210,7 @@ Page.note = function(tabid, url) {
 
 	Page.cleanupUrlCache();
 
-	return Page.tab[tabid].url = url;
+	return onlynote ? url : Page.tab[tabid].url = url;
 }
 
 /**
