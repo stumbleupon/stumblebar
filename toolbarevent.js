@@ -1014,7 +1014,7 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 	if (e.error == 'runout')
 		e = 'Ran out of stumbles';
 	if (e.error == 'nourl' && ['reportSpam', 'miscat', 'blockSite', 'reportInfo', 'reportMissing'].indexOf(e.name) != -1)
-		return ToolbarEvent._buildResponse({error: e}, tabid);
+		return ToolbarEvent._buildResponse({}, tabid);
 	if (e.error == 'nourl' && ['dislike', 'unrate'].indexOf(e.name) != -1)
 		e = 'Page not found on StumbleUpon';
 	return ToolbarEvent._buildResponse({error: e}, tabid);
