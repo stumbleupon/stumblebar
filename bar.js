@@ -72,8 +72,19 @@
 				this.iframe = this.createIframe();
 				this.document.adoptNode(this.iframe);
 				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
+				this.registerFullscreenListner();
 				this.attemptInjection();
 			}
+		},
+
+		registerFullscreenListner: function() {
+			['webkit', 'MS', '', 'mozilla'].forEach(function(platform) {
+				document.addEventListener(platform + 'fullscreenchange', function(e) {
+					try {
+						document.getElementById('discoverbar').style.display = (document.fullscreen || document.webkitIsFullScreen) ? 'none' : 'block';
+					} catch(e) {}
+				});
+			});
 		},
 
 		registerPingListener: function() {
