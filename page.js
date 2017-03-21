@@ -282,11 +282,13 @@ Page.urlChange = function(href, tabid) {
 			return url || ToolbarEvent.api.getUrlByHref(href);
 		})
 		.then(function(url) {
-			Page.note(tabid, url);
-			chrome.tabs.sendMessage(tabid, { url: url }, function() {});
+			Page.note(tabid, url, Page.tab[tabid].status.url == href);
+			if (Page.tab[tabid].status.url == href)
+				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
-			chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
+			if (Page.tab[tabid].status.url == href)
+				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
 }
@@ -306,6 +308,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 		Page.tab[tabid] = {};
 
 	if (info.status == "loading") {
+		Page.tab[tabid].status = { state: info.status, url: tab.url };
 		// User is changing the URL
 		if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
 			Page.tab[tabid].url = {}
@@ -313,6 +316,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 	}
 
 	if (info.status == "complete") {
+		Page.tab[tabid].status = { state: info.status, url: tab.url };
 		Page.tab[tabid].info = tab;
 		if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
 			Page.tab[tabid].url.finalUrl = info.url;
