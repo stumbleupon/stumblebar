@@ -121,7 +121,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.reject(new ToolbarError("TBEV", "spam", "nourl"));
+				return Promise.reject(new ToolbarError("TBEV", "reportSpam", "nourl"));
 			}
 			// No need to dislike, reportSpam auto-dislikes
 			return urlid;
@@ -1013,7 +1013,9 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 		e = "Unknown Error";
 	if (e.error == 'runout')
 		e = 'Ran out of stumbles';
-	if (e.error == 'nourl' && ['dislike', 'reportSpam', 'reportInfo', 'blockSite', 'reportMissing', 'miscat', 'unrate'].indexOf(e.name) != -1)
+	if (e.error == 'nourl' && ['reportSpam', 'miscat', 'blockSite', 'reportInfo', 'reportMissing'].indexOf(e.name) != -1)
+		return ToolbarEvent._buildResponse({error: e}, tabid);
+	if (e.error == 'nourl' && ['dislike', 'unrate'].indexOf(e.name) != -1)
 		e = 'Page not found on StumbleUpon';
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
