@@ -223,7 +223,7 @@ StumbleUponApi.prototype = {
 					return Promise.reject(new ToolbarError("SUAPI", "submit", res));
 				if (!nolike)
 					this.like(res.discovery.publicid || res.discovery.url.publicid);
-				return res.discovery.url;
+				return res.discovery.publicid ? res.discovery : res.discovery.url;
 			}.bind(this));
 	},
 
