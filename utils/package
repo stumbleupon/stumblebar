@@ -19,6 +19,7 @@ done
 echo -e "\n\n\n========= START Firefox"
 cd target
 zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
+web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/
 echo -e "========= END Firefox\n\n\n"
 
 # Chrome
