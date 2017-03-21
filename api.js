@@ -25,17 +25,17 @@ Api.prototype = {
 				if (this.status >= 200 && this.status <= 299)
 					resolve(this.response);
 				else
-					reject(new ToolbarError('API', 'load', this.statusText, this.status));
+					reject(new ToolbarError('API', 'load', this.statusText, { code: this.status, result: this.response }));
 			});
 
 			httpRequest.addEventListener("error", function() {
 				console.log("ERR");
-				reject(new ToolbarError('API', 'error', this.statusText, this.status));
+				reject(new ToolbarError('API', 'error', this.statusText, { code: this.status, result: this.response }));
 			});
 
 			httpRequest.addEventListener("abort", function() {
 				console.log("ABT");
-				reject(new ToolbarError('API', 'abort', this.statusText, this.status));
+				reject(new ToolbarError('API', 'abort', this.statusText, { code: this.status, result: this.response }));
 			});
 
 			data = data || null;
