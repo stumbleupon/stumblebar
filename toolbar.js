@@ -117,8 +117,11 @@ var Toolbar = {
 
 	handleConvo: function(convo) {
 		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
-		document.querySelector(".toolbar-container").addClass("convo-expanded");
 		document.querySelector('.convo-loading').addClass('hidden');
+		if(convo.status && convo.status === "OK") {
+			return true;
+		}
+		document.querySelector(".toolbar-container").addClass("convo-expanded");
 
 		if (!convo.position)
 			document.querySelector('#convo-container').innerHTML = '';

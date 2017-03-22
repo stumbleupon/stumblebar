@@ -272,6 +272,9 @@ StumbleUponApi.prototype = {
 	 */
 	saveShare: function(shareData) {
 		var convo = this.getConversation(null); // build the saveShare response -- the conversation with contacts attached
+		if(typeof shareData === "object") {
+			shareData.forceJSON = true;
+		}
 		return Promise.all([convo.save(shareData), this.getContacts()])
 			.then(function _savedConvo(results) {
 				var conversation = results[0],
