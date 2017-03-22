@@ -128,7 +128,8 @@ ToolbarEvent.reportSpam = function(request, sender) {
 		})
 		.then(function(urlid) {
 			ToolbarEvent._notify("Marked as Spam!");
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 }));
 			return ToolbarEvent.api.reportSpam(urlid);
 		});
 }
@@ -159,7 +160,8 @@ ToolbarEvent.blockSite = function(request, sender) {
 		})
 		.then(function(urlid) {
 			ToolbarEvent._notify("Blocked!");
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
 			return ToolbarEvent.api.blockSite(urlid);
 		})
 }
@@ -238,7 +240,8 @@ ToolbarEvent.reportMissing = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 }));
 			return ToolbarEvent.api.reportMissing(urlid);
 		})
 }
@@ -269,7 +272,8 @@ ToolbarEvent.dislike = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
 			return ToolbarEvent.api.dislike(urlid);
 		});
 }
@@ -296,7 +300,8 @@ ToolbarEvent.unrate = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 }));
 			return ToolbarEvent.api.unrate(urlid);
 		});
 }
@@ -320,7 +325,8 @@ ToolbarEvent.like = function(request, sender) {
 		.then(function() { return Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
 		.then(function(urlid) {
-			Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 }));
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 }));
 			return ToolbarEvent.api.like(urlid);
 		});
 }
@@ -465,8 +471,9 @@ ToolbarEvent.stumble = function(request, sender) {
 			ToolbarEvent.pendingUnread();
 			ToolbarEvent.api.nextUrl(1).then(Page.preload);
 
-			Page.note(sender.tab.id, url);
-			Page.state[sender.tab.id] = { stumble: url, mode: config.mode }
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, url);
+			Page.state[sender.tab.id] = { mode: config.mode }
 
 			ToolbarEvent.api.reportStumble([url.urlid], url.mode, url.modeinfo);
 			request.url = url;
@@ -1045,7 +1052,8 @@ ToolbarEvent._discover = function(request, sender) {
 			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
 		})
 		.then(function(url) { 
-			Page.note(sender.tab.id, url); 
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, url); 
 			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
 			return url;
 		});
