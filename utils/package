@@ -30,6 +30,8 @@ rm -rf StumbleBar
 cp -rp target StumbleBar
 zip -r artifact/StumbleBar\ Chrome\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip StumbleBar
 rm -rf target StumbleBar
+chrome-webstore-manager update  -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID "artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+chrome-webstore-manager publish -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID
 echo -e "========= END Chrome\n\n\n"
 
 popd
