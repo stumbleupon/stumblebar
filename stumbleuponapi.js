@@ -272,6 +272,9 @@ StumbleUponApi.prototype = {
 	 */
 	saveShare: function(shareData) {
 		var convo = this.getConversation(null); // build the saveShare response -- the conversation with contacts attached
+		if(typeof shareData === "object") {
+			shareData.forceJSON = true;
+		}
 		return Promise.all([convo.save(shareData), this.getContacts()])
 			.then(function _savedConvo(results) {
 				var conversation = results[0],
@@ -285,13 +288,13 @@ StumbleUponApi.prototype = {
 						contact.touch(now);
 					} else { // this participant isn't in our cached contact list, so insert them
 						if(participant.email) {
-							contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+							contacts.add(encodeURIComponent(participant.email), participant.email, false, "convo");
 						} else if(participant.suUserId) {
 							contacts.add(
 								participant.suUserId,
 								participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
 								false,
-								"mutual"
+								"convo"
 							);
 						}
 					}
