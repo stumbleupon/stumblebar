@@ -19,7 +19,9 @@ done
 echo -e "\n\n\n========= START Firefox"
 cd target
 zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
-web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/
+if [ "$PUSH_MOZILLA" ]; then
+	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/
+fi
 echo -e "========= END Firefox\n\n\n"
 
 # Chrome
@@ -30,8 +32,10 @@ rm -rf StumbleBar
 cp -rp target StumbleBar
 zip -r artifact/StumbleBar\ Chrome\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip StumbleBar
 rm -rf target StumbleBar
-chrome-webstore-manager update  -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID "artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
-chrome-webstore-manager publish -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID
+if [ "$PUSH_CHROME" ]; then
+	chrome-webstore-manager update  -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID "artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+	chrome-webstore-manager publish -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID
+fi;
 echo -e "========= END Chrome\n\n\n"
 
 popd
