@@ -542,13 +542,13 @@ ToolbarEvent.loadConvo = function(request, sender) {
 					contact.touch(now);
 				} else { // this participant isn't in our cached contact list, so insert them
 					if(participant.email) {
-						contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+						contacts.add(encodeURIComponent(participant.email), participant.email, false, "convo");
 					} else if(participant.suUserId) {
 						contacts.add(
 							participant.suUserId,
 							participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
 							false,
-							"mutual"
+							"convo"
 						);
 					}
 				}
@@ -634,13 +634,13 @@ ToolbarEvent.convoAddRecipient = function(request, sender) {
 					contact.touch(now);
 				} else { // this participant isn't in our cached contact list, so insert them
 					if(participant.email) {
-						contacts.add(encodeURIComponent(participant.email), participant.email, false, "email");
+						contacts.add(encodeURIComponent(participant.email), participant.email, false, "convo");
 					} else if(participant.suUserId) {
 						contacts.add(
 							participant.suUserId,
 							participant.name ? participant.name + " (" + participant.suUserName + ")" : participant.suUserName,
 							false,
-							"mutual"
+							"convo"
 						);
 					}
 				}

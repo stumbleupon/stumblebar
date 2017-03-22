@@ -220,9 +220,13 @@ var Toolbar = {
 		}).map(function(contact) {
 			return contact.name;
 		}).join(', ');
-		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {return contact.isParticipant();});
+		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {
+			return contact.isParticipant();
+		});
 		newFromTemplate('convo-recipients-csv-stub', {innerText: participantsCsv}, 'convo-recipients-list');
-		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {return !contact.isParticipant();});
+		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
+			return !contact.isParticipant() && contact.isMine();
+		});
 	},
 
 	handleConvoContacts: function(convoContacts) {
@@ -632,7 +636,9 @@ var Toolbar = {
 	},
 	validateShare: function validateShare() {
 		// make sure there are some recipients
-		var recipients = this.shareContactList.find(function(contact) {return contact.isParticipant();});
+		var recipients = this.shareContactList.find(function(contact) {
+			return contact.isParticipant() && contact.isMine();
+		});
 		if(recipients.length === 0) {
 			document.getElementById('toolbar-share-recipients-list').innerText = '';
 			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
@@ -684,8 +690,12 @@ var Toolbar = {
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
-		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {return !contact.isParticipant();});
-		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {return contact.isParticipant();});
+		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {
+			return !contact.isParticipant() && contact.isMine();
+		});
+		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {
+			return contact.isParticipant() && contact.isMine();
+		});
 	},
 	handleMouseDown: function(e) {
 		if (e.target) {
@@ -877,7 +887,9 @@ var Toolbar = {
 						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 					];
-				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant();});
+				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {
+					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
+				});
 			}
 		}.bind(this));
 
@@ -889,7 +901,9 @@ var Toolbar = {
 						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 					];
-				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant();});
+				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
+					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
+				});
 			}
 		}.bind(this));
 

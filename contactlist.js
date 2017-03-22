@@ -36,7 +36,10 @@ ContactList.prototype = {
 	 * @returns {Contact}
 	 */
 	add: function addContact(contactId, name, overwrite, source, thumbnail) {
-		var contact, lastAccess = Date.now();
+		var contact, lastAccess = Date.now(), emailRE = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+		if(source === "email" && (!emailRE.test(name) || name !== decodeURIComponent(contactId))) {
+			return false;
+		}
 		if(contactId == this.ownerContactId) {
 			return false;
 		}
@@ -244,6 +247,16 @@ Contact.prototype = {
 			lastAccessed = Date.now();
 		}
 		this.lastAccess = lastAccessed;
+	},
+	/**
+	 * Is this one of the user's contacts, or is it from some other source?  Contacts added from the "mutual"
+	 * endpoint and contacts added from "email" are the user's own contacts -- contacts added from a "convo"
+	 * are not to be displayed for purposes of creating new shares and adding contacts to a conversation, but
+	 * they should appear in the participant list.
+	 * @returns {boolean}
+	 */
+	isMine: function isMyContact() {
+		return (['mutual', 'email'].indexOf(this.source) > -1);
 	},
 	/**
 	 * restore this Contact by setting it's properties from an object.
