@@ -363,6 +363,9 @@ input:invalid {
 .toolbar-share-container .toolbar-share-buttons-container {
 	line-height: 26px;
 }
+.toolbar-share-container .toolbar-share-buttons-container span.toolbar-action{
+	cursor: pointer;
+}
 .toolbar-settings-container {
 	background-color: #888;
 	margin-left: 0;
