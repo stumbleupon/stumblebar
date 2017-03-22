@@ -124,7 +124,7 @@ StumbleUponApi.prototype = {
 				contactList.sort();
 				userCache.set(this.contactsKey, JSON.stringify(contactList)); // this can run async
 				return contactList;
-			});
+			}.bind(this));
 	},
 
 	convoAddRecipient: function(convoRecipientData) {

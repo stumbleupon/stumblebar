@@ -345,7 +345,8 @@ input:invalid {
 .inline-info-expanded #convo-recipients-list:not(.expanded) .convo-recipients-csv {
 	width: 356px;
 }
-#convo-recipients-list button.pill .contact-thumbnail{
+#convo-recipients-list button.pill .contact-thumbnail,
+#toolbar-share-recipients-list button.pill .contact-thumbnail {
 	display: none;
 }
 .toolbar-share-recipients-container,

@@ -578,7 +578,7 @@ ToolbarEvent.newEmailContact = function _newEmailContact(request, sender) {
 			return ToolbarEvent._buildResponse({
 				contactsRefresh: contacts
 			});
-		});
+		}.bind(this));
 }
 
 /**

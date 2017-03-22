@@ -624,6 +624,9 @@ var Toolbar = {
 			suUserIds:null,
 			initialMessage:null
 		};
+		if(!Toolbar.url || !Toolbar.url.urlid) {
+			return false;
+		}
 		data.contentId = Toolbar.url.urlid;
 		data.suUserIds = this.shareContactList.find(function(contact) {return contact.participant && contact.source === "mutual"}).map(function(contact) {
 			return contact.userid;
@@ -915,10 +918,22 @@ var Toolbar = {
 					return false;
 				}
 				this.addShareEmail(e.target.value);
+				e.target.value = '';
+				e.target.focus();
 			}
 		}.bind(this));
+		document.querySelector('#toolbar-share-new-email-add').addEventListener('click', function(e) {
+			var emailEl = document.querySelector('#toolbar-share-new-email');
+			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
+				// @TODO set up validation feedback to user here
+				return false;
+			}
+			this.addShareEmail(emailEl.value);
+			emailEl.value = '';
+			emailEl.focus();
+		}.bind(this));
 
-		// share contacts new email
+		// convo contacts new email
 		document.querySelector('#toolbar-convo-new-email').addEventListener('keyup', function(e) {
 			if(e.keyCode === 13) {
 				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
@@ -932,7 +947,25 @@ var Toolbar = {
 					emails:[email]
 				};
 				Toolbar.dispatch('convo-add-participant', data);
+				e.target.value = '';
+				e.target.focus();
 			}
+		}.bind(this));
+		document.querySelector('#convo-new-email-add').addEventListener('click', function(e) {
+			var emailEl = document.querySelector('#toolbar-convo-new-email');
+			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
+				// @TODO set up validation feedback to user here
+				return false;
+			}
+			var email = emailEl.value;
+			this.addConvoEmail(email);
+			var data = {
+				conversationId:document.querySelector('#convo-id').value,
+				emails:[email]
+			};
+			Toolbar.dispatch('convo-add-participant', data);
+			emailEl.value = '';
+			emailEl.focus();
 		}.bind(this));
 
 		// Redraw
