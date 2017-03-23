@@ -234,7 +234,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
-				return Promise.reject(new ToolbarError("TBEV", "missing", "nourl"));
+				return Promise.reject(new ToolbarError("TBEV", "reportMissing", "nourl"));
 			}
 			ToolbarEvent.api.dislike(urlid);
 			return urlid;
