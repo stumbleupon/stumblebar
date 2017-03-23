@@ -831,8 +831,8 @@ var Toolbar = {
 	},
 	handleRedraw: function() {
 		if (Toolbar.config.rpos) {
-			document.querySelector('#toolbar').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top');
-			document.querySelector('#toolbar').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
+			document.querySelector('body').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top');
+			document.querySelector('body').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
 		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
 			w: Toolbar.state.w = document.querySelector(".toolbar-section-container").offsetWidth,

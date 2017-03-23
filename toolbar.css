@@ -14,7 +14,21 @@ body {
 	zoom: initial;
 	zoom: reset !important;
 	max-width: 420px;
+	position: fixed;
+	left: 0;
+	bottom: 0;
 }
+
+BODY.right-handed {
+	right: 0;
+	left: initial;
+}
+
+BODY.top-handed {
+	top: 0;
+	bottom: initial;
+}
+
 .toolbar-container {
   vertical-align: middle;
 }
