@@ -841,28 +841,20 @@ var Toolbar = {
 			zoom: Toolbar.state.zoom,
 		} } }, "*");
 	},
-	handleIframeEvent: function(e) {
-		if (e.data.hash != Toolbar.state.hash)
-			return false;
-		if (!e.data.action)
-			return false;
-		if (e.data.action == 'mouse') {
-			var data = e.data.data;
-			var hover = data && data.iframe && ( // We can do mini mode if the mouse isn't hovering over the frame
-				   data.iframe.x >= data.mouse.x && data.iframe.x + Toolbar.state.w <= data.mouse.x
-				&& data.iframe.y >= data.mouse.y && data.iframe.y + Toolbar.state.h <= data.mouse.y
-			);
-			Toolbar.state.canMiniMode = !hover;
-			//window.top.postMessage({ type: "hover", hover: hover }, '*');
-			return;
-		}
-		Toolbar.dispatch(e.data.action, e.data.data);
+
+	handleMouse: function(mouse) {
+		var hover = mouse && mouse.iframe && ( // We can do mini mode if the mouse isn't hovering over the frame
+			   mouse.iframe.x >= mouse.mouse.x && mouse.iframe.x + Toolbar.state.w <= mouse.mouse.x
+			&& mouse.iframe.y >= mouse.mouse.y && mouse.iframe.y + Toolbar.state.h <= mouse.mouse.y
+		);
+		Toolbar.state.canMiniMode = !hover;
 	},
+
 	init: function() {
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);
-		window.addEventListener("message", Toolbar.handleIframeEvent, true);
+		//window.addEventListener("message", Toolbar.handleIframeEvent, true);
 
 		// Toolbar initialization
 		Toolbar.dispatch('init');

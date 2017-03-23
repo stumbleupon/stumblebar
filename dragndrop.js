@@ -21,8 +21,8 @@ DragNDrop.prototype = {
 
 	init: function() {
 		this.communicateMouseMove = debounce(function() {
-			this.sendToIframe({action: 'mouse', data: this.mpos });
-		}.bind(this), 1);
+			this.sendToIframe({mouse: this.mpos });
+		}.bind(this), 100);
 
 		window.addEventListener("mousemove", this.handleMouseMove.bind(this));
 		window.addEventListener("message",   this.handleMessage.bind(this))
@@ -30,20 +30,8 @@ DragNDrop.prototype = {
 	},
 
 
-	sendToIframe: function(msg, bg) {
-		msg.hash = this.hash;
-		try {
-			if (this.elem.contentWindow) {
-				this.elem.contentWindow.postMessage(msg, this.origin);
-			} else {
-			}
-		} catch (e) {}
-		if (bg) {
-			try {
-				chrome.runtime.sendMessage(msg, function(response) {
-				});
-			} catch (e){}
-		}
+	sendToIframe: function(msg) {
+		chrome.runtime.sendMessage(msg, function(response) {});
 	},
 
 
