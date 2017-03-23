@@ -67,7 +67,6 @@
 					return false;
 				this.registerPingListener();
 				this.iframe = this.createIframe();
-				this.document.adoptNode(this.iframe);
 				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
 				this.registerFullscreenListner();
 				this.attemptInjection();
