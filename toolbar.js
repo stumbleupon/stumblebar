@@ -258,7 +258,9 @@ var Toolbar = {
 			document.querySelectorAll(".action-theme").forEach(function(elem) {
 				elem.removeClass('enabled');
 			});
+			try {
 			document.querySelector("#theme-" + config.theme).addClass('enabled');
+			} catch(e) {}
 		}
 
 		document.querySelector('.action-stay-expanded').changeClass('enabled', config.stayExpanded);
