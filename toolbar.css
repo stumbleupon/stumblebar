@@ -170,7 +170,8 @@ input:invalid {
 	display: flex;
 	flex-direction: row;
 }
-.toolbar-entry-container {
+.toolbar-entry-container,
+.convo-recipients-csv {
 	padding: 10px;
 	padding-left: 0px;
 }
@@ -326,6 +327,22 @@ input:invalid {
 	display: table;
 	clear: both;
 }
+#convo-recipients-list:before {
+	content: '';
+	position: relative;
+	top: 0;
+	right: 0;
+	background-image: url("asset/Expand.svg");
+	width: 34px;
+	height: 34px;
+	transform: rotate(0deg);
+	transition: transform .2s;
+	float: right;
+}
+#convo-recipients-list.expanded:before {
+	transform: rotate(-180deg);
+	transition: transform .2s;
+}
 #convo-recipients-list:not(.expanded) {
 	max-width: 320px;
 	overflow: hidden;
@@ -335,6 +352,7 @@ input:invalid {
 }
 #convo-recipients-list .convo-recipients-csv {
 	display: none;
+	margin-right: 34px;
 }
 #convo-recipients-list:not(.expanded) .convo-recipients-csv {
 	display: block;
@@ -349,8 +367,7 @@ input:invalid {
 #toolbar-share-recipients-list button.pill .contact-thumbnail {
 	display: none;
 }
-.toolbar-share-recipients-container,
-.convo-recipients-container {
+.toolbar-share-recipients-container{
 	max-height: 51px;
 	overflow-y: auto;
 }
