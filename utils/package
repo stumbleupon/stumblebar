@@ -1,6 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ue
+
+PUSH_MOZILLA=${PUSH_MOZILLA-}
+PUSH_CHROME=${PUSH_CHROME-}
 
 pushd "$(dirname "$0")/../"
 
@@ -20,7 +23,8 @@ echo -e "\n\n\n========= START Firefox"
 cd target
 zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
 if [ "$PUSH_MOZILLA" ]; then
-	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/
+	# It's okay if this fails. We expect it to fail.  
+	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
 fi
 echo -e "========= END Firefox\n\n\n"
 
