@@ -239,13 +239,16 @@ input:invalid {
 	margin: 8px;
 }
 .toolbar-action-container .action-lists, .lists-icon {
-	background-image: url("asset/Icon/List.svg");
-}
-.toolbar-action-container .action-inbox {
 	background-image: url("asset/Icon/Bookmark.svg");
 }
-.toolbar-action-container .action-inbox.enabled {
+.lists-expanded .toolbar-action-container .action-lists {
 	background-image: url("asset/Icon/Bookmark-enabled.svg");
+}
+.toolbar-action-container .action-inbox {
+	background-image: url("asset/Icon/List.svg");
+}
+.toolbar-action-container .action-inbox.enabled {
+	background-image: url("asset/Icon/List.svg");
 }
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
