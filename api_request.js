@@ -13,7 +13,7 @@ function ApiRequest(opts) {
 ApiRequest.serializePostData = function(obj, prefix) {
 	var str = [],
 		v;
-	if (obj instanceof Array) {
+	if (Array.isArray(obj)) {
 		if (!prefix) {
 			throw "You can't serialize a plain array: " + JSON.stringify(obj);
 		}
