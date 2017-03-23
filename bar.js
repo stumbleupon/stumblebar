@@ -38,15 +38,7 @@
 		},
 
 		getDocument: function() {
-			try {
-				var document = window.top.document;
-				if (window.document != document)
-					return false;
-			} catch (e) {
-				return false;
-				var document = window.document;
-			}
-			return document;
+			return window.document;
 		},
 
 		createIframe: function() {
