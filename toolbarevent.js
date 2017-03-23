@@ -627,8 +627,10 @@ ToolbarEvent.openConvo = function(request, sender) {
 
 ToolbarEvent.convoAddRecipient = function(request, sender) {
 	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
-	return Promise.resolve(convo.addRecipient(request.data))
-		.then(Promise.all([convo.messages.bind(convo), ToolbarEvent.api.getContacts()]))
+	return convo.addRecipient(request.data)
+		.then(function() {
+			return Promise.all([convo.messages(), ToolbarEvent.api.getContacts()]);
+		})
 		.then(function(results) {
 			var conversation = results[0],
 				contacts = results[1];

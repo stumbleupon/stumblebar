@@ -944,7 +944,7 @@ var Toolbar = {
 					conversationId:document.querySelector('#convo-id').value,
 					emails:[email]
 				};
-				Toolbar.dispatch('convo-add-participant', data);
+				Toolbar.dispatch('convo-add-recipient', data);
 				e.target.value = '';
 				e.target.focus();
 			}
@@ -961,7 +961,7 @@ var Toolbar = {
 				conversationId:document.querySelector('#convo-id').value,
 				emails:[email]
 			};
-			Toolbar.dispatch('convo-add-participant', data);
+			Toolbar.dispatch('convo-add-recipient', data);
 			emailEl.value = '';
 			emailEl.focus();
 		}.bind(this));
