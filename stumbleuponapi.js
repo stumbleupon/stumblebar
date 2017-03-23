@@ -155,7 +155,7 @@ StumbleUponApi.prototype = {
 	},
 
 	getPendingUnread: function(scope) {
-		return this.api.get(this.config.endpoint.unread, { scope: scope || 'conversation' })
+		return this.api.get(this.config.endpoint.unread, { scope: scope || 'conversation', matchActivities: 'true' })
 			.then(function(r) { return StumbleUponApi.expectSuccess(r); });
 	},
 
