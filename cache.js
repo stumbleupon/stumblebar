@@ -10,7 +10,7 @@ function Cache(defaults) {
 Cache.prototype = {
 	mget: function() {
 		// Lazy mget w/array
-		if (arguments.length == 1 && arguments[0] instanceof Array)
+		if (arguments.length == 1 && Array.isArray(arguments[0]))
 			return this.mget.apply(this, arguments[0]);
 
 		var reqs = [];

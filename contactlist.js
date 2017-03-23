@@ -170,7 +170,7 @@ ContactList.prototype = {
 	 */
 	reconstitute: function reconstitute(contactsObject) {
 		this.ownerContactId = contactsObject.ownerContactId;
-		if(contactsObject.hasOwnProperty('contacts') && typeof contactsObject.contacts === "object" && contactsObject.contacts instanceof Array) {
+		if(contactsObject.hasOwnProperty('contacts') && typeof contactsObject.contacts === "object" && Array.isArray(contactsObject.contacts)) {
 			this.contacts = contactsObject.contacts.map(function(contactObj) {
 				var contact = new Contact();
 				contact.reconstitute(contactObj);
