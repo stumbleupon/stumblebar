@@ -6,9 +6,26 @@ function Page() {
 
 
 /**
- * The current su state
+ * The current su toolbar state
  */
-Page.state = [];
+Page.state = {};
+
+/**
+ * The current tab info
+ */
+Page.tab = {};
+
+/**
+ * A cache of fetched SuUrls
+ */
+Page.urlCache = [];
+Page.urlMap   = {};
+
+
+
+
+
+
 
 /**
  * Get the last known state of the provided tab
@@ -81,10 +98,7 @@ Page.ping = function(tabid) {
 	});
 }
 
-/**
- * The current tab info
- */
-Page.tab = {};
+
 
 /**
  * Get the last url seen by the provided tab id
@@ -127,13 +141,6 @@ Page.getUrl = function(tabid) {
 //			resolve(tab.url);
 //		});
 }
-
-
-/**
- * A cache of fetched SuUrls
- */
-Page.urlCache = [];
-Page.urlMap   = {};
 
 
 /**
@@ -220,7 +227,7 @@ Page.note = function(tabid, url, onlynote) {
  * @param {Number} tabid Tab ID
  * @return {Promise}
  */
-Page.urlChange = function(href, tabid) {
+Page.urlChange = function(href, tabid, incog) {
 	chrome.tabs.getZoom(tabid, function(zoom) {
 		chrome.tabs.sendMessage(tabid, { zoom: zoom });
 	});
@@ -279,15 +286,16 @@ Page.urlChange = function(href, tabid) {
 			return url && Page.getUrlByUrlid(url.urlid, config.mode);
 		})
 		.then(function(url) {
-			return url || ToolbarEvent.api.getUrlByHref(href);
+			return url || (!incog && ToolbarEvent.api.getUrlByHref(href)) || Promise.reject("no url fetching in private mode");
 		})
 		.then(function(url) {
-			Page.note(tabid, url, Page.tab[tabid].status.url == href);
-			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
+			if (!incog)
+				Page.note(tabid, url, Page.tab[tabid].status.url == href);
+			if (incog || !(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
-			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
+			if (incog || !(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
@@ -305,22 +313,26 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 	Page.ping();
 
 	if (!Page.tab[tabid])
-		Page.tab[tabid] = {};
+		Page.tab[tabid] = {url: {}, status: {state: tab.incognito ? 'incog' : 'ready'}};
 
 	if (info.status == "loading") {
-		Page.tab[tabid].status = { state: info.status, url: tab.url };
-		// User is changing the URL
-		if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
-			Page.tab[tabid].url = {}
-		Page.urlChange(info.url || tab.url, tabid);
+		if (!tab.incognito) {
+			Page.tab[tabid].status = { state: info.status, url: tab.url };
+			// User is changing the URL
+			if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
+				Page.tab[tabid].url = {}
+		}
+		Page.urlChange(info.url || tab.url, tabid, tab.incognito);
 	}
 
 	if (info.status == "complete") {
-		Page.tab[tabid].status = { state: info.status, url: tab.url };
-		Page.tab[tabid].info = tab;
-		if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
-			Page.tab[tabid].url.finalUrl = info.url;
-		Page.urlChange(info.url || tab.url, tabid);
+		if (!tab.incognito) {
+			Page.tab[tabid].status = { state: info.status, url: tab.url };
+			Page.tab[tabid].info = tab;
+			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
+				Page.tab[tabid].url.finalUrl = info.url;
+		}
+		Page.urlChange(info.url || tab.url, tabid, tab.incognito);
 	}
 }
 
