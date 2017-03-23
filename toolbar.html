@@ -220,6 +220,7 @@
 							</ul>
 							<label for="toolbar-convo-new-email">New email recipient</label><br>
 							<input type="email" id="toolbar-convo-new-email" class="add-email-contact convo" required>
+							<button class="btn secondary-background" id="convo-new-email-add">+</button>
 						</div>
 
 						<span class="clickable close-icon show-when-convo-expanded" action="close-convo"></span>
@@ -259,11 +260,12 @@
 							</ul>
 							<label for="toolbar-share-new-email">New email recipient</label><br>
 							<input type="email" id="toolbar-share-new-email" class="add-email-contact share" required>
+							<button class="btn secondary-background" id="toolbar-share-new-email-add">+</button>
 						</div>
 						<div class="toolbar-share-container-section toolbar-share-buttons-container">
 							<!-- buttons to initiate actions -->
 							<span class="toolbar-action action-stumble btn secondary-background primary-border" action="share" id="cancel-share">Cancel</span>
-							<span class="toolbar-action action-stumble btn primary-background primary-border" action="save-share" id="save-share">Save</span>
+							<span class="toolbar-action action-stumble btn primary-background primary-border" action="save-share" id="save-share">Send</span>
 						</div>
 					</div>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></button>
