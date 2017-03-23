@@ -707,6 +707,7 @@ ToolbarEvent.signin =
 ToolbarEvent.loginPage = function(request, sender) {
 	ToolbarEvent.api._flush();
 	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		Page.state[tabs[0].id] = { returl: tabs[0].url };
 		chrome.tabs.update((sender && sender.tab.id) || tabs[0].id, {
 			"url": config.suPages.signin.form(config)
 		});

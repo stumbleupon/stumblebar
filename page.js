@@ -227,7 +227,7 @@ Page.note = function(tabid, url, onlynote) {
  * @param {Number} tabid Tab ID
  * @return {Promise}
  */
-Page.urlChange = function(href, tabid, incog) {
+Page.urlChange = function(href, tabid, incog, state) {
 	chrome.tabs.getZoom(tabid, function(zoom) {
 		chrome.tabs.sendMessage(tabid, { zoom: zoom });
 	});
@@ -243,6 +243,19 @@ Page.urlChange = function(href, tabid, incog) {
 				code: "window.stop();",
 			});
 			chrome.tabs.update(tabid, { url: 'about:blank' });
+
+			if (state == 'complete')
+				return;
+
+			// Override {urlid} if we have a returl (we're coming from a signup)
+			if (Page.state[tabid] && Page.state[tabid].returl) {
+				var url = Page.state[tabid].returl;
+				chrome.tabs.update(tabid, { url: url });
+				ToolbarEvent.unhideToolbar();
+				if (flushState)
+					Page.state[tabid] = {};
+				return ToolbarEvent._buildResponse({ hidden: false });
+			}
 
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
@@ -322,7 +335,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 			if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
 				Page.tab[tabid].url = {}
 		}
-		Page.urlChange(info.url || tab.url, tabid, tab.incognito);
+		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}
 
 	if (info.status == "complete") {
@@ -332,7 +345,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
 				Page.tab[tabid].url.finalUrl = info.url;
 		}
-		Page.urlChange(info.url || tab.url, tabid, tab.incognito);
+		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}
 }
 
