@@ -265,7 +265,7 @@ Page.urlChange = function(href, tabid, incog) {
 	// If we're hitting http://su/..., revalidate our auth
 	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/(.*)'));
 	if (suPath && !config.authed) {
-		if (path)
+		if (suPath)
 			ToolbarEvent._sanity();
 		debug('SUPATH SANITY CHECK ' + href);
 	}
