@@ -248,6 +248,7 @@ var Toolbar = {
 	},
 
 	handleConfig: function(config) {
+		config.theme = 'dark-sidebar';
 		if (config.theme && config.theme != Toolbar.config.theme) {
 			var classes = document.querySelector("#toolbar").classList;
 			for (var i = 0; i < classes.length; i++)
