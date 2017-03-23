@@ -50,11 +50,8 @@
 		},
 
 		createIframe: function() {
-			//try {
-			//	//chrome.extension.getBackgroundPage().frames
-			//} catch (e) {
-				var iframe = document.createElement('iframe');
-			//}
+			var iframe = document.createElement('iframe');
+			iframe.sandbox = "allow-scripts allow-forms allow-same-origin";
 			iframe.src = chrome.runtime.getURL(this.theme.url);
 			iframe.style.cssText = this.theme.iframe;
 			iframe.allowTransparency = "true";
