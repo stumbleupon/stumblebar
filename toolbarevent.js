@@ -1019,6 +1019,7 @@ ToolbarEvent._init = function() {
 ToolbarEvent._error = function(request, sender, e, tabid) {
 	error(e);
 	ToolbarEvent.ping();
+	debugger
 	if (!e)
 		e = "Unknown Error";
 	if (e.error == 'runout')
