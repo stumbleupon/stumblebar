@@ -101,6 +101,8 @@
 		handleBodyInjectionEvent: function(e) {
 			if (e && e.animationName == 'nodeInserted') {
 				console.log('BODY appears, StumbleBar time');
+				if (document.getElementById(this.id))
+					document.getElementById(this.id).parentNode.removeChild(document.getElementById(this.id));
 				this.attemptInjection();
 				document.removeEventListener('animationstart',       this.handleBodyInjectionEvent.bind(this), false);
 				document.removeEventListener('MSAnimationStart',     this.handleBodyInjectionEvent.bind(this), false);
