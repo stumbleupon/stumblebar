@@ -69,7 +69,7 @@
 			['webkit', 'MS', '', 'mozilla'].forEach(function(platform) {
 				document.addEventListener(platform + 'fullscreenchange', function(e) {
 					try {
-						document.getElementById('discoverbar').style.display = (document.fullscreen || document.webkitIsFullScreen) ? 'none' : 'block';
+						document.getElementById(this.id).style.display = (document.fullscreen || document.webkitIsFullScreen) ? 'none' : 'block';
 					} catch(e) {}
 				});
 			});
@@ -79,7 +79,7 @@
 			IframeBar.pingListener = chrome.runtime.onMessage.addListener(
 				function(request, sender, sendResponse) {
 					if (request.type == "ping") {
-						sendResponse({type: document.getElementById('discoverbar') ? "pong" : "nobar"});
+						sendResponse({type: document.getElementById(this.id) ? "pong" : "nobar"});
 					}
 					if (request.type == "freshen") {
 						this.init();
@@ -111,13 +111,13 @@
 		attemptInjection: function() {
 			if (!this.iframe)
 				return false;
-			var discoverbar = document.getElementById('discoverbar');
+			var discoverbar = document.getElementById(this.id);
 			if (!discoverbar) {
 				if (!document.body)
 					return setTimeout(this.attemptInjection.bind(this), 10);
 				document.documentElement.appendChild(this.iframe);
 				console.log('StumbleBar created');
-				discoverbar = document.getElementById('discoverbar');
+				discoverbar = document.getElementById(this.id);
 			}
 			if (discoverbar && (discoverbar.nextSibling || !discoverbar.parentNode)) {
 				console.log('StumbleBar relayered', (!!discoverbar.nextSibling && 'sibling') || (!discoverbar.parentNode && 'parent'));
