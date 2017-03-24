@@ -64,6 +64,7 @@
 				this.drag.onMessageSendFail(this.handleMessageSendFail.bind(this))
 				this.registerFullscreenListner();
 				this.attemptInjection();
+				return true;
 			}
 		},
 
@@ -95,7 +96,8 @@
 		},
 
 		registerPingListener: function() {
-			IframeBar.pingListener = chrome.runtime.onMessage.addListener(
+			chrome.runtime.onMessage.addListener(
+				IframeBar.pingListener = 
 				function(request, sender, sendResponse) {
 					if (request.type == "ping") {
 						sendResponse({type: document.getElementById(this.id) ? "pong" : "nobar"});
