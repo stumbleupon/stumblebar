@@ -132,23 +132,30 @@ ContactList.prototype = {
 	 * @param {string} appendToElementId
 	 * @param {Function} filter -- Optional -- a function that accepts a contact object and returns true to include it
 	 */
-	render: function renderContactList(stubId, attributeMappings, appendToElementId, filter) {
+	render: function renderContactList(stubId, attributeMappings, appendToElementId, filter, preserveExisting) {
+		preserveExisting = !!preserveExisting;
 		var appendToElement = document.getElementById(appendToElementId);
 		if(!appendToElement) {
 			return false;
 		}
 		var contacts = this.contacts;
-		appendToElement.innerHTML = '';
+		if(!preserveExisting) {
+			appendToElement.innerHTML = '';
+		};
 		if(filter) {
 			contacts = this.find(filter);
+		}
+		if(preserveExisting) {
 			contacts.forEach(function(contact) {
-				contact.render(stubId, attributeMappings, appendToElementId);
-			});
-		} else {
-			for(var i = 0; i < this.contacts.length; i++) {
-				var contact = this.contacts[i];
-				contact.render(stubId, attributeMappings, appendToElementId);
-			}
+				var el = document.getElementById(appendToElementId + "-" + contact.id);
+				if(el && el.remove) {
+					el.remove();
+				}
+			}.bind(this));
+		}
+		for(var i = 0; i < contacts.length; i++) {
+			var contact = contacts[i];
+			contact.render(stubId, attributeMappings, appendToElementId);
 		}
 	},
 	/**
@@ -231,6 +238,7 @@ Contact.prototype = {
 				return false;
 			}
 		}
+		attributes.id = appendToElementId + "-" + this.id;
 		el = newFromTemplate(stubId, attributes, appendToElementId);
 		this.addThumbnail(el);
 	},
