@@ -1019,15 +1019,21 @@ ToolbarEvent._init = function() {
 ToolbarEvent._error = function(request, sender, e, tabid) {
 	error(e);
 	ToolbarEvent.ping();
+	if (!e || e.message == 'Attempting to use a disconnected port object')
+		return;
 	debugger
-	if (!e)
-		e = "Unknown Error";
 	if (e.error == 'runout')
 		e = 'Ran out of stumbles';
 	if (e.error == 'nourl' && ['reportSpam', 'miscat', 'blockSite', 'reportInfo', 'reportMissing'].indexOf(e.name) != -1)
 		return ToolbarEvent._buildResponse({}, tabid);
 	if (e.error == 'nourl' && ['dislike', 'unrate'].indexOf(e.name) != -1)
 		e = 'Page not found on StumbleUpon';
+	if (e.stack) {
+		if (e.stack.split("\n")[0] == e.message)
+			e = e.stack;
+		else
+			e = e.message + "\n" + e.stack;
+	}
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
 
