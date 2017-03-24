@@ -303,7 +303,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 		})
 		.then(function(url) {
 			if (!incog)
-				Page.note(tabid, url, Page.tab[tabid].status.url == href);
+				Page.note(tabid, url, Page.tab[tabid].status.url != href);
 			if (incog || !(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
