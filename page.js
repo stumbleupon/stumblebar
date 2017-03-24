@@ -359,7 +359,7 @@ Page.handleTabSwitch = function(state) {
 			tabs.forEach(function (tab) {
 				// We have to keep tabs persistent in incognito because we don't retain state for them
 				if (tab.incognito)
-					continue;
+					return;
 				if (state.tabId == tab.id)
 					chrome.tabs.sendMessage(tab.id, {type: 'add'});
 				else
