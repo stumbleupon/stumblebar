@@ -115,7 +115,7 @@ DragNDrop.prototype = {
 	},
 
 	handleMessage: function(event) {
-		if (!event.data || !event.data.type || event.origin != this.origin || event.hash != this.hash)
+		if (!event.data || !event.data.type || event.origin != this.origin)
 			return;
 
 		var handler = 'handle' + event.data.type[0].toUpperCase() + event.data.type.slice(1) + 'Message';
