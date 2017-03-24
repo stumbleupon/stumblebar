@@ -323,7 +323,7 @@ Page.urlChange = function(href, tabid, incog, state) {
  */
 Page.handleTabUpdate = function(tabid, info, tab) {
 //	console.log('update', tabid, info, tab);
-	Page.ping();
+	Page.ping().catch(function() {});
 
 	if (!Page.tab[tabid])
 		Page.tab[tabid] = {url: {}, status: {state: tab.incognito ? 'incog' : 'ready'}};
