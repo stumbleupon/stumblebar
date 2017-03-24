@@ -57,6 +57,7 @@
 				this.document = this.getDocument();
 				if (!this.document)
 					return false;
+				this.onHold = false;
 				this.registerPingListener();
 				this.iframe = this.createIframe();
 				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
@@ -102,6 +103,14 @@
 					if (request.type == "freshen") {
 						this.init();
 					}
+					if (request.type == "remove") {
+						this.remove();
+						this.onHold = true;
+					}
+					if (request.type == "add") {
+						this.onHold = false;
+						this.attemptInjection();
+					}
 					if (request.hash) {
 						this.drag.updateHash(this.hash = request.hash);
 					}
@@ -128,7 +137,7 @@
 		},
 
 		attemptInjection: function() {
-			if (!this.iframe)
+			if (!this.iframe || this.onHold)
 				return false;
 			var discoverbar = document.getElementById(this.id);
 			if (!discoverbar) {
