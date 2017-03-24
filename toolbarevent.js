@@ -129,7 +129,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 		.then(function(urlid) {
 			ToolbarEvent._notify("Marked as Spam!");
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -5 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.reportSpam(urlid);
 		});
 }
@@ -161,7 +161,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 		.then(function(urlid) {
 			ToolbarEvent._notify("Blocked!");
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.blockSite(urlid);
 		})
 }
@@ -241,7 +241,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 		})
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: -6 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.reportMissing(urlid);
 		})
 }
@@ -273,7 +273,7 @@ ToolbarEvent.dislike = function(request, sender) {
 		})
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: -1, subtype: 0 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.dislike(urlid);
 		});
 }
@@ -301,7 +301,7 @@ ToolbarEvent.unrate = function(request, sender) {
 		})
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 0, subtype: 0 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.unrate(urlid);
 		});
 }
@@ -326,7 +326,7 @@ ToolbarEvent.like = function(request, sender) {
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { type: 1, subtype: 0 }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.like(urlid);
 		});
 }
