@@ -26,6 +26,12 @@ if [ "$PUSH_MOZILLA" ]; then
 	# It's okay if this fails. We expect it to fail.  
 	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
 fi
+#sed -i '' 's/\(version": "0.[0-9]*\)/\1rc1/' manifest.json
+#zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
+#if [ "$PUSH_MOZILLA" ]; then
+#	# It's okay if this fails. We expect it to fail.  
+#	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
+#fi
 echo -e "========= END Firefox\n\n\n"
 
 # Chrome
