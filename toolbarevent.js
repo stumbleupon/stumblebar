@@ -117,7 +117,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -149,7 +149,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -177,7 +177,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 ToolbarEvent.miscat = function(request, sender) {
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -204,7 +204,7 @@ ToolbarEvent.miscat = function(request, sender) {
 ToolbarEvent.reportInfo = function(request, sender) {
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -230,7 +230,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -263,7 +263,7 @@ ToolbarEvent.dislike = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -291,7 +291,7 @@ ToolbarEvent.unrate = function(request, sender) {
 	
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to unrate url that doesn't exist", request);
@@ -322,7 +322,7 @@ ToolbarEvent.like = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return Page.getUrlId(sender.tab.id); })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
@@ -879,8 +879,8 @@ ToolbarEvent.urlChange = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.info = function(request, sender) {
-	if (Page.getUrlId(sender.tab.id))
-		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: Page.getUrlId(sender.tab.id) }) });
+	if ((request.url && request.url.urlid) || Page.getUrlId(sender.tab.id))
+		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) }) });
 	return Promise.resolve(true);
 }
 
