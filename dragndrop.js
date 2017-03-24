@@ -24,14 +24,28 @@ DragNDrop.prototype = {
 			this.sendToIframe({mouse: this.mpos });
 		}.bind(this), 100);
 
-		window.addEventListener("mousemove", this.handleMouseMove.bind(this));
-		window.addEventListener("message",   this.handleMessage.bind(this))
+		window.addEventListener("mousemove", this.mouseMoveHandler = this.handleMouseMove.bind(this));
+		window.addEventListener("message",   this.messageHandler = this.handleMessage.bind(this))
 		this.handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
 	},
 
+	uninit: function() {
+		window.removeEventListener("mousemove", this.mouseMoveHandler);
+		window.removeEventListener("message",   this.messageHandler);
+	},
+
+	onMessageSendFail: function(cb) {
+		this.messageSendFailCallback = cb;
+	},
 
 	sendToIframe: function(msg) {
-		chrome.runtime.sendMessage(msg, function(response) {});
+		try {
+			chrome.runtime.sendMessage(msg, function(response) {});
+		} catch(e) {
+			error(e);
+			if (this.messageSendFailCallback)
+				this.messageSendFailCallback(this);
+		}
 	},
 
 

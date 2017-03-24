@@ -60,9 +60,27 @@
 				this.registerPingListener();
 				this.iframe = this.createIframe();
 				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
+				this.drag.onMessageSendFail(this.handleMessageSendFail.bind(this))
 				this.registerFullscreenListner();
 				this.attemptInjection();
 			}
+		},
+
+		// Handle https://bugs.chromium.org/p/chromium/issues/detail?id=649947
+		handleMessageSendFail: function(dnd) {
+			console.log('UNINIT');
+			if (IframeBar.pingListener) {
+				chrome.runtime.onMessage.removeListener(IframeBar.pingListener);
+				IframeBar.pingListener = false;
+			}
+			dnd.uninit();
+			this.remove();
+			this.iframe = false;
+		},
+
+		remove: function() {
+			if (document.getElementById(this.id))
+				document.getElementById(this.id).parentNode.removeChild(document.getElementById(this.id));
 		},
 
 		registerFullscreenListner: function() {
@@ -101,8 +119,7 @@
 		handleBodyInjectionEvent: function(e) {
 			if (e && e.animationName == 'nodeInserted') {
 				console.log('BODY appears, StumbleBar time');
-				if (document.getElementById(this.id))
-					document.getElementById(this.id).parentNode.removeChild(document.getElementById(this.id));
+				this.remove();
 				this.attemptInjection();
 				document.removeEventListener('animationstart',       this.handleBodyInjectionEvent.bind(this), false);
 				document.removeEventListener('MSAnimationStart',     this.handleBodyInjectionEvent.bind(this), false);
