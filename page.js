@@ -353,8 +353,20 @@ Page.handleTabUpdate = function(tabid, info, tab) {
  * Does nothing, but in the future can be used to unload the stumblebar
  * from contexts to save memory
  */
-Page.handleTabSwitch = function(e) {
-	//console.log('switch', e);
+Page.handleTabSwitch = function(state) {
+	if (config.unloadNonVisibleBars) {
+		chrome.tabs.query({}, function(tabs) {
+			tabs.forEach(function (tab) {
+				// We have to keep tabs persistent in incognito because we don't retain state for them
+				if (tab.incognito)
+					continue;
+				if (state.tabId == tab.id)
+					chrome.tabs.sendMessage(tab.id, {type: 'add'});
+				else
+					chrome.tabs.sendMessage(tab.id, {type: 'remove'});
+			});
+		});
+	}
 }
 
 /**

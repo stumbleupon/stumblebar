@@ -28,6 +28,7 @@ config.defaults = {
 };
 
 config.interests = [];
+config.unloadNonVisibleBars = false;
 
 config.miniModeTimeout = 500;
 config.suPages = {
