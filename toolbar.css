@@ -11,8 +11,7 @@ body {
   border: 1px solid black;
 */
 	font-size: 13px;
-	zoom: initial;
-	zoom: reset !important;
+	zoom: 1.0 !important;
 	max-width: 420px;
 	position: fixed;
 	left: 0;
