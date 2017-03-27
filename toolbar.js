@@ -623,17 +623,16 @@ var Toolbar = {
 		}
 		return data;
 	},
-	getShareData: function getShareData() {
+	getShareData: function _getShareData() {
 		var data = {
 			contentType:'url',
 			contentId:null,
 			suUserIds:null,
 			initialMessage:null
 		};
-		if(!Toolbar.url || !Toolbar.url.urlid) {
-			return false;
+		if(Toolbar.url && Toolbar.url.urlid) {
+			data.contentId = Toolbar.url.urlid;
 		}
-		data.contentId = Toolbar.url.urlid;
 		data.suUserIds = this.shareContactList.find(function(contact) {return contact.participant && contact.source === "mutual"}).map(function(contact) {
 			return contact.userid;
 		});
