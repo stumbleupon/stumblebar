@@ -128,8 +128,8 @@ Page.getUrlId = function(tabid) {
  * @return {SuUrl}
  */
 Page.getUrl = function(tabid) {
-	var url = Page.tab[tabid] && Page.tab[tabid].url  && Page.tab[tabid].url.finalUrl
-		   || Page.tab[tabid] && Page.tab[tabid].info && Page.tab[tabid].info.url;
+	var url = Page.tab[tabid] && Page.tab[tabid].url    && Page.tab[tabid].url.finalUrl
+		   || Page.tab[tabid] && Page.tab[tabid].status && Page.tab[tabid].status.url;
 	;
 
 	if (!url)
