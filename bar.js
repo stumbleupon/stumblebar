@@ -89,8 +89,10 @@
 			['webkit', 'MS', '', 'mozilla'].forEach(function(platform) {
 				document.addEventListener(platform + 'fullscreenchange', function(e) {
 					try {
-						document.getElementById(this.id).style.display = (document.fullscreen || document.webkitIsFullScreen) ? 'none' : 'block';
-					} catch(e) {}
+						document.getElementById(this.id).changeClass('fullscreen', document.fullscreen || document.webkitIsFullScreen);
+					} catch(ex) {
+						console.log(document.webkitIsFullScreen || document.fullscreen, ex);
+					}
 				}.bind(this));
 			}.bind(this));
 		},

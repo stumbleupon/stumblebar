@@ -1,3 +1,7 @@
+#discoverbar.fullscreen {
+	display: none !important;
+}
+
 @keyframes nodeInserted {
 	from {
 		outline-color: #fff;

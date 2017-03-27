@@ -59,7 +59,7 @@ String.prototype.form = function(map) {
 
 Node.prototype.addClass = function(name) {
 	if (!this.hasClass(name))
-		this.className += ' ' + name;
+		this.className = (this.className + ' ' + name).trim();
 	return this.className;
 }
 
