@@ -91,8 +91,8 @@
 					try {
 						document.getElementById(this.id).style.display = (document.fullscreen || document.webkitIsFullScreen) ? 'none' : 'block';
 					} catch(e) {}
-				});
-			});
+				}.bind(this));
+			}.bind(this));
 		},
 
 		registerPingListener: function() {
