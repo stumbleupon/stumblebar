@@ -23,7 +23,7 @@
 					<div class="toolbar-section-header"></div>
 
 					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
-						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode">
+						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode" title="Stumble mode">
 							<span class="toolbar-mode" id="mode">All Interests</span>
 							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode" title="Expand"></span>
 						</div>
@@ -193,7 +193,7 @@
 						<div class="convo-recipients-container toolbar-border-top">
 							<div id="convo-recipients-list" action="toggle-class" value="expanded"></div>
 						</div>
-						<span class="icon clickable show-contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
+						<span class="icon clickable show-contacts" title="Invite contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
 						<div class="toolbar-container-section convo-contacts-container toolbar-border-top hidden">
 							<!-- a search input -->
 							<input type="search" id="convo-contacts-search" placeholder="search">
@@ -206,7 +206,7 @@
 							<button class="btn secondary-background" id="convo-new-email-add">+</button>
 						</div>
 
-						<span class="clickable close-icon show-when-convo-expanded" action="close-convo"></span>
+						<span class="clickable close-icon show-when-convo-expanded" title="Close conversation" action="close-convo"></span>
 					</div>
 					<div class="stub convo-recipients-csv" id="convo-recipients-csv-stub" hidden>{{recipient-names-csv}}</div>
 					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
