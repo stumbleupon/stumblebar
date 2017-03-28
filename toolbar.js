@@ -288,8 +288,14 @@ var Toolbar = {
 			document.querySelector("#inbox .badge").innerText = config.numShares ? parseInt(config.numShares) : '';
 			document.querySelector("#inbox").changeClass('enabled', parseInt(config.numShares));
 		}
-
+		var el = document.querySelector('.toolbar-container');
+		if(el) {
+			el.classList.toggle('authed', false);
+		}
 		if (config.hasOwnProperty('authed')) {
+			if(el) {
+				el.classList.toggle('authed', !!config.authed);
+			}
 			document.querySelector("#stumble").changeClass('hidden', !config.authed);
 			document.querySelector("#signin") .changeClass('hidden', config.authed);
 			if (!config.authed)
