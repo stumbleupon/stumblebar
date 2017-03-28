@@ -357,7 +357,7 @@ ToolbarEvent.addToList = function(request, sender) {
 			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
 		})
 		.then(function(item) {
-			ToolbarEvent._notify("Added to list " + request.data.listname, sender.tab.id);
+			ToolbarEvent._notify("Added to list " + request.data.list.name, sender.tab.id);
 			return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
 		});
 }
