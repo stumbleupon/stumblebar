@@ -23,7 +23,7 @@ var Toolbar = {
 		document.querySelector('.interests-loading').addClass('hidden');
 	},
 
-	handleError: function(error) {
+	handleError: function(error, sourceEl) {
 		clearTimeout(Toolbar.state.errorMessageDisplay);
 		document.querySelector('.error-message').removeClass('hidden');
 		if (error.type)
@@ -912,6 +912,7 @@ var Toolbar = {
 			if(e.keyCode === 13) {
 				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
 					// @TODO set up validation feedback to user here
+					this.handleError(new Error('Invalid Email'));
 					return false;
 				}
 				this.addShareEmail(e.target.value);
@@ -923,6 +924,7 @@ var Toolbar = {
 			var emailEl = document.querySelector('#toolbar-share-new-email');
 			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
 				// @TODO set up validation feedback to user here
+				this.handleError(new Error('Invalid Email'));
 				return false;
 			}
 			this.addShareEmail(emailEl.value);
@@ -935,6 +937,7 @@ var Toolbar = {
 			if(e.keyCode === 13) {
 				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
 					// @TODO set up validation feedback to user here
+					this.handleError(new Error('Invalid Email'));
 					return false;
 				}
 				var email = e.target.value;
@@ -952,6 +955,7 @@ var Toolbar = {
 			var emailEl = document.querySelector('#toolbar-convo-new-email');
 			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
 				// @TODO set up validation feedback to user here
+				this.handleError(new Error('Invalid Email'));
 				return false;
 			}
 			var email = emailEl.value;
