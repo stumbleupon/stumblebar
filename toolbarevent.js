@@ -626,14 +626,16 @@ ToolbarEvent.openConvo = function(request, sender) {
 
 
 ToolbarEvent.convoAddRecipient = function(request, sender) {
-	var convo = ToolbarEvent.api.getConversation(request.data.conversationId);
+	var convo = ToolbarEvent.api.getConversation(request.data.conversationId),
+		contactsKey = 'contacts';;
 	return convo.addRecipient(request.data)
-		.then(function() {
+		.then(function _addedRecipient() {
 			return Promise.all([convo.messages(), ToolbarEvent.api.getContacts()]);
 		})
-		.then(function(results) {
+		.then(function _requeriedConvo(results) {
 			var conversation = results[0],
-				contacts = results[1];
+				contacts = results[1],
+				now = Date.now();
 			ToolbarEvent._notify("Added to Conversation!");
 			conversation.participants && conversation.participants.forEach(function _touchOrInsertContact(participant) {
 				// @TODO this code is repeated in stumbleuponapi.js -- refactor to some common place
@@ -662,7 +664,7 @@ ToolbarEvent.convoAddRecipient = function(request, sender) {
 				contact && contact.setParticipant(true);
 			});
 			return ToolbarEvent._buildResponse({convo: Object.assign({}, conversation, {contacts: contacts, position: 'append'})});
-		});
+		}.bind(this));
 }
 
 ToolbarEvent.convoShowContacts = function(request, sender) {
