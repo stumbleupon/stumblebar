@@ -30,7 +30,7 @@
 			    && !location.pathname.match(/^\/su\/[^\/]+/)
 			) && (
 				// No pop-ups
-				!window.opener
+				window.opener !== window
 			) && (
 				// No iframes
 				window.top == window.self
