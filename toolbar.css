@@ -73,7 +73,7 @@ BODY.top-handed {
 	display: flex;
 }
 
-.toolbar-action:hover {
+.toolbar-action-container .toolbar-action:hover {
 	border-radius: 4px;
 	box-shadow: 0 0 2px #888;
 }
@@ -457,6 +457,10 @@ input:invalid {
 	color: white;
 }
 .primary-color {
+	color: #E94A2F;
+	background-color: inherit;
+}
+.primary-hover:hover {
 	color: #E94A2F;
 	background-color: inherit;
 }
@@ -1090,4 +1094,8 @@ input:invalid {
 
 .toolbar-miscat-container {
 	padding: 10px;
+}
+
+.mode-picker .toolbar-action {
+	padding-left: 1em;
 }
