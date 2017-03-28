@@ -37,6 +37,7 @@ config.suPages = {
 	sponsored: ':baseProto://:baseUrl/sponsored-page',
 	signout:   ':baseProto://:baseUrl/logout',
 	signin:    ':baseProto://:baseUrl/login',
+	help:      'http://help.stumbleupon.com/',
 }
 config.url = {
   info:    '/content/:urlid',
