@@ -369,6 +369,12 @@ Page.handleTabSwitch = function(state) {
 		});
 	}
 }
+Page.handleWindowSwitch = function(state) {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		if (tabs && tabs[0] && tabs[0].id)
+			Page.handleTabSwitch({tabId: tabs[0].id})
+	})
+}
 
 /**
  * Clean up tab states and caches on tab close
@@ -407,6 +413,7 @@ Page.init = function() {
 
 	// listen to tab switching
 	chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
+	chrome.windows.onFocusChanged.addListener(Page.handleWindowSwitch);
 
 	chrome.tabs.onRemoved.addListener(Page.handleTabClose);
 
