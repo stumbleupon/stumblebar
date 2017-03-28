@@ -718,7 +718,7 @@ var Toolbar = {
 		if (e.target) {
 			var node = e.target;
 			do {
-				if (node.hasClass('no-drag') || node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')
+				if (node.hasClass('scrollable') || node.hasClass('no-drag') || node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')
 					return false;
 				node = node.parentNode;
 			} while (node);
