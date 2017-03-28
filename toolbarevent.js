@@ -927,6 +927,18 @@ ToolbarEvent.stayExpanded = function(request, sender) {
 
 
 /**
+ * Toggle toolbar expanded state
+ *
+ * @param {MessageRequest} request
+ * @param {chrome.runtime.MessageSender} sender
+ */
+ToolbarEvent.oneBar = function(request, sender) {
+	ToolbarEvent.cache.mset({ unloadNonVisibleBars: config.unloadNonVisibleBars = !config.unloadNonVisibleBars });
+	return ToolbarEvent._buildResponse({ unloadNonVisibleBars: config.unloadNonVisibleBars }, true);
+};
+
+
+/**
  * Open an SU page
  *
  * @param {MessageRequest} request

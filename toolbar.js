@@ -267,6 +267,7 @@ var Toolbar = {
 		}
 
 		document.querySelector('.action-stay-expanded').changeClass('enabled', config.stayExpanded);
+		document.querySelector('.action-one-bar').changeClass('enabled', config.unloadNonVisibleBars);
 
 		if (config.interests && config.interests.length)
 			Toolbar.handleInterests(config.interests);
