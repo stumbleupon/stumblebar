@@ -289,6 +289,27 @@ input:invalid {
 .right-handed .inline-info-expanded .toolbar-action-container .action-inline-info {
 	transform: rotate(0deg);
 }
+.collapse-icon {
+	content: '';
+	position: relative;
+	background-image: url("asset/Expand Horizontal.svg");
+	width: 34px;
+	height: 34px;
+	transform: rotate(0deg);
+	transition: transform .2s;
+}
+.collapse-icon.horizontal {
+	transform: rotate(180deg);
+}
+.right-handed .collapse-icon.horizontal {
+	transform: rotate(0deg);
+}
+.collapse-icon.vertical {
+	transform: rotate(-90deg);
+}
+.top-handed .collapse-icon.vertical {
+	transform: rotate(90deg);
+}
 
 .inline-info-body .inline-info-thumb {
 	width: 16px;
@@ -1142,3 +1163,16 @@ input:invalid {
 	width: 95%;
 }
 
+.toolbar-settings-container .toolbar-entry-list-item {
+	margin: 1px 0px;
+}
+
+.toolbar-settings-container .collapse-icon {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+}
+
+.toolbar-settings-container {
+	padding-top: 4px !important;
+}
