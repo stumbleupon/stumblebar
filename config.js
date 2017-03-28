@@ -9,7 +9,7 @@ var config = {
 //		}.bind(this));
 //  }
 }
-config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed', 'interests', 'stayExpanded'];
+config.persist = ['rpos', 'mode', 'modeinfo', 'theme', 'hidden', 'authed', 'interests', 'stayExpanded', 'unloadNonVisibleBars'];
 
 config.baseUrl   = 'www.stumbleupon.com';
 config.baseProto = 'https';
