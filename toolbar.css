@@ -477,6 +477,23 @@ input:invalid {
 .btn {
 	border-radius: 4px;
 	padding: 0 18px;
+	text-align: center;
+	width: 69px;
+	height: 34px;
+	font-size: 15px;
+	line-height: 34px;
+	vertical-align: middle;
+	background-repeat: no-repeat;
+	background-position: center; 
+	cursor: pointer;
+	content: "";
+	display: inline-block;
+	position: relative;
+}
+.btn-success {
+	background-color: #E94A2F;
+    color: white;
+	border-color: #E94A2F;
 }
 
 /*
@@ -1099,3 +1116,26 @@ input:invalid {
 .mode-picker .toolbar-action {
 	padding-left: 1em;
 }
+
+
+.lists-create-title {
+	margin-bottom: 0.42em;
+}
+
+.lists-create-name {
+	margin-bottom: 1.42em;
+}
+
+.lists-create-privacy {
+	margin-bottom: 2em;
+}
+
+.lists-create-privacy-entry {
+	margin-bottom: 1em;
+}
+
+.lists-create-name INPUT[type="text"] {
+	padding: 4px 8px;
+	width: 95%;
+}
+

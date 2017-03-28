@@ -147,8 +147,6 @@
 							<span class="lists-entry-snippet"></span>
 						</div>
 
-						<span class="clickable close-icon show-when-lists-expanded" action="expand" value="lists"></span>
-
 						<div class="lists-entry lists-create-action clickable" action="toggle" value="lists-container,lists-create-action,lists-create-container" style="font-size: 16px;">
 							[+] Create new list
 						</div>
@@ -157,15 +155,25 @@
 						</span>
 
 						<div class="lists-create-container hidden">
-							<input type="hidden" id="list-id">
-							<input type="text" id="list-name" placeholder="Name">
-							<br>
-							Visibilty
-							<input type="radio" name="list-visibility" value="public" checked> Public
-							<input type="radio" name="list-visibility" value="private"> Private
-							<br>
-							<span class="clickable" action="toggle" id="list-add-cancel" value="lists-create-action,lists-container,lists-create-container">Cancel</span>
-							<span class="clickable" action="add-list" id="list-send" values="name=#list-name,id=#list-id,comment=#list-name">Create</span>
+							<div class="lists-create-title">
+								List Name
+							</div>
+							<div class="lists-create-name">
+								<input type="hidden" id="list-id">
+								<input type="text" id="list-name">
+							</div>
+							<div class="lists-create-privacy">
+								<div class="lists-create-privacy-entry">
+									<input class="lists-create-public" type="radio" name="list-visibility" value="public" checked> Public
+								</div>
+								<div class="lists-create-privacy-entry">
+									<input class="lists-create-private" type="radio" name="list-visibility" value="private"> Private
+								</div>
+							</div>
+							<div class="lists-create-buttons">
+								<span class="btn btn-cancel clickable" action="toggle" id="list-add-cancel" value="lists-create-action,lists-container,lists-create-container">Cancel</span>
+								<span class="btn btn-success clickable" action="add-list" id="list-send" values="name=#list-name,id=#list-id,comment=#list-name">Create</span>
+							</div>
 						</div>
 					</div>
 
@@ -209,7 +217,7 @@
 						<span class="clickable close-icon show-when-convo-expanded" title="Close conversation" action="close-convo"></span>
 					</div>
 					<div class="stub convo-recipients-csv" id="convo-recipients-csv-stub" hidden>{{recipient-names-csv}}</div>
-					<button class="stub btn pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></button>
 
 
@@ -252,7 +260,7 @@
 						</div>
 					</div>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></button>
-					<button class="stub btn pill delete secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub pill delete secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<div class="invalid stub" id="toolbar-share-empty-recipient" hidden>add recipients by clicking in the list below.</div>
 
 
