@@ -1042,6 +1042,10 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 		return ToolbarEvent._buildResponse({}, tabid);
 	if (e.error == 'nourl' && ['dislike', 'unrate'].indexOf(e.name) != -1)
 		e = 'Page not found on StumbleUpon';
+	if (e.error && e.error._reason && e.error._reason[0] && e.error._reason[0].message)
+		e = e.error._reason[0].message;
+	if (e.error && e.error._reason && e.error._reason && e.error._reason.message)
+		e = e.error._reason.message;
 	if (e.stack) {
 		if (e.stack.split("\n")[0] == e.message)
 			e = e.stack;
