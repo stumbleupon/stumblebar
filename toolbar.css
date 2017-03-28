@@ -804,6 +804,10 @@ input:invalid {
 	display: none;
 }
 
+.toolbar-container:not(.authed) .hide-when-not-authed {
+	display: none;
+}
+
 .toolbar-container.keywords-expanded .hide-when-keywords-expanded:not(.enabled) {
 	display: none;
 }
