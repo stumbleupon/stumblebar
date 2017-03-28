@@ -286,6 +286,9 @@ input:invalid {
 	background-image: url("asset/Expand Horizontal.svg");
 	transform: rotate(-180deg);
 }
+.right-handed .inline-info-expanded .toolbar-action-container .action-inline-info {
+	transform: rotate(0deg);
+}
 
 .inline-info-body .inline-info-thumb {
 	width: 16px;
