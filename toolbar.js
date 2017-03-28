@@ -359,6 +359,8 @@ var Toolbar = {
 
 		if (!inbox.messages.length) {
 			document.querySelector('#inbox-container').setAttribute('infinite-scroll-disabled', null);
+			if (!inbox.position)
+				document.querySelector('.inbox-no-entries').removeClass('hidden');
 		}
 
 		document.querySelector('.inbox-loading').addClass('hidden');

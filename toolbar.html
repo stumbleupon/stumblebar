@@ -118,6 +118,10 @@
 					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode hide-when-share-expanded">
 						<span class="clickable close-icon show-when-inbox-expanded" action="expand" value="inbox"></span>
 
+						<div class="no-drag inbox-no-entries hidden">
+							No conversations available
+						</div>
+
 						<div class="inbox-entry clickable stub" action="open-convo" id="stub-inbox-entry">
 							<span class="inbox-entry-image"></span>
 							<span class="inbox-entry-title"></span>
@@ -182,7 +186,7 @@
 							<span class="spinner"></span> Loading...
 						</div>
 
-						<div class="convo-entry no-drag clickable stub" raction="openConvo" value="" id="stub-convo-entry">
+						<div class="convo-entry no-drag clickable stub" value="" id="stub-convo-entry">
 							<span class="convo-entry-image"></span>
 							<span class="convo-entry-title"></span>
 							<span class="convo-entry-user"></span>
