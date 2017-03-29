@@ -134,7 +134,7 @@ Page.getUrl = function(tabid) {
 	;
 
 	if (!url)
-		return Promise.reject({});
+		return Promise.reject(new ToolbarError('Page', 'nourl', Page.tab[tabid]));
 
 	return Promise.resolve(url);
 
