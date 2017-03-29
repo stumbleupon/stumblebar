@@ -873,7 +873,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 						resolve(ToolbarEvent._buildResponse({url: url}));
 					});
 			} else {
-				reject();
+				reject(Promise.reject(new ToolbarError('TBEV', 'nourl-urlChange', Page.tab[tabid])));
 			}
 		});
 	});
