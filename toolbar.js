@@ -272,7 +272,7 @@ var Toolbar = {
 		if (config.interests && config.interests.length)
 			Toolbar.handleInterests(config.interests);
 
-		if (config.mode && config.mode != Toolbar.config.mode) {
+		if (config.mode) {
 			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
 			//document.querySelector(".toolbar-mode").removeClass("hidden");
 			document.querySelector("#mode").innerText = config.modes[config.mode].name;
