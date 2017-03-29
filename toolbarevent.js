@@ -1057,7 +1057,7 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 		if (e.stack.split("\n")[0] == e.message)
 			e = e.stack;
 		else
-			e = e.message + "\n" + e.stack;
+			e = (e.message || (e.type + '::' + e.name)) + "\n" + e.stack;
 	}
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
