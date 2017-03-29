@@ -260,8 +260,6 @@ Page.urlChange = function(href, tabid, incog, state) {
 				var url = Page.state[tabid].returl;
 				chrome.tabs.update(tabid, { url: url });
 				ToolbarEvent.unhideToolbar();
-				if (flushState)
-					Page.state[tabid] = {};
 				return ToolbarEvent._buildResponse({ hidden: false });
 			}
 
