@@ -882,11 +882,18 @@ var Toolbar = {
 		document.addEventListener("wheel",          Toolbar.handleMouseWheel, true);
 		document.addEventListener("DOMMouseScroll", Toolbar.handleMouseWheel, true);
 
-		// Enter-on-send
-		document.querySelector('#convo-reply').addEventListener("keypress", function(e) {
-			console.log(e);
-			if (e.keyCode == 13 && !e.shiftKey)
-				Toolbar.handleEvent({ target: document.querySelector('#convo-send') });
+		// Action-on-enter
+		document.querySelectorAll('[action-on-enter]').forEach(function(elem) {
+			elem.addEventListener("keypress", function(e) {
+				if (e.keyCode == 13 && !e.shiftKey) {
+					var target = e.target.getAttribute('action-on-enter');
+					if (target)
+						target = document.querySelector(target);
+					else
+						target = e.target;
+					Toolbar.handleEvent({ target: target });
+				}
+			});
 		});
 
 		// share contacts search

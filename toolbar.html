@@ -49,11 +49,11 @@
 									Tag<br>
 								</div>
 								<div class="inset-input-container">
-									<input type="text" id="stumble-keyword">
+									<input type="text" id="stumble-keyword" action-on-enter="#stumble-tag">
 								</div>
 								<div class="inset-buttons">
 									<span class="clickable btn btn-cancel" action="expand" value="keywords">Cancel</span>
-									<span class="clickable btn btn-success" action="mode" values="value=mode,keyword=#stumble-keyword" mode="keyword">Stumble</span>
+									<span class="clickable btn btn-success" action="mode" id="stumble-tag" values="value=mode,keyword=#stumble-keyword" mode="keyword">Stumble This</span>
 								</div>
 							</div>
 
@@ -211,7 +211,7 @@
 
 						<div class="convo-response-container">
 							<input type="hidden" id="convo-id">
-							<input type="text" id="convo-reply">
+							<input type="text" id="convo-reply" action-on-enter="#convo-send">
 							<span class="clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
 						</div>
 						<div class="convo-recipients-container toolbar-border-top">
