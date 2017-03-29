@@ -804,6 +804,7 @@ input:invalid {
 	display: none;
 }
 
+.toolbar-container.authed .hide-when-authed,
 .toolbar-container:not(.authed) .hide-when-not-authed {
 	display: none;
 }
