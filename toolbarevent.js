@@ -91,7 +91,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 		.then(function() { return request.data.contentId || Page.getUrlId(sender.tab.id) })
 		.then(function(urlid) {
 			return urlid || ToolbarEvent._discover(request, sender)
-				.then(function(url) { return url.urlid; });
+				.then(function(url) { return url.publicid; });
 		})
 		.then(function(urlid) {
 			request.data.contentId = urlid;
@@ -330,7 +330,7 @@ ToolbarEvent.like = function(request, sender) {
 	return ToolbarEvent
 		._sanity()
 		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
-		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.urlid; }); })
+		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); })
 		.then(function(urlid) {
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
@@ -358,7 +358,7 @@ ToolbarEvent.addToList = function(request, sender) {
 		.then(function(urlid) { 
 			request.nolike = false;
 			return urlid || ToolbarEvent._discover(request, sender)
-				.then(function(url) { return url.urlid; });
+				.then(function(url) { return url.publicid; });
 		})
 		.then(function(urlid) { 
 			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
@@ -873,7 +873,7 @@ ToolbarEvent.urlChange = function(request, sender) {
 						resolve(ToolbarEvent._buildResponse({url: url}));
 					});
 			} else {
-				reject(Promise.reject(new ToolbarError('TBEV', 'nourl-urlChange', Page.tab[tabid])));
+				reject(Promise.reject(new ToolbarError('TBEV', 'nourl-urlChange', Page.tab[sender.tab.id])));
 			}
 		});
 	});
