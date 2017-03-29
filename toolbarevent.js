@@ -471,8 +471,8 @@ ToolbarEvent.stumble = function(request, sender) {
 			ToolbarEvent.pendingUnread();
 			ToolbarEvent.api.nextUrl(1).then(Page.preload);
 
-			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, url);
+			// We have to explicitly note the url on incognito, otherwise we can't perform any operations
+			Page.note(sender.tab.id, url);
 			Page.state[sender.tab.id] = { mode: config.mode }
 
 			ToolbarEvent.api.reportStumble([url.urlid], url.mode, url.modeinfo);
