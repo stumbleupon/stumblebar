@@ -390,9 +390,10 @@ StumbleUponApi.prototype = {
 	},
 
 	_flush: function() {
+		debug('FLUSH called');
 		this.api.addHeaders({[this.config.accessTokenHeader]: null});
 		this.userCache = null;
-		this.flushStumbles();
+		this._flushStumbles();
 		return this.cache.mset({
 			accessToken: null,
 		});
