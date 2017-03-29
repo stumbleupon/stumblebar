@@ -29,7 +29,7 @@
 							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode" title="Expand"></span>
 						</div>
 						<div class="toolbar-mode-selection show-when-mode-expanded reverse-when-top-handed">
-							<div class="default-color toolbar-entry-container" action="expand" value="mode">
+							<div class="default-color toolbar-entry-container hide-when-keywords-expanded" action="expand" value="mode">
 								Select...
 								<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="expand" value="mode" title="Collapse"></span>
 							</div>
@@ -45,11 +45,16 @@
 							</div>
 
 							<div class="show-when-keywords-expanded">
-								Tag<br>
-								<input type="text" id="stumble-keyword">
-								<br>
-								<button action="expand" value="keywords">Cancel</button>
-								<button action="mode" values="value=mode,keyword=#stumble-keyword" mode="keyword">Stumble</button>
+								<div class="inset-title">
+									Tag<br>
+								</div>
+								<div class="inset-input-container">
+									<input type="text" id="stumble-keyword">
+								</div>
+								<div class="inset-buttons">
+									<span class="clickable btn btn-cancel" action="expand" value="keywords">Cancel</span>
+									<span class="clickable btn btn-success" action="mode" values="value=mode,keyword=#stumble-keyword" mode="keyword">Stumble</span>
+								</div>
 							</div>
 
 							<div class="show-when-interests-expanded">
@@ -166,18 +171,18 @@
 						</span>
 
 						<div class="lists-create-container hidden">
-							<div class="lists-create-title">
+							<div class="inset-title">
 								List Name
 							</div>
-							<div class="lists-create-name">
+							<div class="inset-input-container">
 								<input type="hidden" id="list-id">
 								<input type="text" id="list-name">
 							</div>
-							<div class="lists-create-privacy">
-								<div class="lists-create-privacy-entry">
+							<div class="inset-input-entry">
+								<div class="inset-input-entry">
 									<input class="lists-create-public" type="radio" name="list-visibility" value="public" checked> Public
 								</div>
-								<div class="lists-create-privacy-entry">
+								<div class="inset-input-entry">
 									<input class="lists-create-private" type="radio" name="list-visibility" value="private"> Private
 								</div>
 							</div>

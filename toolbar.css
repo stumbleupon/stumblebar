@@ -1149,11 +1149,12 @@ input:invalid {
 }
 
 
-.lists-create-title {
+.inset-title {
+	margin-top: 1em;
 	margin-bottom: 0.42em;
 }
 
-.lists-create-name {
+.inset-input-container {
 	margin-bottom: 1.42em;
 }
 
@@ -1161,11 +1162,16 @@ input:invalid {
 	margin-bottom: 2em;
 }
 
-.lists-create-privacy-entry {
+.lists-input-entry {
 	margin-bottom: 1em;
 }
 
-.lists-create-name INPUT[type="text"] {
+.inset-buttons {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+INPUT[type="text"] {
 	padding: 4px 8px;
 	width: 95%;
 }
