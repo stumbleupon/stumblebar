@@ -91,6 +91,7 @@ var Toolbar = {
 
 		if (url.hasOwnProperty('sponsored')) {
 			document.querySelector("#sponsored").changeClass("hidden", !url.sponsored);
+			document.querySelector(".toolbar-container").addClass("inline-info-expanded");
 		}
 	},
 
