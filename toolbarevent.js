@@ -43,7 +43,14 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 		.then(function(response) {
 			if (response && response !== true) {
 				console.log("ToolbarEvent.sendResponse", request, response);
-				sendResponse(response);
+				try {
+					sendResponse(response);
+				} catch (e) {
+					if (Page.tab[sender.tab.id].status.state == 'incog') {
+						warning(e);
+						return; // Sometimes we get incognito races.  They are safe to ignore.
+					}
+				}
 			}
 		})
 		.catch(function(err) {
