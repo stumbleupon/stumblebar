@@ -305,11 +305,11 @@ Page.urlChange = function(href, tabid, incog, state) {
 		.then(function(url) {
 			if (!incog)
 				Page.note(tabid, url, Page.tab[tabid].status.url != href);
-			if (incog || !(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
+			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
-			if (incog || !(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
+			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
@@ -332,10 +332,10 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 	if (info.status == "loading") {
 		if (!tab.incognito) {
 			Page.tab[tabid].status = { state: info.status, url: tab.url };
-			// User is changing the URL
-			if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
-				Page.tab[tabid].url = {}
 		}
+		// User is changing the URL
+		if (Page.tab[tabid].url && Page.tab[tabid].url.url != tab.url)
+			Page.tab[tabid].url = {}
 		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}
 
