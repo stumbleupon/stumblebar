@@ -766,6 +766,9 @@ input:invalid {
 .toolbar-container:not(.settings-expanded) .show-when-settings-expanded:not(.enabled) {
 	display: none;
 }
+.settings-expanded .toolbar-section:not(.show-when-settings-expanded):not(.toolbar-action-container) {
+	display: none;
+}
 
 .toolbar-container:not(.inline-info-expanded) .show-when-inline-info-expanded:not(.enabled) {
 	display: none;
