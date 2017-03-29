@@ -502,7 +502,7 @@ input:invalid {
 	border-radius: 4px;
 	padding: 0 18px;
 	text-align: center;
-	width: 69px;
+	min-width: 58px;
 	height: 34px;
 	font-size: 15px;
 	line-height: 34px;
