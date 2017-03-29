@@ -1040,7 +1040,7 @@ input:invalid {
 }
 
 .lists-container .lists-entry-snippet {
-	display: block;
+	display: none;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	height: 1em;
@@ -1053,7 +1053,6 @@ input:invalid {
 	display: inline-block;
 	background-size: cover;
 	margin-right: 8px;
-	float: left;
 }
 
 .lists-container .list-create-action .lists-icon {
@@ -1180,4 +1179,18 @@ input:invalid {
 
 .toolbar-settings-container {
 	padding-top: 4px !important;
+}
+
+.lists-create-container .lists-entry-image {
+	border-radius: 16px;
+	position: relative;
+}
+
+.lists-create-container .lists-entry-image:after {
+	content: "+";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	transform: translateY(20%);
 }
