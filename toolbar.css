@@ -1181,6 +1181,10 @@ input:invalid {
 	padding-top: 4px !important;
 }
 
+.lists-create-container {
+	max-width: initial;
+}
+
 .lists-create-container .lists-entry-image {
 	border-radius: 16px;
 	position: relative;
