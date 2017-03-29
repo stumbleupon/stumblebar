@@ -133,8 +133,15 @@ Page.getUrl = function(tabid) {
 		   || Page.tab[tabid] && Page.tab[tabid].status && Page.tab[tabid].status.url   // What we noted
 	;
 
-	if (!url)
-		return Promise.reject(new ToolbarError('Page', 'nourl', Page.tab[tabid]));
+	if (!url) {
+		return new Promise(function(resolve, reject) {
+			chrome.tabs.get(tabid, function(tab) {
+				if (!tab || !tab.id || !tab.url)
+					return reject(new ToolbarError('Page', 'nourl', Page.tab[tabid]));
+				resolve(tab.url);
+			});
+		});
+	}
 
 	return Promise.resolve(url);
 
