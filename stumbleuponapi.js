@@ -391,11 +391,11 @@ StumbleUponApi.prototype = {
 
 	_flush: function() {
 		this.api.addHeaders({[this.config.accessTokenHeader]: null});
+		this.userCache = null;
+		this.flushStumbles();
 		return this.cache.mset({
 			accessToken: null,
 		});
-		this.userCache = null;
-		this.flushStumbles();
 	},
 
 	_buildPost: function(type, remap) {
