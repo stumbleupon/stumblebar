@@ -381,7 +381,8 @@ ToolbarEvent.addList = function(request, sender) {
 	return ToolbarEvent
 		.api.addList(request.data.name, request.data.description || '', request.data.visibility)
 		.then(function(list) {
-			ToolbarEvent._notify("Added list " + request.data.name, sender.tab.id);
+			// This message isn't needed, we're already showing the Added To List message in addToList
+			//ToolbarEvent._notify("Added list " + request.data.name, sender.tab.id);
 			return ToolbarEvent.addToList({ data: { list: list } }, sender)
 		});
 }

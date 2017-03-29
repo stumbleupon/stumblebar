@@ -579,6 +579,7 @@ var Toolbar = {
 		}
 		if (action == 'add-list') {
 			Toolbar.handleImmediateAction('toggle', document.querySelector("#list-add-cancel").getAttribute('value'));
+			document.querySelector("#list-name").value = '';
 		}
 		if (action == 'add-list' || action == 'add-to-list') {
 			document.querySelector(".toolbar-container").removeClass("lists-expanded");
