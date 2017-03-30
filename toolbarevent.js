@@ -34,9 +34,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 		action = requestedAction && requestedAction.replace(/-[a-z]/g, function (x) {
 			return x[1].toUpperCase();
 		});
-	console.log("action: ", action);
 	if (!action || !ToolbarEvent[action]) {
-		console.log("bailing");
 		return false;
 	}
 	ToolbarEvent[action](request, sender)
@@ -867,7 +865,6 @@ ToolbarEvent.urlChange = function(request, sender) {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
-			console.log(url);
 			if (url) {
 				Page.urlChange(url, tabs[0].id)
 					.then(function(url) {

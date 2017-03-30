@@ -328,7 +328,7 @@ Page.urlChange = function(href, tabid, incog, state) {
  * @param {Object} tab The new state of the tab
  */
 Page.handleTabUpdate = function(tabid, info, tab) {
-//	console.log('update', tabid, info, tab);
+	console.log('update', tabid, info, tab);
 	Page.ping().catch(function() {});
 
 	if (!Page.tab[tabid])
@@ -349,7 +349,7 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 			Page.tab[tabid].status = { state: info.status, url: tab.url };
 			Page.tab[tabid].info = tab;
 			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
-				Page.tab[tabid].url.finalUrl = info.url;
+				Page.tab[tabid].url.finalUrl = info.url || tab.url;
 		}
 		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}

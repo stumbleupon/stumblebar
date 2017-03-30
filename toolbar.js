@@ -872,7 +872,7 @@ var Toolbar = {
 
 		// Toolbar initialization
 		Toolbar.dispatch('init');
-		Toolbar.dispatch('urlChange');
+    	//Toolbar.dispatch('urlChange');
 		window.setInterval(function(e) { Toolbar.tryMiniMode(e); }, 1000);
 
 		// Drag-n-drop logic
