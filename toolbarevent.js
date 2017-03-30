@@ -1085,8 +1085,10 @@ ToolbarEvent._discover = function(request, sender) {
 			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
 		})
 		.then(function(url) { 
-			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, url); 
+			if (!sender.tab.incognito) {
+				// Super hacky rewrite of urlid to make stuff work correctly
+				Page.note(sender.tab.id, Object.assign(url, {urlid: url.publicid})); 
+			}
 			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
 			return url;
 		});
