@@ -14,6 +14,7 @@ DragNDrop.prototype = {
 		top:    'bottom',
 		bottom: 'top',
 	},
+	estyle: {},
 
 	updateHash: function(hash) {
 		this.hash = hash;
@@ -82,36 +83,54 @@ DragNDrop.prototype = {
 					h: this.elem.offsetHeight
 				};
 			}
-			this.elem.style.left = Math.min(window.innerWidth  * zoom - this.elem.offsetWidth , Math.max(0, this.mpos.iframe.x)) + 'px';
-			this.elem.style.top  = Math.min(window.innerHeight * zoom - this.elem.offsetHeight, Math.max(0, this.mpos.iframe.y)) + 'px';
+
+			this.elem.style.left = this.estyle.left = Math.min(window.innerWidth  * zoom - this.elem.offsetWidth , Math.max(0, this.mpos.iframe.x)) + 'px';
+			this.elem.style.top  = this.estyle.top  = Math.min(window.innerHeight * zoom - this.elem.offsetHeight, Math.max(0, this.mpos.iframe.y)) + 'px';
+			this.estyle['-stumble-dirty-style'] = '1';
 		}
+	},
+
+
+	applyEstyle: function(rebuild) {
+		var cssText = this.cachedCssText || '';
+		if (rebuild || this.estyle['-stumble-dirty-style'] != '0') {
+			cssText = '';
+			this.estyle['-stumble-dirty-style'] = '0';
+			for (var p in this.estyle)
+				cssText += p+':'+this.estyle[p]+';';
+			this.cachedCssText = cssText;
+		}
+		if (this.elem.style.cssText != cssText)
+			this.elem.style.cssText = cssText;
 	},
 
 
 	handleRepos: function(rpos, noMargin) {
-		this.elem.style[rpos.vside] = rpos.v + '%';
-		this.elem.style[rpos.hside] = rpos.h + '%';
-		this.elem.style[this.oside[rpos.vside]] = 'initial';
-		this.elem.style[this.oside[rpos.hside]] = 'initial';
+		this.estyle[rpos.vside] = this.elem.style[rpos.vside] = rpos.v + '%';
+		this.estyle[rpos.hside] = this.elem.style[rpos.hside] = rpos.h + '%';
+		this.estyle[this.oside[rpos.vside]] = this.elem.style[this.oside[rpos.vside]] = 'initial';
+		this.estyle[this.oside[rpos.hside]] = this.elem.style[this.oside[rpos.hside]] = 'initial';
 
 		this.handleTrySnap(rpos)
+		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
 	handleTrySnap: function(rpos) {
 		if (rpos.v <= 1) {
-			this.elem.style['margin-' + rpos.vside] = '-3px';
-			this.elem.style['margin-' + this.oside[rpos.vside]] = 'initial';
-			this.elem.style[rpos.vside] = '0';
+			this.estyle['margin-' + rpos.vside] = this.elem.style['margin-' + rpos.vside] = '-3px';
+			this.estyle['margin-' + this.oside[rpos.vside]] = this.elem.style['margin-' + this.oside[rpos.vside]] = 'initial';
+			this.estyle[rpos.vside] = this.elem.style[rpos.vside] = '0';
 		} else {
-			this.elem.style['margin-' + rpos.vside] = 'initial';
+			this.estyle['margin-' + rpos.vside] = this.elem.style['margin-' + rpos.vside] = 'initial';
 		}
 		if (rpos.h <= 1) {
-			this.elem.style['margin-' + rpos.hside] = '-3px';
-			this.elem.style['margin-' + this.oside[rpos.hside]] = 'initial';
-			this.elem.style[rpos.hside] = '0';
+			this.estyle['margin-' + rpos.hside] = this.elem.style['margin-' + rpos.hside] = '-3px';
+			this.estyle['margin-' + this.oside[rpos.hside]] = this.elem.style['margin-' + this.oside[rpos.hside]] = 'initial';
+			this.estyle[rpos.hside] = this.elem.style[rpos.hside] = '0';
 		} else {
-			this.elem.style['margin-' + rpos.hside] = 'initial';
+			this.estyle['margin-' + rpos.hside] = this.elem.style['margin-' + rpos.hside] = 'initial';
 		}
+		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
 	handleMessage: function(event) {
@@ -143,7 +162,8 @@ DragNDrop.prototype = {
 	},
 
 	handleHideMessage: function(message) {
-		this.elem.style.display = 'none';
+		this.elem.style.display = this.estyle.display = 'none';
+		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
 	handleUpMessage: function(message) {
@@ -176,15 +196,16 @@ DragNDrop.prototype = {
 
 	handleRedrawMessage: function(message) {
 		if (message.toolbar.h && message.toolbar.w) {
-			this.elem.style.height = message.toolbar.h + 'px';
-			this.elem.style.width  = message.toolbar.w + 'px';
+			this.elem.style.height = this.estyle.height = message.toolbar.h + 'px';
+			this.elem.style.width  = this.estyle.width  = message.toolbar.w + 'px';
 			this.updateIframePos();
 		}
 		if (message.toolbar.rpos)
 			this.handleRepos(message.toolbar.rpos);
 		if (message.toolbar.hidden)
-			this.elem.style.display = 'none';
+			this.elem.style.display = this.estyle.display = 'none';
 		else
-			this.elem.style.display = 'block';
+			this.elem.style.display = this.estyle.display = 'block';
+		this.estyle['-stumble-dirty-style'] = '1';
 	}
 }
