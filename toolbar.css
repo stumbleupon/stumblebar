@@ -262,10 +262,10 @@ input.invalid:focus {
 	background-image: url("asset/Icon/Bookmark-enabled.svg");
 }
 .toolbar-action-container .action-inbox {
-	background-image: url("asset/Icon/List.svg");
+	background-image: url("asset/Inbox.svg");
 }
 .toolbar-action-container .action-inbox.enabled {
-	background-image: url("asset/Icon/List.svg");
+	background-image: url("asset/Inbox.svg");
 }
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
@@ -867,6 +867,10 @@ input.invalid:focus {
 	border-radius: 6px;
 	font-size: 8px;
 	display: block;
+}
+.action-inbox .badge {
+	line-height: 1;
+	margin-top: 20%;
 }
 
 
