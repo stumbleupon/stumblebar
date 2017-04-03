@@ -859,7 +859,6 @@ input.invalid:focus {
 	left: 0;
 	background-color: white;
 	border: 1px solid #E94A2F;
-	color: white;
 	text-shadow: 0px 0px 1px black;
 	vertical-align: middle;
 	text-align: center;
@@ -867,6 +866,7 @@ input.invalid:focus {
 	display: block;
 	*/
 
+	color: white;
 	font-size: 8px;
 	position: absolute;
 	left: 51%;
