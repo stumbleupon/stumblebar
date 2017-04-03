@@ -987,11 +987,19 @@ var Toolbar = {
 			emailEl.focus();
 		}.bind(this));
 
-		// Redraw
-		//Toolbar.handleRedraw();
-		//Toolbar._events.forEach(function(entry) {
-		//	document.getElementById(entry.id).addEventListener(entry.ev, Toolbar[entry.cb])
-		//});
+		// Hack for chrome to handle disappearing SVG background images
+		if( /webkit/gi.test(navigator.userAgent.toLowerCase()) ){
+			(svg || []).forEach(function(svgpath) {
+				var obj = document.createElement("img");
+				obj.setAttribute("type", "image/svg+xml");
+				obj.setAttribute("src", svgpath);
+				obj.setAttribute("width", "1");
+				obj.setAttribute("height", "1");
+				obj.setAttribute("style", "width: 0px; height: 0px; position: absolute;visibility : hidden");
+				document.getElementsByTagName("html")[0].appendChild(obj);
+			});
+		}
+
 	},
 	_events: [{ ev: 'click', id: 'stumble', cb: 'stumble' }]
 }
