@@ -124,10 +124,14 @@ button.add-contact:not(.stub) .contact-thumbnail {
 .invalid,
 input:invalid {
 	color: red;
-	background-color: transparent;
-	white-space: pre-line;
-	margin: 2px;
 }
+input.invalid:active {
+	outline: red auto 5px;
+}
+input.invalid:focus {
+	outline: red auto 5px;
+}
+
 .icon.show-contacts {
 	display: inline-block;
 	/*

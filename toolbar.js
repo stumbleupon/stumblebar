@@ -489,6 +489,15 @@ var Toolbar = {
 					attr = target.split('.')[1] || 'value';
 				}
 				value[parts[0]] = source.getAttribute(attr) || source[attr] || null;
+				if (!value[parts[0]] && source.hasAttribute('validate')) {
+					source.addClass('invalid');
+					var clearInvalid = function() {
+						source.removeClass('invalid');
+						source.removeEventListener("keydown", clearInvalid, true);
+					}
+					source.addEventListener("keydown", clearInvalid, true);
+					throw "Validation failed for " + parts[0];
+				}
 			});
 		}
 		return value;
