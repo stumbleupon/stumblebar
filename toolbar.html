@@ -23,7 +23,7 @@
 				<div class="toolbar-section-container handed reverse-when-top-handed">
 					<div class="toolbar-section-header"></div>
 
-					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
+					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded hide-when-miscat-expanded clickable handed">
 						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode" title="Stumble mode">
 							<span class="toolbar-mode" id="mode">All Interests</span>
 							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode" title="Expand"></span>
@@ -84,40 +84,42 @@
 						</div>
 					</div>
 
+					<div class="toolbar-section toolbar-section-standalone toolbar-miscat-container show-when-miscat-expanded">
+						<div class="inset-input-container toolbar-section-header toolbar-entry-container toolbar-border-bottom">
+							Report a Misclassified Page
+						</div>
+
+						<div class="inset-input-container">
+							<span class="inset-title">Current Interest:</span>
+							<span class="toolbar-entry-body" id="miscat-current-interest"></span>
+						</div>
+
+						<div class="inset-input-container">
+							<div class="inset-title">Suggested Interest</div>
+							<div class="toolbar-entry-body">
+								<select id="miscat-suggested-interest"></select>
+							</div>
+						</div>
+
+						<div class="inset-input-container">
+							<div class="inset-title">Additional Details</div>
+							<div class="toolbar-entry-body">
+								<input type="text" id="miscat-details">
+							</div>
+						</div>
+
+						<div class="inset-create-buttons center">
+							<span class="btn btn-cancel clickable" action="expand" value="miscat">Cancel</span>
+							<span class="btn btn-success clickable" action="miscat" values="interest=#miscat-suggested-interest,details=#miscat-details">Submit</span>
+						</div>
+					</div>
+
 					<div class="toolbar-section toolbar-dislike-menu-container show-when-dislike-menu-expanded toolbar-entry-container toolbar-section-contains-entries hide-in-mini-mode hide-when-share-expanded clickable handed">
 						<div class="toolbar-mode-selection primary-color reverse-when-top-handed hide-when-miscat-expanded">
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-spam">Report: Spam</div>
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="show-miscat">Report: Wrong Topic</div>
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="report-missing">Report: Not Available</div>
 							<div class="toolbar-action toolbar-entry-container toolbar-border-top action-dislike-menu-option" action="block-site">Block Site</div>
-						</div>
-
-						<div class="toolbar-mode-selection toolbar-miscat-container show-when-miscat-expanded">
-							<div class="toolbar-entry-header">Report a Misclassified Page</div>
-
-							<div class="toolbar-entry-row">
-								<div class="toolbar-entry-header">Current Interest</div>
-								<div class="toolbar-entry-body" id="miscat-current-interest"></div>
-							</div>
-
-							<div class="toolbar-entry-row">
-								<div class="toolbar-entry-header">Suggested Interest</div>
-								<div class="toolbar-entry-body">
-									<select id="miscat-suggested-interest"></select>
-								</div>
-							</div>
-
-							<div class="toolbar-entry-row">
-								<div class="toolbar-entry-header">Optional Details</div>
-								<div class="toolbar-entry-body">
-									<input type="text" id="miscat-details">
-								</div>
-							</div>
-
-							<div class="toolbar-entry-buttons">
-								<button class="toolbar-entry-button-cancel" action="expand" value="miscat">Cancel</button>
-								<button class="toolbar-entry-button-send" action="miscat" values="interest=#miscat-suggested-interest,details=#miscat-details">Send Report</button>
-							</div>
 						</div>
 					</div>
 
@@ -290,7 +292,7 @@
 
 
 
-					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed hide-when-share-expanded">
+					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed hide-when-share-expanded hide-when-miscat-expanded">
 						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
 						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
 						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">

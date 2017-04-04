@@ -182,6 +182,9 @@ input.invalid:focus {
 	margin-left: 44px;
 	position: relative;
 }
+.toolbar:not(.mini-mode) .toolbar-section {
+	min-width: 240px;
+}
 .toolbar-action-container {
 	font-size: 0;
 	display: flex;
@@ -1152,9 +1155,6 @@ input.invalid:focus {
 	text-align: right;
 }
 
-.toolbar-miscat-container {
-	padding: 10px;
-}
 
 .mode-picker .toolbar-action {
 	padding-left: 1em;
@@ -1239,3 +1239,14 @@ INPUT[type="text"] {
 	font-size: 16px;
 }
 
+.center {
+text-align: center;
+}
+
+#miscat-current-interest {
+	font-weight: bold;
+}
+
+.toolbar-section-standalone {
+	padding-top: 0;
+}
