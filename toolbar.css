@@ -397,7 +397,7 @@ input.invalid:focus {
 	transition: transform .2s;
 }
 #convo-recipients-list:not(.expanded) {
-	max-width: 320px;
+	max-width: 360px;
 	overflow: hidden;
 }
 #convo-recipients-list:not(.expanded) button.pill {
@@ -1035,7 +1035,7 @@ input.invalid:focus {
 
 .interests-container {
 	white-space: normal;
-	max-width: 320px;
+	max-width: 360px;
 }
 
 
@@ -1086,13 +1086,13 @@ input.invalid:focus {
 
 .lists-container {
 	white-space: normal;
-	max-width: 320px;
+	max-width: 360px;
 }
 
 
 .convo-container {
 	white-space: normal;
-	max-width: 320px;
+	max-width: 360px;
 }
 
 .convo-container .convo-entry {
