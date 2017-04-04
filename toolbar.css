@@ -1256,13 +1256,13 @@ INPUT[type="text"] {
 	top: 0;
 	left: 0px;
 	right: 0px;
-	font-size: 0.6em;
-	font-family: consolas;
 	z-index: 10;
-	max-height: 75%;
-	padding: .25em .5em;
+	text-align: center;
+	z-index: 10;
+	padding: .5em .5em;
 	overflow: auto;
-	background-color: white;
+	color: white;
+	background-color: red;
 	box-shadow: 0px 4px 10px black;
 }
 
