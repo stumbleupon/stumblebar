@@ -96,7 +96,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 			return ToolbarEvent.api.saveShare(request.data)
 				.then(function(convo) {
 					Page.state[sender.tab.id] = { convo: convo.id };
-					ToolbarEvent._notify("Sent!");
+					ToolbarEvent._notify("Sent");
 					return ToolbarEvent._buildResponse({newConvo: { convo:  convo}}, false);
 				});
 		});
@@ -132,7 +132,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			ToolbarEvent._notify("Marked as Spam!");
+			ToolbarEvent._notify("Marked as Spam");
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.reportSpam(urlid);
@@ -164,7 +164,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			ToolbarEvent._notify("Blocked!");
+			ToolbarEvent._notify("Blocked");
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.blockSite(urlid);
@@ -642,7 +642,7 @@ ToolbarEvent.convoAddRecipient = function(request, sender) {
 			var conversation = results[0],
 				contacts = results[1],
 				now = Date.now();
-			ToolbarEvent._notify("Added to Conversation!");
+			ToolbarEvent._notify("Added to Conversation");
 			conversation.participants && conversation.participants.forEach(function _touchOrInsertContact(participant) {
 				// @TODO this code is repeated in stumbleuponapi.js -- refactor to some common place
 				// update the last-accessed time for sorting purposes -- this must be persisted
@@ -701,7 +701,7 @@ ToolbarEvent.signout = function(request, sender) {
 			chrome.cookies.remove({ url: 'https://' + cookie.domain + cookie.path, name: cookie.name });
 		});
 	});
-	ToolbarEvent._notify("Signed Out!");
+	ToolbarEvent._notify("Signed Out");
 	ToolbarEvent.cache.mset({ authed: config.authed = false, user: {} });
 	return ToolbarEvent._buildResponse({}, true);
 }
@@ -733,7 +733,7 @@ ToolbarEvent.loginPage = function(request, sender) {
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
 	ToolbarEvent.cache.mset({ authed: config.authed = false });
-	ToolbarEvent._notify("You got logged out!");
+	ToolbarEvent._notify("You got logged out");
 	return ToolbarEvent._buildResponse({}, true);
 }
 
