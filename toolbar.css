@@ -1250,3 +1250,34 @@ text-align: center;
 .toolbar-section-standalone {
 	padding-top: 0;
 }
+
+
+.error-message {
+	position: absolute;
+	top: 0;
+	left: 0px;
+	right: 0px;
+	font-size: 0.6em;
+	font-family: consolas;
+	z-index: 10;
+	max-height: 75%;
+	padding: .25em .5em;
+	overflow: auto;
+	background-color: white;
+	box-shadow: 0px 4px 10px black;
+}
+
+.notify-message {
+	position: absolute;
+	top: 0;
+	left: 0px;
+	right: 0px;
+	text-align: center;
+	z-index: 10;
+	padding: .5em .5em;
+	overflow: auto;
+	color: white;
+	background-color: #1797d3;
+	box-shadow: 0px 4px 10px black;
+}
+
