@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="subMenus" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="report" transform="translate(-893.000000, -323.000000)">
+            <g id="Group-6" transform="translate(612.000000, 126.000000)">
+                <g id="reportSubMenu">
+                    <g id="Badge">
+                        <g id="Actions" transform="translate(53.000000, 190.000000)">
+                            <g id="Group-3" transform="translate(220.000000, 0.000000)">
+                                <rect id="Rectangle-4" x="0" y="0" width="34" height="34"></rect>
+                                <path d="M16.0623119,8.77118867 C16.5801827,7.79298818 17.4220173,7.79714377 17.9376881,8.77118867 L25.0623119,22.2288113 C25.5801827,23.2070118 25.1073772,24 24.0049107,24 L9.99508929,24 C8.8932319,24 8.42201729,23.2028562 8.93768812,22.2288113 L16.0623119,8.77118867 Z" id="Triangle" stroke="#E94A2F" fill="#E94A2F"></path>
+                                <text id="!" font-family="ArialRoundedMTBold, Arial Rounded MT Bold" font-size="12" font-weight="normal" fill="#FFFFFF">
+                                    <tspan x="15.0019531" y="21">!</tspan>
+                                </text>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

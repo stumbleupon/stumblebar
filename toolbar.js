@@ -572,6 +572,10 @@ var Toolbar = {
 		}
 		if (['dislike-menu', 'report-missing', 'report-spam', 'report-miscat', 'block-site'].includes(action)) {
 			document.querySelector(".toolbar-container").toggleClass("dislike-menu-expanded");
+			document.querySelector("#dislike-menu").removeClass("enabled");
+		}
+		if (action == 'expand' && value == 'dislike-menu') {
+			document.querySelector("#dislike-menu").toggleClass("enabled");
 		}
 		if (action == 'share') {
 			document.querySelector(".toolbar-share-container").toggleClass("hidden");

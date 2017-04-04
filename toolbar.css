@@ -286,6 +286,12 @@ input.invalid:focus {
 .toolbar-action-container .action-dislike.enabled {
 	background-image: url("asset/Icon/Down-enabled.svg");
 }
+.toolbar-action-container .action-report {
+	background-image: url("asset/reportInactiveIcon.svg");
+}
+.toolbar-action-container .action-report.enabled {
+	background-image: url("asset/reportActiveIcon.svg");
+}
 .toolbar-action-container .action-inline-info {
 	background-image: url("asset/DotDotDot.svg");
 }
