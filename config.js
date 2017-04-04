@@ -38,6 +38,7 @@ config.suPages = {
 	signout:   ':baseProto://:baseUrl/logout',
 	signin:    ':baseProto://:baseUrl/login',
 	help:      'http://help.stumbleupon.com/',
+	interests: ':baseProto://:baseUrl/discover/interests',
 }
 config.url = {
   info:    '/content/:urlid',

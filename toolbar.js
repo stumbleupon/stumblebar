@@ -6,6 +6,10 @@ var Toolbar = {
 	handleInterests: function(interests) {
 		document.querySelector('#interests-container').innerHTML = '';
 
+		var addNode = document.querySelector(".interests-create-action.stub").cloneNode('deep');
+		addNode.removeClass('stub');
+		document.querySelector('#interests-container').insertBefore(addNode, null);
+
 		interests.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-interests-entry").cloneNode('deep');
 
