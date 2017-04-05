@@ -66,7 +66,9 @@
 		handleMessageSendFail: function(dnd) {
 			console.log('UNINIT');
 			if (IframeBar.pingListener) {
+				try {
 				chrome.runtime.onMessage.removeListener(IframeBar.pingListener);
+				} catch (e) {}
 				IframeBar.pingListener = false;
 			}
 			dnd.uninit();
