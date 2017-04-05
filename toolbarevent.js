@@ -245,6 +245,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
+			ToolbarEvent._notify("Reported Missing");
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.reportMissing(urlid);
