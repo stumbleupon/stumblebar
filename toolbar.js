@@ -538,7 +538,7 @@ var Toolbar = {
 	handleImmediateAction: function(action, value, elem) {
 		document.querySelector(".toolbar-container").className.split(/ /).forEach(function(c) {
 			var section = c.split(/-/).slice(0, -1).join('-');
-			if (c.split(/-/).slice(-1) == 'expanded' && c != 'inline-info-expanded' && section != action && section != value) {
+			if (c.split(/-/).slice(-1) == 'expanded' && section != 'mode' && section != 'inline-info' && section != action && section != value) {
 				document.querySelector(".toolbar-container").removeClass(c);
 				var v = document.querySelector('#' + section);
 				if (v)
