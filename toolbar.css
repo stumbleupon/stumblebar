@@ -268,7 +268,7 @@ input.invalid:focus {
 	background-image: url("asset/Inbox.svg");
 }
 .toolbar-action-container .action-inbox.enabled {
-	background-image: url("asset/Inbox.svg");
+	background-image: url("asset/Inbox Enabled.svg");
 }
 .toolbar-action-container .action-info {
 	background-image: url("asset/Icon/Info.svg");
