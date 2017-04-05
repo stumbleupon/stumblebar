@@ -222,8 +222,10 @@
 
 						<div class="convo-response-container">
 							<input type="hidden" id="convo-id">
+							<div>
 							<input type="text" id="convo-reply" action-on-enter="#convo-send">
-							<span class="clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
+							</div>
+							<span class="btn float-right btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
 						</div>
 						<div class="convo-recipients-container toolbar-border-top">
 							<div id="convo-recipients-list" action="toggle-class" value="expanded"></div>

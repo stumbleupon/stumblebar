@@ -533,6 +533,10 @@ input.invalid:focus {
 	background-color: #E94A2F;
     color: white;
 	border-color: #E94A2F;
+	line-height: 28px;
+	vertical-align: middle;
+	height: 28px;
+	margin: 0 8px;
 }
 
 /*
@@ -1306,4 +1310,13 @@ INPUT[type="text"] {
 .alternate-colors > div:nth-of-type(odd) {
 	background: #e0e0e0;
 	color: black;
+}
+
+.convo-response-container INPUT {
+	width: 100%;
+}
+
+.convo-response-container .btn {
+	float: right;
+	margin: 0;
 }
