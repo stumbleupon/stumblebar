@@ -536,6 +536,15 @@ var Toolbar = {
 	 *                              OR return an Object to replace the data object sent to dispatch.
 	 */
 	handleImmediateAction: function(action, value, elem) {
+		document.querySelector(".toolbar-container").className.split(/ /).forEach(function(c) {
+			var section = c.split(/-/).slice(0, -1).join('-');
+			if (c.split(/-/).slice(-1) == 'expanded' && c != 'inline-info-expanded' && section != action && section != value) {
+				document.querySelector(".toolbar-container").removeClass(c);
+				var v = document.querySelector('#' + section);
+				if (v)
+					v.removeClass('enabled');
+			}
+		});
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector("#stumble").addClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
