@@ -472,18 +472,20 @@ input.invalid:focus {
 	border-style: solid;
 }
 .toolbar-action-container .action-stumble.enabled {
-	animation: stumble-pulse 3s infinite;
+	animation: stumble-pulse 2s infinite;
 }
 @keyframes stumble-pulse {
 	0% {
 		background-color: #E94136;
 	}
-	10% {
+	50% {
 		background-color: #A94A2F;
 	}
+	/*
 	80% {
 		background-color: #FF4A2F;
 	}
+	*/
 	100% {
 		background-color: #E94A2F;
 	}
