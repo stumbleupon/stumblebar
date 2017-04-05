@@ -453,8 +453,8 @@ ToolbarEvent.mode = function(request, sender) {
 	ToolbarEvent.cache.mset({ mode: config.mode = request.data.value || config.defaults.mode });
 	ToolbarEvent._generateModeInfo(request, sender);
 	ToolbarEvent.api._flushStumbles();
-	ToolbarEvent.stumble(request, sender);
-	return ToolbarEvent._buildResponse({ mode: config.mode, modeinfo: config.modeinfo }, true);
+	ToolbarEvent._buildResponse({ mode: config.mode, modeinfo: config.modeinfo }, true);
+	return ToolbarEvent.stumble(request, sender);
 }
 
 

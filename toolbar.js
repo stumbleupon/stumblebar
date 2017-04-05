@@ -27,7 +27,12 @@ var Toolbar = {
 		document.querySelector('.interests-loading').addClass('hidden');
 	},
 
+	_stateCleanup: function() {
+		document.querySelector("#stumble").removeClass("enabled");
+	},
+
 	handleError: function(error, sourceEl) {
+		Toolbar._stateCleanup();
 		clearTimeout(Toolbar.state.errorMessageDisplay);
 		document.querySelector('.error-message').removeClass('hidden');
 		if (error.type)
@@ -39,6 +44,7 @@ var Toolbar = {
 	},
 
 	handleNotify: function(message) {
+		Toolbar._stateCleanup();
 		clearTimeout(Toolbar.state.notifyMessageDisplay);
 		document.querySelector('.notify-message').removeClass('hidden');
 		document.querySelector('.notify-message').innerText = message;
@@ -531,7 +537,7 @@ var Toolbar = {
 	 */
 	handleImmediateAction: function(action, value, elem) {
 		if (action == 'stumble' || action == 'mode') {
-			document.querySelector(".action-stumble").toggleClass("enabled");
+			document.querySelector("#stumble").addClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
 		}
 		if (action == 'expand') {
