@@ -297,7 +297,7 @@ var Toolbar = {
 
 		if (config.hasOwnProperty('numShares')) {
 			document.querySelector("#inbox .badge").innerText = config.numShares ? parseInt(config.numShares) : '';
-			document.querySelector("#inbox").changeClass('enabled', parseInt(config.numShares));
+			document.querySelector("#inbox").changeClass('enabled', parseInt(config.numShares) || document.querySelector(".toolbar-container").hasClass("inbox-expanded"));
 		}
 		var el = document.querySelector('.toolbar-container');
 		if(el) {
@@ -550,6 +550,7 @@ var Toolbar = {
 		if (action == 'inbox') {
 			document.querySelector(".toolbar-container").toggleClass("inbox-expanded");
 			document.querySelector('.inbox-loading').removeClass('hidden');
+			document.querySelector("#inbox").changeClass('enabled', document.querySelector(".toolbar-container").hasClass("inbox-expanded") || document.querySelector("#inbox .badge").innerText);
 		}
 		if (action == 'show-miscat') {
 			Toolbar.dispatch('report-info');
