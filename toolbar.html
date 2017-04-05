@@ -124,8 +124,11 @@
 						<span class="inline-info-body" id="inline-info-body"></span>
 					</div>
 
-					<div class="toolbar-section toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode hide-when-share-expanded">
-						<span class="clickable close-icon show-when-inbox-expanded" action="expand" value="inbox"></span>
+					<div class="toolbar-section toolbar-section-standalone toolbar-inbox-container toolbar-border-top show-when-inbox-expanded hide-in-mini-mode hide-when-share-expanded">
+						<div class="default-color toolbar-section-header toolbar-border-bottom toolbar-entry-container hide-when-keywords-expanded" action="inbox">
+							Inbox
+							<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="inbox" title="Collapse"></span>
+						</div>
 
 						<div class="no-drag inbox-no-entries hidden">
 							No conversations available
@@ -139,7 +142,7 @@
 							<span class="inbox-entry-snippet"></span>
 						</div>
 
-						<span class="inbox-container scrollable" infinite-scroll id="inbox-container">
+						<span class="inbox-container alternate-colors scrollable" infinite-scroll id="inbox-container">
 						</span>
 
 						<div class="inbox-loading">
@@ -147,7 +150,12 @@
 						</div>
 					</div>
 
-					<div class="toolbar-section toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode hide-when-share-expanded">
+					<div class="toolbar-section toolbar-section-standalone toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode hide-when-share-expanded">
+						<div class="default-color toolbar-section-header toolbar-border-bottom toolbar-entry-container hide-when-keywords-expanded" action="lists">
+							Lists
+							<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="lists" title="Collapse"></span>
+						</div>
+
 						<div class="lists-loading">
 							<span class="spinner"></span> Loading...
 						</div>
@@ -285,7 +293,7 @@
 
 
 
-					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed hide-when-share-expanded hide-when-miscat-expanded">
+					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed always-show-during-expand hide-when-share-expanded hide-when-miscat-expanded">
 						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
 						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
 						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">

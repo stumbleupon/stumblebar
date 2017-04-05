@@ -798,6 +798,19 @@ input.invalid:focus {
 }
 
 
+.toolbar-container.inbox-expanded .toolbar-section:not(.show-when-inbox-expanded):not(.always-show-during-expand) {
+	display: none;
+}
+.toolbar-container.dislike-menu-expanded .toolbar-section:not(.show-when-dislike-menu-expanded):not(.always-show-during-expand):not(.show-when-miscat-expanded) {
+	display: none;
+}
+.toolbar-container.lists-expanded .toolbar-section:not(.show-when-lists-expanded):not(.always-show-during-expand) {
+	display: none;
+}
+.toolbar-container.miscat-expanded .toolbar-section:not(.show-when-miscat-expanded):not(.always-show-during-expand) {
+	display: none;
+}
+
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
 }
@@ -1145,7 +1158,7 @@ input.invalid:focus {
 .scrollable {
 	overflow-y: auto;
 	overflow-x: hidden;
-	max-width: 356px;
+	max-width: 420px;
 }
 
 
@@ -1282,3 +1295,15 @@ INPUT[type="text"] {
 	box-shadow: 0px 4px 10px black;
 }
 
+.toolbar-section-header {
+	font-weight: bold;
+}
+
+.alternate-colors {
+	background: #ffffff;
+	color: black;
+}
+.alternate-colors > div:nth-of-type(odd) {
+	background: #e0e0e0;
+	color: black;
+}
