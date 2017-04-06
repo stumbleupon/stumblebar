@@ -50,7 +50,7 @@ Api.prototype = {
 				httpRequest.setRequestHeader(name, req.headers[name]);
 
 			if (data && req.method != 'GET')
-				httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
 
 			try {
 				var retval = httpRequest.send(data);
