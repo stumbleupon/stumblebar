@@ -100,6 +100,8 @@ DragNDrop.prototype = {
 				cssText += p+':'+this.estyle[p]+';';
 			this.cachedCssText = cssText;
 		}
+		if (this.isFullscreen)
+			cssText += 'display: none !important;';
 		if (this.elem.style.cssText != cssText)
 			this.elem.style.cssText = cssText;
 	},
@@ -207,5 +209,11 @@ DragNDrop.prototype = {
 		else
 			this.elem.style.display = this.estyle.display = 'block';
 		this.estyle['-stumble-dirty-style'] = '1';
+	},
+
+	fullscreen: function(fullscreen) {
+		this.isFullscreen = fullscreen;
+		this.estyle['-stumble-dirty-style'] = '1';
+		this.applyEstyle();
 	}
 }

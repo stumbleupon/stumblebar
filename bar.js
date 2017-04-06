@@ -85,7 +85,7 @@
 			['webkit', 'MS', '', 'mozilla'].forEach(function(platform) {
 				document.addEventListener(platform + 'fullscreenchange', function(e) {
 					try {
-						document.getElementById(this.id).changeClass('fullscreen', document.fullscreen || document.webkitIsFullScreen);
+						this.drag.fullscreen(document.fullscreen || document.webkitIsFullScreen);
 					} catch(ex) {
 						console.log(document.webkitIsFullScreen || document.fullscreen, ex);
 					}
