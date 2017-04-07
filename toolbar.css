@@ -368,21 +368,24 @@ input.invalid:focus {
 .toolbar-share-container {
 	width: 240px;
 }
+#toolbar-share-contacts-container,
+#convo-contacts-container {
+	position: absolute;
+	display: none;
+	z-index: 1;
+}
 #toolbar-share-recipients-list,
-#convo-recipients-list {
+#convo-recipients-list-container {
 	display: block;
 	position: relative;
-	width: 100%;
+	float: left;
 }
-#toolbar-share-recipients-list:after,
-#convo-recipients-list.expanded:after {
-	content: '';
-	display: table;
-	clear: both;
-}
-#convo-recipients-list:before {
-	content: '';
+.convo-recipients-container {
 	position: relative;
+}
+.convo-recipients-container:before {
+	content: '';
+	position: absolute;
 	top: 0;
 	right: 0;
 	background-image: url("asset/Expand.svg");
@@ -390,39 +393,51 @@ input.invalid:focus {
 	height: 34px;
 	transform: rotate(0deg);
 	transition: transform .2s;
-	float: right;
 }
-#convo-recipients-list.expanded:before {
+.convo-recipients-container.expanded:before {
 	transform: rotate(-180deg);
 	transition: transform .2s;
 }
-#convo-recipients-list:not(.expanded) {
+.convo-recipients-container:not(.expanded) .convo-recipients-list-container {
 	max-width: 360px;
 	overflow: hidden;
 }
-#convo-recipients-list:not(.expanded) button.pill {
+.convo-recipients-container:not(.expanded) .convo-recipients-list-container {
 	display: none;
 }
-#convo-recipients-list .convo-recipients-csv {
+.convo-recipients-container #convo-recipients-csv-container {
+	margin-bottom: 18px;
 	display: none;
 	margin-right: 34px;
+	width: 302px;
 }
-#convo-recipients-list:not(.expanded) .convo-recipients-csv {
+.convo-recipients-container:not(.expanded) #convo-recipients-csv-container {
 	display: block;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.inline-info-expanded #convo-recipients-list:not(.expanded) .convo-recipients-csv {
+.inline-info-expanded .convo-recipients-container:not(.expanded) .convo-recipients-csv {
 	width: 356px;
 }
-#convo-recipients-list button.pill .contact-thumbnail,
+.convo-recipients-list-container button.pill .contact-thumbnail,
 #toolbar-share-recipients-list button.pill .contact-thumbnail {
 	display: none;
 }
-.toolbar-share-recipients-container{
-	max-height: 51px;
-	overflow-y: auto;
+.toolbar-share-recipients-container,
+.convo-recipients-list-container {
+	border: 1px solid gray;
+	padding: 5px;
+	width: 302px;
+}
+.toolbar-share-container .toolbar-share-recipients-container.active,
+.convo-recipients-container.active.expanded .convo-recipients-list-container {
+	padding: 0;
+	border-color: rgba(59, 153, 252, 0.5);
+	border-style: solid;
+	border-width: 5px;
+	border-radius: 5px;
+	padding: 1px;
 }
 .toolbar-share-container-section {
 	display: block;
@@ -430,11 +445,29 @@ input.invalid:focus {
 	clear: left;
 	min-height: 13px;
 }
+.toolbar-share-recipients-container:focus {
+	border: 2px thick blue;
+}
 .toolbar-share-container .toolbar-share-buttons-container {
 	line-height: 26px;
 }
 .toolbar-share-container .toolbar-share-buttons-container span.toolbar-action{
 	cursor: pointer;
+}
+#share-contacts-search,
+#convo-contacts-search {
+	border: 0;
+	float: left;
+	background: transparent;
+}
+.clearfix:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+#share-contacts-search:focus,
+#convo-contacts-search:focus {
+	outline: 0;
 }
 .toolbar-settings-container {
 	background-color: #888;

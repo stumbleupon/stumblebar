@@ -36,8 +36,8 @@ ContactList.prototype = {
 	 * @returns {Contact}
 	 */
 	add: function addContact(contactId, name, overwrite, source, thumbnail) {
-		var contact, lastAccess = Date.now(), emailRE = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-		if(source === "email" && (!emailRE.test(name) || name !== decodeURIComponent(contactId))) {
+		var contact, lastAccess = Date.now();
+		if(source === "email" && (!isEmailAddress(name) || name !== decodeURIComponent(contactId))) {
 			return false;
 		}
 		if(contactId == this.ownerContactId) {
@@ -161,14 +161,16 @@ ContactList.prototype = {
 	/**
 	 * perform a case-insensitive pattern match against the names in the contact list, returning an array of the userids
 	 * @param {string} searchText -- the text to search
+	 * @param {boolean} includeParticipants -- optional, true to include particpants, excludes participants by default
 	 * @returns {Array<number>} -- array of user ids
 	 */
-	search: function searchContacts(searchText) {
-		var searchRegEx =  new RegExp(searchText, "i");
+	search: function searchContacts(searchText, includeParticipants) {
+		var nameRegEx = new RegExp(searchText, "i"),
+			idRegEx = new RegExp(encodeURIComponent(searchText), "i");
 		return this.contacts.filter(function(contact) {
-			return searchRegEx.test(contact.name);
+			return (nameRegEx.test(contact.name) || idRegEx.test(contact.id)) && contact.isMine() && (includeParticipants || !contact.isParticipant());
 		}).map(function(contact) {
-			return parseInt(contact.userid);
+			return contact.userid;
 		});
 	},
 	/**
@@ -263,7 +265,7 @@ Contact.prototype = {
 	 * they should appear in the participant list.
 	 * @returns {boolean}
 	 */
-	isMine: function isMyContact() {
+	isMine: function _isMyContact() {
 		return (['mutual', 'email'].indexOf(this.source) > -1);
 	},
 	/**
