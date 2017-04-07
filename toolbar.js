@@ -32,6 +32,7 @@ var Toolbar = {
 	},
 
 	handleError: function(error, sourceEl) {
+		this._errorIsShowing = true;
 		Toolbar._stateCleanup();
 		clearTimeout(Toolbar.state.errorMessageDisplay);
 		document.querySelector('.error-message').removeClass('hidden');
@@ -41,6 +42,17 @@ var Toolbar = {
 			document.querySelector('.error-message').innerText = error;
 		document.querySelector('.error-message').addEventListener('mousedown', function() { document.querySelector('.error-message').addClass('hidden') });
 		//Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
+	},
+
+	clearError: function _clearError(error, sourceEl) {
+		if(!this._errorIsShowing) {
+			return;
+		}
+		this._errorIsShowing = false;
+		document.querySelector("#stumble").addClass("enabled");
+		document.querySelector('.error-message').addClass('hidden');
+		document.querySelector('.error-message').innerText = '';
+
 	},
 
 	handleNotify: function(message) {
@@ -543,7 +555,7 @@ var Toolbar = {
 	handleImmediateAction: function(action, value, elem) {
 		document.querySelector(".toolbar-container").className.split(/ /).forEach(function(c) {
 			var section = c.split(/-/).slice(0, -1).join('-');
-			if (c.split(/-/).slice(-1) == 'expanded' && section != 'mode' && section != 'inline-info' && section != action && section != value) {
+			if (c.split(/-/).slice(-1) == 'expanded' && ['mode','share','convo','inline-info',action,value].indexOf(section) === -1) {
 				document.querySelector(".toolbar-container").removeClass(c);
 				var v = document.querySelector('#' + section);
 				if (v)
@@ -1002,6 +1014,7 @@ var Toolbar = {
 
 		// share contacts search
 		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
 			this.validateShareSearch();
 			if(this.shareContactList) {
 				var contactIds = this.shareContactList.search(e.target.value),
@@ -1017,6 +1030,7 @@ var Toolbar = {
 
 		// convo contacts search
 		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
 			this.validateConvoSearch();
 			if(this.convoContactList) {
 				var contactIds = this.convoContactList.search(e.target.value),
