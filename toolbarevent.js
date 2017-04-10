@@ -958,6 +958,8 @@ ToolbarEvent.su = function(request, sender) {
 	else
 		var promise = Promise.resolve();
 	promise.then(function() {
+		if (!config.authed && config.suPagesNeedAuth.includes(request.data.value))
+			return Promise.reject();
 		chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
 	}).catch(function() {
 		chrome.tabs.create({ url: config.suPages['signin'].form(config) });
