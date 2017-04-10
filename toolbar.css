@@ -271,13 +271,13 @@ input.invalid:focus {
 .toolbar-action-container .action-inbox.enabled {
 	background-image: url("asset/Inbox Enabled.svg");
 }
-.toolbar-action-container .action-info {
+.default-icon-gray {
 	background-image: url("asset/Icon/Info.svg");
 	-webkit-filter: grayscale(100%) brightness(150%);
     filter: grayscale(100%) brightness(150%);
 	
 }
-#info.on {
+.default-icon-gray.on {
 	-webkit-filter: none !important;
     filter: none !important;
 }

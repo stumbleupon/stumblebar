@@ -104,9 +104,11 @@ var Toolbar = {
 		document.querySelector("#inline-info-body").appendChild(messageElem);
 
 		document.querySelector("#info").removeClass("on");
+		document.querySelector("#dislike-menu").removeClass("on");
 		document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !url.urlid);
 		if (url.urlid) {
 			document.querySelector("#info").addClass("on");
+			document.querySelector("#dislike-menu").addClass("on");
 			document.querySelector("#domain").innerText = uriToDomain(url.url);
 			document.querySelector(".toolbar-entry-stumble-domain").changeClass('hidden', !uriToDomain(url.url));
 		}
@@ -569,6 +571,9 @@ var Toolbar = {
 					v.removeClass('enabled');
 			}
 		});
+		if (action == 'expand' && value == 'dislike-menu' && !Toolbar.url.urlid) {
+			return false;
+		}
 		if (action == 'cancel-bubble') {
 			return false;
 		}
