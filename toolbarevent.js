@@ -164,7 +164,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			ToolbarEvent._notify("Blocked");
+			ToolbarEvent._notify("Domain Blocked");
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.blockSite(urlid);
@@ -363,7 +363,7 @@ ToolbarEvent.addToList = function(request, sender) {
 			return ToolbarEvent.api.addToList(request.data.listid || request.data.list.id, urlid);
 		})
 		.then(function(item) {
-			ToolbarEvent._notify("Added to list " + (request.data.listname || request.data.list.name), sender.tab.id);
+			ToolbarEvent._notify("Added to " + (request.data.listname || request.data.list.name), sender.tab.id) + " List";
 			return ToolbarEvent._buildResponse({ listitem: item, list: request.data.list });
 		});
 }
