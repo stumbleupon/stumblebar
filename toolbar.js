@@ -163,7 +163,7 @@ var Toolbar = {
 			else
 				name = suname;
 			personMap[person.id] = name;
-			if (person.suUserID == Toolbar.config.authed)
+			if (person.suUserId == Toolbar.config.authed)
 				myConvoId = person.id;
 		});
 
@@ -177,11 +177,13 @@ var Toolbar = {
 
 			var poster = null;
 			entryNode.querySelector('.convo-entry-user').innerText = personMap[entry.createdBy];
-			entryNode.changeClass('.convo-me', entry.createdBy == myConvoId);
+			entryNode.changeClass('convo-me', entry.createdBy == myConvoId);
+			entryNode.changeClass('entry-background',          !convo.participants || entry.createdBy == myConvoId);
+			entryNode.changeClass('entry-background-secondary', convo.participants && entry.createdBy != myConvoId);
 			if (!convo.participants) {
 				poster = 'You';
 				entryNode.querySelector('.convo-entry-user').innerText = 'You';
-				entryNode.addClass('.convo-me');
+				entryNode.addClass('convo-me');
 			}
 
 			entryNode.querySelector('.convo-entry-date').innerText = reldate(entry.createdAt, 's').text;

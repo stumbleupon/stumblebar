@@ -183,6 +183,10 @@ input.invalid:focus {
 	margin-left: 44px;
 	position: relative;
 }
+.toolbar-section-unbound {
+	margin-left: 33px;
+	padding-right: 0;
+}
 .toolbar:not(.mini-mode) .toolbar-section {
 	min-width: 240px;
 }
@@ -633,6 +637,19 @@ input.invalid:focus {
 	bottom: 0;
 	opacity: 0.777;
 }
+.theme-dark-sidebar .entry-background {
+	background-color: white;
+}
+.theme-dark-sidebar .entry-background-secondary {
+	background-color: #ddd;
+}
+.theme-dark-sidebar .alternate-colors {
+	background: white;
+}
+.theme-dark-sidebar .alternate-colors > div:nth-of-type(odd) {
+	background: #ddd;
+}
+
 .theme-dark-sidebar .toolbar-background {
 	background-color: white;
 	opacity: 0.777;
@@ -705,6 +722,12 @@ input.invalid:focus {
 	border-style: solid !important;
 	border-color: #ccc !important;
 }
+.theme-all-light .alternate-colors {
+	background: #fff;
+}
+.theme-all-light .alternate-colors > div:nth-of-type(odd) {
+	background: #ddd;
+}
 .theme-all-light .toolbar-logo-container {
 	/*
 	position: relative;
@@ -762,6 +785,18 @@ input.invalid:focus {
 	bottom: 0;
 	opacity: 0.777;
 */
+}
+.theme-all-dark .entry-background {
+	background-color: black;
+}
+.theme-all-dark .entry-background-secondary {
+	background-color: #333;
+}
+.theme-all-light .alternate-colors {
+	background: #000;
+}
+.theme-all-light .alternate-colors > div:nth-of-type(odd) {
+	background: #333;
 }
 .theme-all-dark .toolbar-background {
 	background-color: #111;
@@ -988,10 +1023,6 @@ input.invalid:focus {
 	-webkit-animation: rotation 2s infinite linear;
 }
 
-.toolbar-convo-container {
-	padding-right: 1em;
-}
-
 .inbox-container, .convo-container, .lists-container, .interests-container, .keywords-container {
 	max-height: 140px;
 	display: block;
@@ -1161,14 +1192,20 @@ input.invalid:focus {
 	white-space: normal;
 	width: 100%;
 	display: inline-block;
+	padding: 1em 12px;
+	box-sizing: border-box;
+}
+
+.convo-container .convo-entry.convo-me {
+	text-align: right;
 }
 
 .convo-container .convo-entry-user {
 	font-weight: bold;
 }
 .convo-container .convo-entry-date {
-	float: right;
 	font-style: italic;
+	font-size: 0.666em;
 }
 
 .convo-container .convo-entry-title {
@@ -1189,8 +1226,8 @@ input.invalid:focus {
 }
 
 .convo-container .convo-entry-body {
-	margin: .5em .5em 1.5em .5em;
 	display: block;
+	margin: .25em 0;
 	clear: both;
 }
 
@@ -1351,15 +1388,6 @@ INPUT[type="text"] {
 
 .toolbar-section-header {
 	font-weight: bold;
-}
-
-.alternate-colors {
-	background: #ffffff;
-	color: black;
-}
-.alternate-colors > div:nth-of-type(odd) {
-	background: #e0e0e0;
-	color: black;
 }
 
 .convo-response-container INPUT {
