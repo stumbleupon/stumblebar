@@ -31,6 +31,7 @@ config.interests = [];
 config.unloadNonVisibleBars = false;
 
 config.miniModeTimeout = 500;
+config.suPagesNeedAuth = ['profile', 'settings', 'interests'];
 config.suPages = {
 	profile:   ':baseProto://:baseUrl/stumbler',
 	settings:  ':baseProto://:baseUrl/settings',

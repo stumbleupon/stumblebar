@@ -953,7 +953,15 @@ ToolbarEvent.oneBar = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.su = function(request, sender) {
-	chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+	if (config.suPagesNeedAuth.includes(request.data.value))
+		var promise = ToolbarEvent.ping();
+	else
+		var promise = Promise.resolve();
+	promise.then(function() {
+		chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+	}).catch(function() {
+		chrome.tabs.create({ url: config.suPages['signin'].form(config) });
+	});
 };
 
 /*************** END STATE *****************/
