@@ -1009,7 +1009,7 @@ input.invalid:focus {
 	*/
 }
 .inbox-entry.read * {
-	opacity: 0.25;
+	opacity: 0.666;
 }
 .inbox-entry-user {
 	font-weight: bold;
