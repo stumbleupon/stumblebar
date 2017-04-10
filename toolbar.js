@@ -288,14 +288,21 @@ var Toolbar = {
 			document.querySelector("#toolbar").addClass('theme-' + config.theme);
 			document.querySelectorAll(".action-theme").forEach(function(elem) {
 				elem.removeClass('enabled');
+				try {
+					document.querySelector("#" + elem.id + "-radio").checked = null;
+					delete document.querySelector("#" + elem.id + "-radio").checked;
+				} catch(e) {}
 			});
 			try {
-			document.querySelector("#theme-" + config.theme).addClass('enabled');
+				document.querySelector("#theme-" + config.theme + "-radio").checked = "checked";
+				document.querySelector("#theme-" + config.theme).addClass('enabled');
 			} catch(e) {}
 		}
 
 		document.querySelector('.action-stay-expanded').changeClass('enabled', config.stayExpanded);
+		document.querySelector('#action-stay-expanded-checkbox').checked = config.stayExpanded ? "checked" : null;
 		document.querySelector('.action-one-bar').changeClass('enabled', config.unloadNonVisibleBars);
+		document.querySelector('#action-one-bar-checkbox').checked = config.unloadNonVisibleBars ? "checked" : null;
 
 		if (config.interests && config.interests.length)
 			Toolbar.handleInterests(config.interests);

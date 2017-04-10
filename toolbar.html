@@ -310,27 +310,26 @@
 
 
 					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hide-when-share-expanded show-when-settings-expanded">
+						<div class="toolbar-entry-container	larger-font">
+							<span class="toolbar-version-container">Version <span id="toolbar-version"></span></span>
+							StumbleBar Settings
+						</div>
 						<div class="toolbar-entry-container">
-							Theme
-							<ul>
-								<li class="toolbar-action action-theme clickable" id="theme-dark-sidebar" action="theme" value="dark-sidebar">dark-sidebar</li>
-						<!--
-								<li class="toolbar-action action-theme clickable" id="theme-all-light"    action="theme" value="all-light"   >all-light</li>
-						-->
-								<li class="toolbar-action action-theme clickable" id="theme-all-dark"     action="theme" value="all-dark"    >all-dark</li>
-							</ul>
+							<form>
+								<div class="toolbar-action toolbar-entry-list-item action-theme clickable" id="theme-dark-sidebar" action="theme" value="dark-sidebar"><input type="radio" id="theme-dark-sidebar-radio" value="dark-sidebar" name="theme"> Dark Sidebar Theme</div>
+								<div class="toolbar-action toolbar-entry-list-item action-theme clickable" id="theme-all-dark"     action="theme" value="all-dark"    ><input type="radio" id="theme-all-dark-radio"     value="all-dark"     name="theme"> All-Dark Theme</div>
+							</form>
+						</div>
+						<div class="toolbar-entry-container toolbar-border-top">
+							<div class="toolbar-action toolbar-entry-list-item action-one-bar clickable" action="one-bar"><input id="action-one-bar-checkbox" type="checkbox"> Single Bar Mode</div> 
+							<div class="toolbar-action toolbar-entry-list-item action-stay-expanded  clickable" action="stay-expanded"><input id="action-stay-expanded-checkbox" type="checkbox"> Always Expanded</div> 
+							<div class="toolbar-action toolbar-entry-list-item action-hide clickable" action="hide-toolbar">Hide Extension</div> 
 						</div>
 						<div class="toolbar-entry-container toolbar-border-top">
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-settings clickable" action="su" value="settings">My Settings</div> 
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-profile  clickable" action="su" value="profile">My Profile</div> 
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-help     clickable" action="su" value="help">Help</div>
 							<div class="toolbar-action toolbar-entry-list-item action-su action-su-signout  clickable" action="signout">Sign Out</div> 
-						</div>
-						<div class="toolbar-entry-container toolbar-border-top">
-							<div class="toolbar-action toolbar-entry-list-item action-one-bar clickable" action="one-bar">Single Bar Mode</div> 
-							<div class="toolbar-action toolbar-entry-list-item action-stay-expanded  clickable" action="stay-expanded">Stay Expanded</div> 
-							<span class="toolbar-version-container">Version <span id="toolbar-version"></span></span>
-							<div class="toolbar-action toolbar-entry-list-item action-hide clickable" action="hide-toolbar">Hide Extension</div> 
 						</div>
 						<span class="clickable collapse-icon vertical" action="expand" value="settings"></span>
 					</div>
