@@ -1252,6 +1252,12 @@ INPUT[type="text"] {
 	min-height: 16px;
 }
 
+.inbox-no-entries {
+	color: #888;
+	font-style: italic;
+	margin: 1em 0;
+}
+
 .toolbar-settings-container .collapse-icon {
 	position: absolute;
 	left: 0;
