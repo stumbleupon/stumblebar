@@ -393,7 +393,7 @@ var Toolbar = {
 			entryNode.querySelector('.inbox-entry-date').value        = entry.occurred;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
-			entryNode.changeClass('unread', !entry.read);
+			entryNode.changeClass('read', entry.read);
 
 			document.querySelector('#inbox-container').insertBefore(entryNode, (inbox.position == 'prepend') ? document.querySelector('#inbox-container').firstChild : null);
 		});

@@ -1002,8 +1002,17 @@ input.invalid:focus {
 	border-bottom: 1px solid #888;
 }
 
-.inbox-entry.unread {
-	background-color: blue;
+.inbox-entry.read {
+	/*
+	background-color: #e0e0e0;
+	color: black;
+	*/
+}
+.inbox-entry.read * {
+	opacity: 0.25;
+}
+.inbox-entry-user {
+	font-weight: bold;
 }
 
 .inbox-container SPAN {
