@@ -182,3 +182,9 @@ function debounce(fn, delay) {
 function isScalar(x) {
 	return (/string|number|boolean/).test(typeof x);
 }
+
+
+function isEmailAddress(string) {
+	var emailRE = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+	return emailRE.test(string);
+}

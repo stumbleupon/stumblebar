@@ -32,6 +32,7 @@ var Toolbar = {
 	},
 
 	handleError: function(error, sourceEl) {
+		this._errorIsShowing = true;
 		Toolbar._stateCleanup();
 		clearTimeout(Toolbar.state.errorMessageDisplay);
 		document.querySelector('.error-message').removeClass('hidden');
@@ -41,6 +42,17 @@ var Toolbar = {
 			document.querySelector('.error-message').innerText = error;
 		document.querySelector('.error-message').addEventListener('mousedown', function() { document.querySelector('.error-message').addClass('hidden') });
 		//Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
+	},
+
+	clearError: function _clearError(error, sourceEl) {
+		if(!this._errorIsShowing) {
+			return;
+		}
+		this._errorIsShowing = false;
+		document.querySelector("#stumble").addClass("enabled");
+		document.querySelector('.error-message').addClass('hidden');
+		document.querySelector('.error-message').innerText = '';
+
 	},
 
 	handleNotify: function(message) {
@@ -222,7 +234,10 @@ var Toolbar = {
 			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
 	},
 	updateConvoParticipants: function _updateConvoParticipants() {
-		var attributeMap = [
+		var searchEl = document.querySelector('#convo-contacts-search'),
+			contactsEl = document.querySelector('#convo-contacts-container'),
+			contactIds = this.convoContactList.search(searchEl.value),
+			attributeMap = [
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
@@ -234,14 +249,16 @@ var Toolbar = {
 		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {
 			return contact.isParticipant();
 		}, true);
-		var csvEl = document.querySelector('#convo-recipients-list .convo-recipients-csv');
+		var csvEl = document.querySelector('#convo-recipients-csv');
 		if(csvEl) {
 			csvEl.remove();
 		}
-		newFromTemplate('convo-recipients-csv-stub', {innerText: participantsCsv}, 'convo-recipients-list');
+		newFromTemplate('convo-recipients-csv-stub', {innerText: participantsCsv, id: 'convo-recipients-csv'}, 'convo-recipients-csv-container');
 		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
-			return !contact.isParticipant() && contact.isMine();
+			return (contactIds.indexOf(contact.id) > -1) && !contact.isParticipant() && contact.isMine();
 		});
+		contactsEl.style.setProperty('display', (searchEl.value.length > 0) ? 'block' : 'none');
+		this.handleRedraw();
 	},
 
 	handleConvoContacts: function(convoContacts) {
@@ -538,13 +555,16 @@ var Toolbar = {
 	handleImmediateAction: function(action, value, elem) {
 		document.querySelector(".toolbar-container").className.split(/ /).forEach(function(c) {
 			var section = c.split(/-/).slice(0, -1).join('-');
-			if (c.split(/-/).slice(-1) == 'expanded' && section != 'mode' && section != 'inline-info' && section != action && section != value) {
+			if (c.split(/-/).slice(-1) == 'expanded' && ['mode','share','convo','inline-info',action,value].indexOf(section) === -1) {
 				document.querySelector(".toolbar-container").removeClass(c);
 				var v = document.querySelector('#' + section);
 				if (v)
 					v.removeClass('enabled');
 			}
 		});
+		if (action == 'cancel-bubble') {
+			return false;
+		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector("#stumble").addClass("enabled");
 			document.querySelector(".toolbar-container").removeClass("mode-expanded");
@@ -554,6 +574,7 @@ var Toolbar = {
 		}
 		if (action == 'toggle-class') {
 			elem.toggleClass(value);
+			this.handleRedraw();
 			return false;
 		}
 		if (action == 'inbox') {
@@ -599,7 +620,7 @@ var Toolbar = {
 		}
 		if (action == 'share-add-contact') {
 			// make the contact a participant
-			this.addParticipant(value, elem);
+			this.addParticipant(value);
 			elem.toggleClass("enabled");
 		}
 		if (action == 'share-delete-contact') {
@@ -631,10 +652,10 @@ var Toolbar = {
 			document.querySelector("#convo-reply").value = '';
 		}
 		if (action == 'convo-show-contacts') {
-			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+			document.querySelector('#convo-contacts-container').toggleClass("hidden");
 		}
 		if (action == 'convo-add-recipient') {
-			document.querySelector('.convo-contacts-container').toggleClass("hidden");
+			document.querySelector('#convo-contacts-container').toggleClass("hidden");
 			return this.getNewConvoParticipantData(value);
 		}
 		if (action == 'save-share') {
@@ -686,7 +707,7 @@ var Toolbar = {
 		data.initialMessage = document.querySelector('#toolbar-share-comment').value;
 		return data;
 	},
-	validateShare: function validateShare() {
+	validateShare: function _validateShare() {
 		// make sure there are some recipients
 		var recipients = this.shareContactList.find(function(contact) {
 			return contact.isParticipant() && contact.isMine();
@@ -705,17 +726,72 @@ var Toolbar = {
 		canMiniMode:   false,
 		inMiniMode:    false,
 	},
-	addParticipant: function toolbarAddParticipant(value, sourceEl) {
-		var id = sourceEl.getAttribute('value'),
-			contact = this.shareContactList.get(id);
-		contact.setParticipant(true);
-		this.updateShare();
+	/**
+	 * use html5 input validation api to manage the search input for share participants
+	 */
+	validateShareSearch: function _validateShareSearch() {
+		var searchEl = document.querySelector('#share-contacts-search'),
+			qs = searchEl.value,
+			contactIds = this.shareContactList.search(qs);
+		if(isEmailAddress(qs) || contactIds.length === 1) {
+			searchEl.setCustomValidity('');
+		} else {
+			searchEl.setCustomValidity('input requires a valid email address or an existing contact');
+		}
+	},
+	/**
+	 * use html5 input validation api to manage the search input for conversation participants
+	 */
+	validateConvoSearch: function _validateConvoSearch() {
+		var searchEl = document.querySelector('#convo-contacts-search'),
+			qs = searchEl.value,
+			contactIds = this.convoContactList.search(qs);
+		if(isEmailAddress(qs) || contactIds.length === 1) {
+			searchEl.setCustomValidity('');
+		} else {
+			searchEl.setCustomValidity('input requires a valid email address or an existing contact');
+		}
+	},
+	/**
+	 * Add a contact from the existing contacts to the participants
+	 * @param {string} id -- id of the contact to add
+	 */
+	addParticipant: function _addParticipant(id) {
+		var contact = this.shareContactList.get(id);
+		if(contact) {
+			contact.setParticipant(true);
+			this.updateShare();
+		}
+	},
+	/**
+	 * Validate the input is a username or email address and call the correct method to add the person to the participants
+	 * @param nameOrEmail
+	 */
+	addShare: function _addShare(nameOrEmail) {
+		var contactIds = this.shareContactList.search(nameOrEmail);
+		if(contactIds.length === 1) {
+			this.addParticipant(contactIds[0]);
+		} else if(isEmailAddress(nameOrEmail)) {
+			this.addShareEmail(nameOrEmail);
+		}
 	},
 	addShareEmail: function _addShareEmail(emailAddress) {
 		Toolbar.dispatch('newEmailContact', emailAddress); // signal the background to add this asynchronously to the cached contacts list
 		var contact = this.shareContactList.add(encodeURIComponent(emailAddress), emailAddress, true, 'email');
 		contact.setParticipant(true);
 		this.updateShare();
+	},
+	addConvoParticipant: function _addConvoParticipant(nameOrEmail) {
+		var contactIds = this.convoContactList.search(nameOrEmail);
+		if(contactIds.length === 1) {
+			this.addParticipantToConvo(contactIds[0]);
+		} else if(isEmailAddress(nameOrEmail)) {
+			this.addConvoEmail(nameOrEmail);
+		}
+	},
+	addParticipantToConvo: function _addParticipantToConvo(id) {
+		var data = this.getNewConvoParticipantData(id);
+		Toolbar.dispatch('convo-add-recipient', data);
 	},
 	addConvoEmail: function _addConvoEmail(emailAddress) {
 		Toolbar.dispatch('newEmailContact', emailAddress); // signal the background to add this asynchronously to the cached contacts list
@@ -738,16 +814,22 @@ var Toolbar = {
 	 * Redraw the share section's lists of contacts and recipients using current state of the contact list.
 	 */
 	updateShare: function updateShare() {
-		var attributeMap = [
-			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
-			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
-		];
+		var searchEl = document.querySelector('#share-contacts-search'),
+			contactsEl = document.querySelector('.toolbar-share-contacts-container'),
+			attributeMap = [
+				{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+				{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+			];
 		this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {
 			return !contact.isParticipant() && contact.isMine();
 		});
 		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {
 			return contact.isParticipant() && contact.isMine();
 		});
+		contactsEl.style.setProperty('display', (searchEl.value.length > 0) ? 'block' : 'none');
+		searchEl.value = '';
+		searchEl.focus();
+		this.handleRedraw();
 	},
 	handleMouseDown: function(e) {
 		if (e.target) {
@@ -932,6 +1014,8 @@ var Toolbar = {
 
 		// share contacts search
 		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
+			this.validateShareSearch();
 			if(this.shareContactList) {
 				var contactIds = this.shareContactList.search(e.target.value),
 					attributeMap = [
@@ -946,6 +1030,8 @@ var Toolbar = {
 
 		// convo contacts search
 		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
+			this.validateConvoSearch();
 			if(this.convoContactList) {
 				var contactIds = this.convoContactList.search(e.target.value),
 					attributeMap = [
@@ -959,65 +1045,67 @@ var Toolbar = {
 		}.bind(this));
 
 		// share contacts new email
-		document.querySelector('#toolbar-share-new-email').addEventListener('keyup', function(e) {
+		document.querySelector('#share-contacts-search').addEventListener('keyup', function(e) {
 			if(e.keyCode === 13) {
-				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
-					// @TODO set up validation feedback to user here
-					this.handleError(new Error('Invalid Email'));
+				if(e.target.validity.customError || e.target.validity.valueMissing) {
+					// enter key
+					this.handleError(new Error('Invalid Recipient'));
 					return false;
 				}
-				this.addShareEmail(e.target.value);
+				this.addShare(e.target.value);
+				e.target.value = '';
+				e.target.focus();
+			} else if(e.keyCode === 27) {
+				// escape key
 				e.target.value = '';
 				e.target.focus();
 			}
+			document.querySelector('.toolbar-share-contacts-container')
+				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
 		}.bind(this));
-		document.querySelector('#toolbar-share-new-email-add').addEventListener('click', function(e) {
-			var emailEl = document.querySelector('#toolbar-share-new-email');
-			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
-				// @TODO set up validation feedback to user here
-				this.handleError(new Error('Invalid Email'));
-				return false;
-			}
-			this.addShareEmail(emailEl.value);
-			emailEl.value = '';
-			emailEl.focus();
-		}.bind(this));
-
 		// convo contacts new email
-		document.querySelector('#toolbar-convo-new-email').addEventListener('keyup', function(e) {
+		document.querySelector('#convo-contacts-search').addEventListener('keyup', function(e) {
 			if(e.keyCode === 13) {
-				if(e.target.validity.typeMismatch || e.target.validity.valueMissing) {
-					// @TODO set up validation feedback to user here
-					this.handleError(new Error('Invalid Email'));
+				if(e.target.validity.customError || e.target.validity.valueMissing) {
+					// enter key
+					this.handleError(new Error('Invalid Recipient'));
 					return false;
 				}
-				var email = e.target.value;
-				this.addConvoEmail(email);
-				var data = {
-					conversationId:document.querySelector('#convo-id').value,
-					emails:[email]
-				};
-				Toolbar.dispatch('convo-add-recipient', data);
+				this.addConvoParticipant(e.target.value);
+				e.target.value = '';
+				e.target.focus();
+			} else if(e.keyCode === 27) {
+				// escape key
 				e.target.value = '';
 				e.target.focus();
 			}
+			document.querySelector('#convo-contacts-container')
+				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
 		}.bind(this));
-		document.querySelector('#convo-new-email-add').addEventListener('click', function(e) {
-			var emailEl = document.querySelector('#toolbar-convo-new-email');
-			if(emailEl.validity.typeMismatch || emailEl.validity.valueMissing) {
-				// @TODO set up validation feedback to user here
-				this.handleError(new Error('Invalid Email'));
-				return false;
+		this.convoContactExpansionObserver = new MutationObserver(function(mutations) {
+			console.log(mutations);
+			if(mutations[0].target.classList.contains('expanded')) {
+				window.setTimeout(function() {
+					document.querySelector('#convo-contacts-search').focus()
+				}, 0);
 			}
-			var email = emailEl.value;
-			this.addConvoEmail(email);
-			var data = {
-				conversationId:document.querySelector('#convo-id').value,
-				emails:[email]
-			};
-			Toolbar.dispatch('convo-add-recipient', data);
-			emailEl.value = '';
-			emailEl.focus();
+		});
+		this.convoContactExpansionObserver.observe(
+			document.querySelector('.convo-recipients-container'),
+			{attributes: true, attributFilter: ['class']}
+		);
+		document.querySelector('#share-contacts-search').addEventListener('focus', function(e) {
+			document.querySelector('.toolbar-share-contacts-container')
+				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
+			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', true);
+		}.bind(this));
+		document.querySelector('#convo-contacts-search').addEventListener('focus', function(e) {
+			document.querySelector('.convo-recipients-container').classList.toggle('active', true);
+		}.bind(this));
+		document.querySelector('#share-contacts-search').addEventListener('blur', function(e) {
+			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', false);
+		}.bind(this));
+		document.querySelector('#convo-contacts-search').addEventListener('blur', function(e) {
 		}.bind(this));
 
 		// Hack for chrome to handle disappearing SVG background images

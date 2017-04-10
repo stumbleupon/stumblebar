@@ -228,20 +228,20 @@
 							</div>
 							<span class="btn float-right btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
 						</div>
-						<div class="convo-recipients-container toolbar-border-top">
-							<div id="convo-recipients-list" action="toggle-class" value="expanded"></div>
-						</div>
-						<span class="icon clickable show-contacts" title="Invite contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
-						<div class="toolbar-container-section convo-contacts-container toolbar-border-top hidden">
-							<!-- a search input -->
-							<input type="search" id="convo-contacts-search" placeholder="search">
-							<!-- the list of contacts to be invited -->
-							<label for="convo-contacts-list">Contacts</label><br>
-							<ul id="convo-contacts-list" class="scrollable">
-							</ul>
-							<label for="toolbar-convo-new-email">New email recipient</label><br>
-							<input type="email" id="toolbar-convo-new-email" class="add-email-contact convo" required>
-							<button class="btn secondary-background" id="convo-new-email-add">+</button>
+						<div class="convo-recipients-container" action="toggle-class" value="expanded">
+							<div id="convo-recipients-csv-container"></div>
+							<div class="convo-recipients-list-container" action="cancel-bubble">
+
+								<div id="convo-recipients-list"></div>
+								<!-- a search input -->
+								<input type="search" id="convo-contacts-search" placeholder="search">
+								<div class="clearfix"></div>
+							</div>
+							<div id="convo-contacts-container" class="toolbar-container-section convo-contacts-container">
+								<!-- the list of contacts to be invited -->
+								<ul id="convo-contacts-list" class="scrollable">
+								</ul>
+							</div>
 						</div>
 
 						<span class="clickable close-icon show-when-convo-expanded" title="Close conversation" action="close-convo"></span>
@@ -268,20 +268,17 @@
 							<label for="toolbar-share-comment">Say something</label><br>
 							<textarea id="toolbar-share-comment">Check this out</textarea>
 						</div>
-						<div class="toolbar-share-container-section toolbar-share-recipients-container toolbar-border-top">
+						<div class="toolbar-share-container-section toolbar-share-recipients-container">
 							<!-- contacts who have been selected for share -->
 							<div id="toolbar-share-recipients-list"></div>
-						</div>
-						<div class="toolbar-share-container-section toolbar-share-contacts-container toolbar-border-top ">
 							<!-- a search input -->
 							<input type="search" id="share-contacts-search" placeholder="search">
-							<!-- the list of contacts to be invited -->
-							<label for="toolbar-share-contacts-list">Contacts</label><br>
-							<ul id="toolbar-share-contacts-list" class="scrollable">
-							</ul>
-							<label for="toolbar-share-new-email">New email recipient</label><br>
-							<input type="email" id="toolbar-share-new-email" class="add-email-contact share" required>
-							<button class="btn secondary-background" id="toolbar-share-new-email-add">+</button>
+							<div class="clearfix"></div>
+							<div id="toolbar-share-contacts-container" class="toolbar-share-container-section toolbar-share-contacts-container">
+								<!-- the list of contacts to be invited -->
+								<ul id="toolbar-share-contacts-list" class="scrollable">
+								</ul>
+							</div>
 						</div>
 						<div class="toolbar-share-container-section toolbar-share-buttons-container">
 							<!-- buttons to initiate actions -->
