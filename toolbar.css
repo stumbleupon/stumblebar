@@ -798,10 +798,10 @@ input.invalid:focus {
 .theme-all-dark .entry-background-secondary {
 	background-color: #333;
 }
-.theme-all-light .alternate-colors {
+.theme-all-dark .alternate-colors {
 	background: #000;
 }
-.theme-all-light .alternate-colors > div:nth-of-type(odd) {
+.theme-all-dark .alternate-colors > div:nth-of-type(odd) {
 	background: #333;
 }
 .theme-all-dark .toolbar-background {
