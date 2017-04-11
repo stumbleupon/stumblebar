@@ -430,6 +430,13 @@ ToolbarEvent.inbox = function(request, sender) {
 
 
 ToolbarEvent.pendingUnread = function(request, sender) {
+	// Handle 30 second cache timeout at proxy layer
+	if (ToolbarEvent._lastUnreadUpdate && Date.now() - ToolbarEvent._lastUnreadUpdate > 30 * 1000) {
+		ToolbarEvent._lastUnreadUpdate = 0;
+		ToolbarEvent._lastUnreadCount  = 0;
+		return ToolbarEvent._buildResponse({ }, true);
+	}
+	ToolbarEvent._lastUnreadUpdate = Date.now();
 	return ToolbarEvent.api.getPendingUnread().then(function(info) {
 		ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
 		return ToolbarEvent._buildResponse({ }, true);
@@ -607,6 +614,12 @@ ToolbarEvent.newEmailContact = function _newEmailContact(request, sender) {
  */
 ToolbarEvent.openConvo = function(request, sender) {
 	if (request.data.actionid) {
+		if (!request.data.read) {
+			ToolbarEvent._lastUnreadUpdate = Date.now();
+			ToolbarEvent._lastUnreadCount  = (ToolbarEvent._lastUnreadCount || 0) + 1;
+			ToolbarEvent.cache.mset({ numShares: config.numShares = Math.max((config.numShares || 0) - 1, 0) });
+		}
+
 		ToolbarEvent.api.markActivityAsRead(request.data.actionid)
 			.then(ToolbarEvent.pendingUnread);
 	}

@@ -383,7 +383,7 @@ var Toolbar = {
 			entryNode.setAttribute('convourl', entry.conversationDetails.originator.conversationUrl);
 			entryNode.id = entry.conversationDetails.id;
 			entryNode.setAttribute('actionid', entry.id);
-			entryNode.setAttribute('values', 'urlid,id,actionid,url=convourl');
+			entryNode.setAttribute('values', 'urlid,id,actionid,url=convourl,read');
 			if (entry.urlId)
 				entryNode.setAttribute('urlid',  entry.urlId);
 			entryNode.removeClass('stub');
@@ -393,13 +393,12 @@ var Toolbar = {
 				entryNode.querySelector('.inbox-entry-user').innerText = 'Me';
 			else
 				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
-			//else if (entry.conversationDetails.participants)
-			//	entryNode.querySelector('.inbox-entry-user').innerText = (entry.conversationDetails.participants[0].suUserName || entry.conversationDetails.participants[0].suUserId || entry.conversationDetails.participants[0].email) + ((entry.conversationDetails.participants.length > 1) ? '...' : '');
 			entryNode.querySelector('.inbox-entry-date').innerText    = reldate(entry.occurred, 's').text;
 			entryNode.querySelector('.inbox-entry-date').value        = entry.occurred;
 			entryNode.querySelector('.inbox-entry-snippet').innerText = entry.message;
 
 			entryNode.changeClass('read', entry.read);
+			entryNode.setAttribute('read', entry.read ? "1" : "0");
 
 			document.querySelector('#inbox-container').insertBefore(entryNode, (inbox.position == 'prepend') ? document.querySelector('#inbox-container').firstChild : null);
 		});
@@ -580,6 +579,12 @@ var Toolbar = {
 		}
 		if (action == 'cancel-bubble') {
 			return false;
+		}
+		if (action == 'open-convo') {
+			if (!elem.hasClass('read'))
+				document.querySelector("#inbox .badge").innerText = (document.querySelector("#inbox .badge").innerText <= 1) ? '' : (parseInt(document.querySelector("#inbox .badge").innerText) - 1);
+			elem.addClass('read');
+			elem.setAttribute('read', "1");
 		}
 		if (action == 'stumble' || action == 'mode') {
 			document.querySelector("#stumble").addClass("enabled");
