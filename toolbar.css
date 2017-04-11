@@ -962,7 +962,7 @@ input.invalid:focus {
 	display: none;
 }
 
-.enabled .badge, .badge.enabled {
+.badge {
 	/*
 	position: absolute;
 	top: 0;
@@ -986,6 +986,9 @@ input.invalid:focus {
 	background-color: #E94A2F;
 	border-radius: 6px;
 	line-height: 1;
+}
+.badge:empty {
+	display: none;
 }
 
 
