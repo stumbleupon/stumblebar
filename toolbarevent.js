@@ -431,12 +431,11 @@ ToolbarEvent.inbox = function(request, sender) {
 
 ToolbarEvent.pendingUnread = function(request, sender) {
 	// Handle 30 second cache timeout at proxy layer
-	if (ToolbarEvent._lastUnreadUpdate && Date.now() - ToolbarEvent._lastUnreadUpdate > 30 * 1000) {
-		ToolbarEvent._lastUnreadUpdate = 0;
-		ToolbarEvent._lastUnreadCount  = 0;
+	if (ToolbarEvent._lastUnreadUpdate && Date.now() - ToolbarEvent._lastUnreadUpdate <= 30 * 1000) {
 		return ToolbarEvent._buildResponse({ }, true);
 	}
 	ToolbarEvent._lastUnreadUpdate = Date.now();
+	ToolbarEvent._lastUnreadCount  = 0;
 	return ToolbarEvent.api.getPendingUnread().then(function(info) {
 		ToolbarEvent.cache.mset({ numShares: config.numShares = info.unread });
 		return ToolbarEvent._buildResponse({ }, true);
