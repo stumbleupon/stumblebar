@@ -77,7 +77,7 @@ BODY.top-handed {
 	display: flex;
 }
 
-.toolbar-action-container .toolbar-action:hover {
+.toolbar-action-container .toolbar-action:not(.default-icon-gray):hover {
 	border-radius: 4px;
 	box-shadow: 0 0 2px #888;
 }
