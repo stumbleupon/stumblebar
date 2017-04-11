@@ -1121,6 +1121,10 @@ ToolbarEvent._generateModeInfo = function(request, sender) {
 	return config.modeinfo;
 }
 
+ToolbarEvent.mouse = function(request, sender) {
+	console.log(request, sender.tab.id);
+	return ToolbarEvent._buildResponse(request, sender.tab.id);
+}
 
 
 

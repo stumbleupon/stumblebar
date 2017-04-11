@@ -22,7 +22,7 @@ DragNDrop.prototype = {
 
 	init: function() {
 		this.communicateMouseMove = debounce(function() {
-			this.sendToIframe({mouse: this.mpos });
+			this.sendToBackground({mouse: this.mpos, action: 'mouse'});
 		}.bind(this), 100);
 
 		window.addEventListener("mousemove", this.mouseMoveHandler = this.handleMouseMove.bind(this));
@@ -39,7 +39,7 @@ DragNDrop.prototype = {
 		this.messageSendFailCallback = cb;
 	},
 
-	sendToIframe: function(msg) {
+	sendToBackground: function(msg) {
 		try {
 			chrome.runtime.sendMessage(msg, function(response) {});
 		} catch(e) {
@@ -189,7 +189,7 @@ DragNDrop.prototype = {
 			rpos.hside = 'right';
 		}
 		this.handleRepos(rpos);
-		this.sendToIframe({action: 'repos', from: 'bar', data: { rpos: rpos } }, true);
+		this.sendToBackground({action: 'repos', from: 'bar', data: { rpos: rpos } }, true);
 	},
 
 	handleHoverMessage: function(message) {

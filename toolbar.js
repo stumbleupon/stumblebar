@@ -430,7 +430,7 @@ var Toolbar = {
 		if (r && r.url)
 			Toolbar.handleUrl(r.url);
 		Object.keys(r || {}).forEach(function _eachResponseKey(key) {
-			if (['config', 'url', 'all', 'data', 'event'].includes(key))
+			if (['action', 'config', 'url', 'all', 'data', 'event'].includes(key))
 				return;
 			var method = 'handle' + key.replace(/^./, function(x) { return x.toUpperCase() });
 			try {
