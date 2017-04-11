@@ -305,7 +305,8 @@ Page.urlChange = function(href, tabid, incog, state) {
 			return url && Page.getUrlByUrlid(url.urlid, config.mode);
 		})
 		.then(function(url) {
-			return url || (!incog && ToolbarEvent.api.getUrlByHref(href)) || Promise.reject(new ToolbarError('Page', 'nourl-incog', Page.tab[tabid])); // No URL fetching in private mode
+			//return url || (!incog && ToolbarEvent.api.getUrlByHref(href)) || Promise.reject(new ToolbarError('Page', 'nourl-incog', Page.tab[tabid])); // No URL fetching in private mode
+			return url || Promise.reject(new ToolbarError('Page', 'nourl', Page.tab[tabid])); // No URL fetching in general
 		})
 		.then(function(url) {
 			if (!incog)
