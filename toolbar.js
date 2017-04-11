@@ -176,13 +176,14 @@ var Toolbar = {
 			entryNode.removeClass('stub');
 
 			var poster = null;
+			var me = !convo.participants || entry.createdBy == myConvoId;
 			entryNode.querySelector('.convo-entry-user').innerText = personMap[entry.createdBy];
-			entryNode.changeClass('convo-me', entry.createdBy == myConvoId);
-			entryNode.changeClass('entry-background',          !convo.participants || entry.createdBy == myConvoId);
-			entryNode.changeClass('entry-background-secondary', convo.participants && entry.createdBy != myConvoId);
-			if (!convo.participants) {
-				poster = 'You';
-				entryNode.querySelector('.convo-entry-user').innerText = 'You';
+			entryNode.changeClass('convo-me', me);
+			entryNode.changeClass('entry-background',           me);
+			entryNode.changeClass('entry-background-secondary', !me);
+			if (me) {
+				poster = 'Me';
+				entryNode.querySelector('.convo-entry-user').innerText = 'Me';
 				entryNode.addClass('convo-me');
 			}
 
@@ -389,7 +390,7 @@ var Toolbar = {
 			entryNode.querySelector('.inbox-entry-image').style       = "background-image: url(" + entry.conversationDetails.thumbnail + ")";
 			entryNode.querySelector('.inbox-entry-title').innerText   = entry.conversationDetails.title;
 			if (entry.sourceUserId == Toolbar.config.authed)
-				entryNode.querySelector('.inbox-entry-user').innerText = 'You';
+				entryNode.querySelector('.inbox-entry-user').innerText = 'Me';
 			else
 				entryNode.querySelector('.inbox-entry-user').innerText = entry.conversationDetails.originator.suUserName || entry.conversationDetails.originator.suUserId || entry.conversationDetails.originator.email;
 			//else if (entry.conversationDetails.participants)
