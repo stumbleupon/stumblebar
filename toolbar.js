@@ -1070,7 +1070,7 @@ var Toolbar = {
 			if(e.keyCode === 13) {
 				if(e.target.validity.customError || e.target.validity.valueMissing) {
 					// enter key
-					this.handleError(new Error('Invalid Recipient'));
+					this.handleError(new Error('Invalid Email Address'));
 					return false;
 				}
 				this.addShare(e.target.value);
@@ -1089,7 +1089,7 @@ var Toolbar = {
 			if(e.keyCode === 13) {
 				if(e.target.validity.customError || e.target.validity.valueMissing) {
 					// enter key
-					this.handleError(new Error('Invalid Recipient'));
+					this.handleError(new Error('Invalid Email Address'));
 					return false;
 				}
 				this.addConvoParticipant(e.target.value);
