@@ -36,6 +36,7 @@ BODY.top-handed {
 	text-align: left;
 	overflow: hidden;
 	white-space: nowrap;
+	cursor: move;
 }
 .toolbar-background {
 	border-radius: 4px;
