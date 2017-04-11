@@ -1,4 +1,6 @@
 #!/bin/bash
+# Dependencies
+# npm install -g svgo chrome-webstore-manager web-ext
 
 set -ue
 
@@ -11,10 +13,19 @@ rm -rf target
 mkdir -p target
 mkdir -p artifact
 
+
+# Add tracked files to target
 git ls-tree -r master --name-only | while read FILE; do
 	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
 	if [[ "$(dirname "$FILE")" == "utils" ]]; then continue; fi
+	if [[ ( "$(dirname "$FILE")" == "assets" ) && ( "$(echo "$FILE" | grep "\.svg$")" ) ]]; then continue; fi
 	cp -rp {,target/}"$FILE"
+done
+
+
+# Convert SVGs to data
+cat toolbar.css | grep background.*asset/.*\.svg | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
+	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo -i - -o - --datauri=base64)~" target/toolbar.css
 done
 
 
@@ -33,6 +44,7 @@ fi
 #	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
 #fi
 echo -e "========= END Firefox\n\n\n"
+
 
 # Chrome
 echo -e "========= START Chrome"
