@@ -227,15 +227,16 @@ var Toolbar = {
 			document.querySelector('#convo-container').setAttribute('infinite-scroll-disabled', null);
 		}
 
-		this.convoContactList = new ContactList(Toolbar.config.authed);
-		this.convoContactList.reconstitute(convo.contacts);
-		this.updateConvoParticipants();
 		document.querySelector('.convo-loading').addClass('hidden');
 
-		if (convo.position) // Remember scroll position
+		if (convo.position != 'append') // Remember scroll position
 			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight - currentOffset;
 		else // Scroll to the bottom
 			document.querySelector('#convo-container').scrollTop = document.querySelector('#convo-container').scrollHeight;
+
+		this.convoContactList = new ContactList(Toolbar.config.authed);
+		this.convoContactList.reconstitute(convo.contacts);
+		this.updateConvoParticipants();
 	},
 	updateConvoParticipants: function _updateConvoParticipants() {
 		var searchEl = document.querySelector('#convo-contacts-search'),
