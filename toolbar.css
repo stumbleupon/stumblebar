@@ -187,6 +187,11 @@ input.invalid:focus {
 	margin-left: 33px;
 	padding-right: 0;
 }
+.toolbar-section-rebound DIV {
+	padding-left: 12px;
+	padding-right: 12px;
+	box-sizing: border-box;
+}
 .toolbar:not(.mini-mode) .toolbar-section {
 	min-width: 240px;
 }
@@ -883,6 +888,13 @@ input.invalid:focus {
 .toolbar-container.miscat-expanded .toolbar-section:not(.show-when-miscat-expanded):not(.always-show-during-expand) {
 	display: none;
 }
+.toolbar-container.new-list-expanded .toolbar-section:not(.show-when-new-list-expanded):not(.always-show-during-expand) {
+	display: none;
+}
+
+.toolbar-container:not(.new-list-expanded) .show-when-new-list-expanded:not(.enabled) {
+	display: none;
+}
 
 .toolbar-container:not(.inbox-expanded) .show-when-inbox-expanded:not(.enabled) {
 	display: none;
@@ -1273,6 +1285,10 @@ input.invalid:focus {
 
 .inset-input-container {
 	margin-bottom: 1.42em;
+}
+
+.inset-input-entry {
+	margin: .25em 0;
 }
 
 .lists-create-privacy {

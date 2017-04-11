@@ -151,7 +151,7 @@
 						</div>
 					</div>
 
-					<div class="toolbar-section toolbar-section-standalone toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode hide-when-share-expanded">
+					<div class="toolbar-section toolbar-section-unbound toolbar-section-rebound toolbar-section-standalone toolbar-lists-container toolbar-border-top show-when-lists-expanded hide-in-mini-mode hide-when-share-expanded">
 						<div class="default-color toolbar-section-header toolbar-border-bottom toolbar-entry-container hide-when-keywords-expanded" action="lists">
 							Lists
 							<span class="toolbar-expand-icon clickable toolbar-icon-right enabled" action="lists" title="Collapse"></span>
@@ -170,7 +170,7 @@
 						</div>
 
 						<span class="lists-container lists-create-container">
-							<div class="lists-entry lists-create-action clickable" action="toggle" value="lists-container,lists-create-action,lists-create-container">
+							<div class="lists-entry lists-create-action clickable" action="expand" value="new-list">
 								<span class="lists-entry-image primary-background"></span>
 								<span class="lists-entry-title">Create New List</span>
 								<span class="lists-entry-user"></span>
@@ -182,7 +182,11 @@
 						<span class="lists-container alternate-colors scrollable" id="lists-container">
 						</span>
 
-						<div class="lists-create-container hidden">
+					</div>
+
+
+					<div class="toolbar-section toolbar-section-standalone toolbar-new-list-container toolbar-border-top show-when-new-list-expanded hide-in-mini-mode hide-when-share-expanded">
+						<div class="lists-create-container">
 							<div class="inset-title">
 								List Name
 							</div>
@@ -199,7 +203,7 @@
 								</div>
 							</div>
 							<div class="lists-create-buttons">
-								<span class="btn btn-cancel clickable" action="toggle" id="list-add-cancel" value="lists-create-action,lists-container,lists-create-container">Cancel</span>
+								<span class="btn btn-cancel clickable" action="expand" id="list-add-cancel" value="new-list">Cancel</span>
 								<span class="btn btn-success clickable" action="add-list" id="list-send" values="name=#list-name,id=#list-id,comment=#list-name">Create</span>
 							</div>
 						</div>
