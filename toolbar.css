@@ -115,6 +115,7 @@ button.pill.delete:before {
 button.add-contact:not(.stub) {
 	display: list-item;
 	line-height: 19px;
+	width: 100%;
 }
 button.add-contact:not(.stub) .contact-thumbnail {
 	display: block;
@@ -138,15 +139,18 @@ input.invalid:focus {
 
 .icon.show-contacts {
 	display: inline-block;
-	/*
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	*/
+	float: right;
+	margin-right: 12px;
 	width: 24px;
 	height: 24px;
-	background-image: url('asset/Icon/add-participants.png');
+	background-image: url('asset/addUserInactive.svg');
 	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.active.icon.show-contacts {
+	background-image: url('asset/addUserActive.svg');
 }
 /*
 .toolbar-action {
@@ -201,8 +205,7 @@ input.invalid:focus {
 	display: flex;
 	flex-direction: row;
 }
-.toolbar-entry-container,
-.convo-recipients-csv {
+.toolbar-entry-container {
 	padding: 10px;
 	padding-left: 0px;
 }
@@ -382,7 +385,6 @@ input.invalid:focus {
 #toolbar-share-contacts-container,
 #convo-contacts-container {
 	position: absolute;
-	display: none;
 	z-index: 1;
 }
 #toolbar-share-recipients-list,
@@ -394,55 +396,71 @@ input.invalid:focus {
 .convo-recipients-container {
 	position: relative;
 }
-.convo-recipients-container:before {
-	content: '';
-	position: absolute;
-	top: 0;
-	right: 0;
-	background-image: url("asset/Expand.svg");
-	width: 34px;
-	height: 34px;
-	transform: rotate(0deg);
-	transition: transform .2s;
+.convo-recipients-container #convo-new-email-add,
+.convo-recipients-container #convo-contacts-search {
+	height: 24px;
+	line-height: 24px;
 }
-.convo-recipients-container.expanded:before {
-	transform: rotate(-180deg);
-	transition: transform .2s;
+.convo-recipients-container .convo-recipients-thumbs-container {
+	max-width: 90px;
+	float: right;
 }
-.convo-recipients-container:not(.expanded) .convo-recipients-list-container {
-	max-width: 360px;
-	overflow: hidden;
-}
-.convo-recipients-container:not(.expanded) .convo-recipients-list-container {
-	display: none;
-}
-.convo-recipients-container #convo-recipients-csv-container {
-	margin-bottom: 18px;
-	display: none;
-	margin-right: 34px;
-	width: 302px;
-}
-.convo-recipients-container:not(.expanded) #convo-recipients-csv-container {
+.convo-recipients-container .convo-recipients-thumbs-container .convo-recipient-thumb-container {
 	display: block;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	background: transparent;
+	color: transparent;
+	float: left;
+	width: 25px;
+	height: 25px;
+	margin-right: 5px;
 }
-.inline-info-expanded .convo-recipients-container:not(.expanded) .convo-recipients-csv {
-	width: 356px;
+.convo-recipients-container .convo-recipients-thumbs-container .convo-recipient-thumb-container .contact-thumbnail {
+	display: block;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	border-radius: 12px;
+	margin-right: 5px;
+	color: white;
+	text-align: center;
 }
+.convo-recipients-container.expanded .convo-recipients-thumbs-container {
+	display: none;
+}
+
+.convo-recipients-container .convo-recipients-list-container {
+	display: none;
+}
+
+.convo-recipients-container.expanded .convo-recipients-list-container {
+	display: block;
+}
+
 .convo-recipients-list-container button.pill .contact-thumbnail,
 #toolbar-share-recipients-list button.pill .contact-thumbnail {
 	display: none;
 }
-.toolbar-share-recipients-container,
-.convo-recipients-list-container {
+.convo-recipients-container .convo-recipients-thumbs-container {
+	padding: 0 0 13px 12px;
+	position: relative;
+}
+.convo-recipients-container .convo-recipients-list-container {
+	padding: 0 0 13px 12px;
+	margin-right: 24px;
+}
+.convo-recipients-container .convo-contacts-search-container {
+	padding: 0 12px 13px;
+	position: relative;
+}
+.convo-recipients-container .convo-contacts-search-container #convo-new-email-add {
+	float: right;
+}
+
+.toolbar-share-recipients-container {
 	border: 1px solid gray;
 	padding: 5px;
-	width: 302px;
 }
-.toolbar-share-container .toolbar-share-recipients-container.active,
-.convo-recipients-container.active.expanded .convo-recipients-list-container {
+.toolbar-share-container .toolbar-share-recipients-container.active {
 	padding: 0;
 	border-color: rgba(59, 153, 252, 0.5);
 	border-style: solid;
@@ -465,10 +483,12 @@ input.invalid:focus {
 .toolbar-share-container .toolbar-share-buttons-container span.toolbar-action{
 	cursor: pointer;
 }
-#share-contacts-search,
-#convo-contacts-search {
+#share-contacts-search {
 	border: 0;
 	float: left;
+}
+#share-contacts-search,
+#convo-contacts-search {
 	background: transparent;
 }
 .clearfix:after {
@@ -496,8 +516,7 @@ input.invalid:focus {
 }
 .toolbar-share-container ul,
 #convo-contacts-list {
-	max-height: 100px;
-	overflow-y: auto;
+	width: 100%;
 }
 
 .toolbar-inline-info-container .toolbar-expand-icon, .toolbar-icon-right {
@@ -538,6 +557,9 @@ input.invalid:focus {
 .primary-background {
 	background-color: #E94A2F;
 	color: white;
+}
+.primary-background.disabled {
+	color: #888888;
 }
 .primary-color {
 	color: #E94A2F;

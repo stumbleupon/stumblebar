@@ -188,3 +188,71 @@ function isEmailAddress(string) {
 	var emailRE = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 	return emailRE.test(string);
 }
+
+/**
+ * generate a 32 bit int from a string
+ * @param str
+ * @returns {number}
+ */
+function hashCode(str) {
+	var hash = 0;
+	for (var i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	return Math.abs(hash);
+}
+
+/**
+ * return an rgb code (ie #142536) of a color on the darker side of gray
+ * that is determined by the given string -- this will ensure that imageless
+ * thumbnail backgrounds don't change color when replacing elements in response
+ * to fresh data from background fetches
+ * @param str
+ * @returns {string}
+ */
+function strToDarkRGB(str) {
+	var i = hashCode(str);
+	var c = (i & 0x00FFFFFF)
+		.toString(8)
+		.substr(-6);
+	switch (i % 12) {
+		case 0:
+			c = '00' + c.substr(-4);
+			break;
+		case 1:
+			c = c.substr(0, 2) + '00' + c.substr(-2);
+			break;
+		case 2:
+			c = c.substr(0, 4) + '00'
+			break;
+		case 3:
+			c = '00' + c.substr(2, 2) + '00';
+			break;
+		case 4:
+			c = '0000' + c.substr(-2);
+			break;
+		case 5:
+			c = c.substr(0, 2) + '0000'
+			break;
+		case 6:
+			c = '77' + c.substr(-4);
+			break;
+		case 7:
+			c = c.substr(0, 2) + '77' + c.substr(-2);
+			break;
+		case 8:
+			c = c.substr(0, 4) + '77'
+			break;
+		case 9:
+			c = '77' + c.substr(2, 2) + '77';
+			break;
+		case 10:
+			c = '7777' + c.substr(-2);
+			break;
+		case 11:
+			c = c.substr(0, 2) + '7777'
+			break;
+	}
+	console.log(str, c, i%12);
+	return "#" + c;
+}

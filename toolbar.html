@@ -222,6 +222,27 @@
 							<span class="convo-entry-date"></span>
 						</div>
 
+						<div class="convo-recipients-container">
+							<span class="icon clickable show-contacts active" title="Invite contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
+							<div id="convo-recipients-thumbs-container" class="convo-recipients-thumbs-container" action="expand-convo-recipients"></div>
+							<div class="convo-recipients-list-container clearfix" action="expand-convo-recipients">
+								<div id="convo-recipients-list"></div>
+								<!-- a search input -->
+							</div>
+							<div class="clearfix"></div>
+							<div class="convo-contacts-search-container hidden" id="convo-contacts-search-container">
+								<input type="search" id="convo-contacts-search" placeholder="search">
+								<span class="toolbar-action btn primary-background primary-border disabled" id="convo-new-email-add" action="convo-add-recipient-button">Add Contact</span>
+								<div class="clearfix"></div>
+								<div id="convo-contacts-container" class="toolbar-container-section convo-contacts-container" action="cancel-bubble">
+									<!-- the list of contacts to be invited -->
+									<ul id="convo-contacts-list" class="scrollable">
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+
 						<span class="convo-container scrollable" infinite-scroll infinite-scroll-trigger="top" id="convo-container">
 						</span>
 
@@ -232,27 +253,12 @@
 							</div>
 							<span class="btn float-right btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
 						</div>
-						<div class="convo-recipients-container" action="toggle-class" value="expanded">
-							<div id="convo-recipients-csv-container"></div>
-							<div class="convo-recipients-list-container" action="cancel-bubble">
-
-								<div id="convo-recipients-list"></div>
-								<!-- a search input -->
-								<input type="search" id="convo-contacts-search" placeholder="search">
-								<div class="clearfix"></div>
-							</div>
-							<div id="convo-contacts-container" class="toolbar-container-section convo-contacts-container">
-								<!-- the list of contacts to be invited -->
-								<ul id="convo-contacts-list" class="scrollable">
-								</ul>
-							</div>
-						</div>
 
 						<span class="clickable close-icon show-when-convo-expanded" title="Close conversation" action="close-convo"></span>
 					</div>
-					<div class="stub convo-recipients-csv" id="convo-recipients-csv-stub" hidden>{{recipient-names-csv}}</div>
 					<button class="stub pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></button>
+					<div class="stub convo-recipient-thumb-container" id="convo-recipient-thumb-stub" title="{{contact-name}}" hidden></div>
 
 
 
@@ -278,7 +284,7 @@
 							<!-- a search input -->
 							<input type="search" id="share-contacts-search" placeholder="search">
 							<div class="clearfix"></div>
-							<div id="toolbar-share-contacts-container" class="toolbar-share-container-section toolbar-share-contacts-container">
+							<div id="toolbar-share-contacts-container" class="toolbar-share-container-section toolbar-share-contacts-container hidden">
 								<!-- the list of contacts to be invited -->
 								<ul id="toolbar-share-contacts-list" class="scrollable">
 								</ul>

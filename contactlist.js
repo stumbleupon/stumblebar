@@ -287,7 +287,7 @@ Contact.prototype = {
 		if(this.thumbnail) {
 			span.style.backgroundImage = "url('" + this.thumbnail + "')";
 		} else {
-			span.style.backgroundColor = "rgb(" + parseInt(Math.random() * 128) + "," + parseInt(Math.random() * 128) + "," + parseInt(Math.random() * 128) + ")";
+			span.style.backgroundColor = strToDarkRGB(this.name);
 			span.innerText = this.name[0].toUpperCase();
 		}
 		el.appendChild(span);

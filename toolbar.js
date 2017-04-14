@@ -243,27 +243,27 @@ var Toolbar = {
 		var searchEl = document.querySelector('#convo-contacts-search'),
 			contactsEl = document.querySelector('#convo-contacts-container'),
 			contactIds = this.convoContactList.search(searchEl.value),
-			attributeMap = [
+			i = 0,
+			attributeMap = [{attributeName: 'title', propertyName: 'name'}]; // the name goes into the stub's title attribute
+		this.convoContactList.render('convo-recipient-thumb-stub', attributeMap, 'convo-recipients-thumbs-container', function(contact) {
+			return (3 > i++) && contact.isParticipant();
+		}, false);
+
+		attributeMap = [
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
 		];
-		var participantsCsv = this.convoContactList.find(function(contact) {
-			return contact.isParticipant();
-		}).map(function(contact) {
-			return contact.name;
-		}).join(', ');
 		this.convoContactList.render('convo-recipient-stub', attributeMap, 'convo-recipients-list', function(contact) {
 			return contact.isParticipant();
 		}, true);
-		var csvEl = document.querySelector('#convo-recipients-csv');
-		if(csvEl) {
-			csvEl.remove();
-		}
-		newFromTemplate('convo-recipients-csv-stub', {innerText: participantsCsv, id: 'convo-recipients-csv'}, 'convo-recipients-csv-container');
 		this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
 			return (contactIds.indexOf(contact.id) > -1) && !contact.isParticipant() && contact.isMine();
 		});
-		contactsEl.style.setProperty('display', (searchEl.value.length > 0) ? 'block' : 'none');
+		if (searchEl.value.length > 0) {
+			contactsEl.removeClass('hidden');
+		} else {
+			contactsEl.addClass('hidden');
+		}
 		this.handleRedraw();
 	},
 
@@ -673,7 +673,25 @@ var Toolbar = {
 			document.querySelector("#convo-reply").value = '';
 		}
 		if (action == 'convo-show-contacts') {
-			document.querySelector('#convo-contacts-container').toggleClass("hidden");
+			elem.toggleClass('active');
+			var el = document.querySelector('.convo-contacts-search-container');
+			el.toggleClass("hidden");
+			if(!el.hasClass('hidden')) {
+				document.querySelector('#convo-contacts-search').focus();
+			}
+		}
+		if (action == 'convo-add-recipient-button') {
+			if(elem.hasClass('disabled')) {
+				return false;
+			}
+			document.querySelector('#convo-show-contacts').removeClass("active");
+			document.querySelector('#convo-contacts-search-container').removeClass("hidden");
+			var el = document.querySelector('#convo-contacts-search');
+			this.addConvoParticipant(el.value);
+			elem.addClass('disabled');
+			el.value = '';
+			el.focus();
+			return false;
 		}
 		if (action == 'convo-add-recipient') {
 			document.querySelector('#convo-contacts-container').toggleClass("hidden");
@@ -690,6 +708,10 @@ var Toolbar = {
 			} else {
 				return false;
 			}
+		}
+		if ( action == 'expand-convo-recipients') {
+			document.querySelector('.convo-recipients-container').toggleClass('expanded');
+			return false;
 		}
 		return true;
 	},
@@ -769,8 +791,10 @@ var Toolbar = {
 			contactIds = this.convoContactList.search(qs);
 		if(isEmailAddress(qs) || contactIds.length === 1) {
 			searchEl.setCustomValidity('');
+			document.querySelector('#convo-new-email-add').removeClass('disabled');
 		} else {
 			searchEl.setCustomValidity('input requires a valid email address or an existing contact');
+			document.querySelector('#convo-new-email-add').addClass('disabled');
 		}
 	},
 	/**
@@ -847,7 +871,11 @@ var Toolbar = {
 		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {
 			return contact.isParticipant() && contact.isMine();
 		});
-		contactsEl.style.setProperty('display', (searchEl.value.length > 0) ? 'block' : 'none');
+		if (searchEl.value.length > 0) {
+			contactsEl.removeClass('hidden');
+		} else {
+			contactsEl.addClass('hidden');
+		}
 		searchEl.value = '';
 		searchEl.focus();
 		this.handleRedraw();
@@ -1000,6 +1028,109 @@ var Toolbar = {
 		Toolbar.state.canMiniMode = !hover;
 	},
 
+	/**
+	 * initialize DOM event listeners for share contacts elements
+	 * @private
+	 */
+	_initShareContacts: function _initShareContacts() {
+		// share contacts search
+		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
+			this.validateShareSearch();
+			if(this.shareContactList) {
+				var contactIds = this.shareContactList.search(e.target.value),
+					attributeMap = [
+						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+					];
+				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {
+					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
+				});
+			}
+		}.bind(this));
+
+		// share contacts new email
+		document.querySelector('#share-contacts-search').addEventListener('keyup', function(e) {
+			if(e.keyCode === 13) {
+				if(e.target.validity.customError || e.target.validity.valueMissing) {
+					// enter key
+					this.handleError(new Error('Invalid Email Address'));
+					return false;
+				}
+				this.addShare(e.target.value);
+				e.target.value = '';
+				e.target.focus();
+			} else if(e.keyCode === 27) {
+				// escape key
+				e.target.value = '';
+				e.target.focus();
+			}
+			var el = document.querySelector('.toolbar-share-contacts-container');
+			if (e.target.value.length > 0) {
+				el.removeClass('hidden');
+			} else {
+				el.addClass('hidden');
+			}
+		}.bind(this));
+
+		document.querySelector('#share-contacts-search').addEventListener('focus', function(e) {
+			var el = document.querySelector('.toolbar-share-contacts-container');
+			if (e.target.value.length > 0) {
+				el.removeClass('hidden');
+			} else {
+				el.addClass('hidden');
+			}
+			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', true);
+		}.bind(this));
+		document.querySelector('#share-contacts-search').addEventListener('blur', function(e) {
+			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', false);
+		}.bind(this));
+	},
+
+	/**
+	 * initialize DOM event listeners for conversation contacts elements
+	 * @private
+	 */
+	_initConvoContacts: function _initConvoContacts() {
+		// convo contacts search
+		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
+			this.clearError();
+			this.validateConvoSearch();
+			if(this.convoContactList) {
+				var contactIds = this.convoContactList.search(e.target.value),
+					attributeMap = [
+						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
+						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
+					];
+				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
+					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
+				});
+			}
+			var el = document.querySelector('#convo-contacts-container');
+			if(e.target.value.length > 0) {
+				el.removeClass('hidden');
+			} else {
+				el.addClass('hidden');
+			}
+		}.bind(this));
+
+		// convo contacts new email
+		document.querySelector('#convo-contacts-search').addEventListener('keyup', function(e) {
+			if(e.keyCode === 27) {
+				// escape key
+				e.target.value = '';
+				e.target.focus();
+			}
+		}.bind(this));
+
+
+		document.querySelector('#convo-contacts-search').addEventListener('focus', function(e) {
+			document.querySelector('.convo-recipients-container').classList.toggle('active', true);
+		}.bind(this));
+		document.querySelector('#convo-contacts-search').addEventListener('blur', function(e) {
+		}.bind(this));
+	},
+
 	init: function() {
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
@@ -1008,7 +1139,7 @@ var Toolbar = {
 
 		// Toolbar initialization
 		Toolbar.dispatch('init');
-    	//Toolbar.dispatch('urlChange');
+		//Toolbar.dispatch('urlChange');
 		window.setInterval(function(e) { Toolbar.tryMiniMode(e); }, 1000);
 
 		// Drag-n-drop logic
@@ -1033,101 +1164,8 @@ var Toolbar = {
 			});
 		});
 
-		// share contacts search
-		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
-			this.clearError();
-			this.validateShareSearch();
-			if(this.shareContactList) {
-				var contactIds = this.shareContactList.search(e.target.value),
-					attributeMap = [
-						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
-						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
-					];
-				this.shareContactList.render('toolbar-share-add-contact-stub', attributeMap, 'toolbar-share-contacts-list', function(contact) {
-					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
-				});
-			}
-		}.bind(this));
-
-		// convo contacts search
-		document.querySelector('#convo-contacts-search').addEventListener('input', function(e) {
-			this.clearError();
-			this.validateConvoSearch();
-			if(this.convoContactList) {
-				var contactIds = this.convoContactList.search(e.target.value),
-					attributeMap = [
-						{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
-						{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML
-					];
-				this.convoContactList.render('convo-add-contact-stub', attributeMap, 'convo-contacts-list', function(contact) {
-					return contactIds.indexOf(contact.id) !== -1 && !contact.isParticipant() && contact.isMine();
-				});
-			}
-		}.bind(this));
-
-		// share contacts new email
-		document.querySelector('#share-contacts-search').addEventListener('keyup', function(e) {
-			if(e.keyCode === 13) {
-				if(e.target.validity.customError || e.target.validity.valueMissing) {
-					// enter key
-					this.handleError(new Error('Invalid Email Address'));
-					return false;
-				}
-				this.addShare(e.target.value);
-				e.target.value = '';
-				e.target.focus();
-			} else if(e.keyCode === 27) {
-				// escape key
-				e.target.value = '';
-				e.target.focus();
-			}
-			document.querySelector('.toolbar-share-contacts-container')
-				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
-		}.bind(this));
-		// convo contacts new email
-		document.querySelector('#convo-contacts-search').addEventListener('keyup', function(e) {
-			if(e.keyCode === 13) {
-				if(e.target.validity.customError || e.target.validity.valueMissing) {
-					// enter key
-					this.handleError(new Error('Invalid Email Address'));
-					return false;
-				}
-				this.addConvoParticipant(e.target.value);
-				e.target.value = '';
-				e.target.focus();
-			} else if(e.keyCode === 27) {
-				// escape key
-				e.target.value = '';
-				e.target.focus();
-			}
-			document.querySelector('#convo-contacts-container')
-				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
-		}.bind(this));
-		this.convoContactExpansionObserver = new MutationObserver(function(mutations) {
-			console.log(mutations);
-			if(mutations[0].target.classList.contains('expanded')) {
-				window.setTimeout(function() {
-					document.querySelector('#convo-contacts-search').focus()
-				}, 0);
-			}
-		});
-		this.convoContactExpansionObserver.observe(
-			document.querySelector('.convo-recipients-container'),
-			{attributes: true, attributFilter: ['class']}
-		);
-		document.querySelector('#share-contacts-search').addEventListener('focus', function(e) {
-			document.querySelector('.toolbar-share-contacts-container')
-				.style.setProperty('display', (e.target.value.length > 0) ? 'block' : 'none');
-			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', true);
-		}.bind(this));
-		document.querySelector('#convo-contacts-search').addEventListener('focus', function(e) {
-			document.querySelector('.convo-recipients-container').classList.toggle('active', true);
-		}.bind(this));
-		document.querySelector('#share-contacts-search').addEventListener('blur', function(e) {
-			document.querySelector('.toolbar-share-recipients-container').classList.toggle('active', false);
-		}.bind(this));
-		document.querySelector('#convo-contacts-search').addEventListener('blur', function(e) {
-		}.bind(this));
+		this._initShareContacts();
+		this._initConvoContacts();
 
 		// Hack for chrome to handle disappearing SVG background images
 		if( /webkit/gi.test(navigator.userAgent.toLowerCase()) ){
@@ -1143,6 +1181,7 @@ var Toolbar = {
 		}
 
 	},
+	// @TODO: documentation -- why?  what depends on this?  -- please don't make me search.
 	_events: [{ ev: 'click', id: 'stumble', cb: 'stumble' }]
 }
 Toolbar.init();
