@@ -942,6 +942,9 @@ input.invalid:focus {
 .toolbar-container:not(.convo-expanded) .show-when-convo-expanded:not(.enabled) {
 	display: none;
 }
+.toolbar-container.convo-expanded .hide-when-convo-expanded {
+	display: none;
+}
 
 .toolbar-container.authed .hide-when-authed,
 .toolbar-container:not(.authed) .hide-when-not-authed {
