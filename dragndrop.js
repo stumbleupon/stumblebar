@@ -205,10 +205,12 @@ DragNDrop.prototype = {
 		if (message.toolbar.rpos)
 			this.handleRepos(message.toolbar.rpos);
 		if (message.toolbar.hidden)
-			this.elem.style.display = this.estyle.display = 'none';
+			this.estyle.display = 'none';
 		else
-			this.elem.style.display = this.estyle.display = 'block';
+			this.estyle.display = 'block';
 		this.estyle['-stumble-dirty-style'] = '1';
+		if (!this.isFullscreen)
+			this.elem.style.display = this.estyle.display;
 	},
 
 	fullscreen: function(fullscreen) {
