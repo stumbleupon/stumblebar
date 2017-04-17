@@ -403,6 +403,10 @@ input.invalid:focus {
 	height: 24px;
 	line-height: 24px;
 }
+.convo-recipients-container #convo-contacts-search {
+	border-width: 1px;
+	border-radius: 2px;
+}
 .convo-recipients-container .convo-recipients-thumbs-container {
 	max-width: 90px;
 	float: right;
@@ -1431,14 +1435,21 @@ INPUT[type="text"] {
 }
 
 .convo-response-container {
-	margin-bottom: 24px;
+	padding: 12px;
+	margin-bottom: 12px;
 }
 
 .convo-response-container INPUT {
-	width: 100%;
+	width: calc(100% - 36px);
+	border-width: 1px;
+	border-radius: 2px;
+	height: 24px;
+	line-height: 24px;
 }
 
-.convo-response-container .btn {
+.convo-response-container .btn-success {
 	float: right;
 	margin: 0;
+	height: 24px;
+	line-height: 24px;
 }

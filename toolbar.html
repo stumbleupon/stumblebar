@@ -248,10 +248,10 @@
 
 						<div class="convo-response-container clearfix">
 							<input type="hidden" id="convo-id">
-							<div>
 							<input type="text" id="convo-reply" action-on-enter="#convo-send">
-							</div>
-							<span class="btn float-right btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
+							<span class="btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">
+								<img src="asset/arrowUp.svg">
+							</span>
 						</div>
 
 						<span class="clickable close-icon show-when-convo-expanded" title="Close conversation" action="close-convo"></span>
