@@ -403,11 +403,6 @@ input.invalid:focus {
 	height: 24px;
 	line-height: 24px;
 }
-.convo-recipients-container #convo-contacts-search {
-	width: calc(100% - 36px);
-	border-width: 0;
-	border-radius: 2px;
-}
 .convo-recipients-container .convo-recipients-thumbs-container {
 	max-width: 90px;
 	float: right;
@@ -560,6 +555,9 @@ input.invalid:focus {
 .primary-background {
 	background-color: #E94A2F;
 	color: white;
+}
+.primary-background.disabled {
+	color: #888888;
 }
 .primary-color {
 	color: #E94A2F;
