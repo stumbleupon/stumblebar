@@ -491,6 +491,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			ToolbarEvent.api.reportStumble([url.urlid], url.mode, url.modeinfo);
 			request.url = url;
 
+			Page.tab[sender.tab.id].stumbling = true;
 			chrome.tabs.update(sender.tab.id, { url: url.url });
 
 			return ToolbarEvent._buildResponse({});
