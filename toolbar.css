@@ -487,10 +487,6 @@ input.invalid:focus {
 	border: 0;
 	float: left;
 }
-#share-contacts-search,
-#convo-contacts-search {
-	background: transparent;
-}
 .clearfix:after {
 	content: '';
 	display: table;
@@ -1430,6 +1426,10 @@ INPUT[type="text"] {
 
 .toolbar-section-header {
 	font-weight: bold;
+}
+
+.convo-response-container {
+	margin-bottom: 24px;
 }
 
 .convo-response-container INPUT {
