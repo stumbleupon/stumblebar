@@ -23,10 +23,10 @@ git ls-tree -r master --name-only | while read FILE; do
 done
 
 
-# Convert SVGs to data
-cat toolbar.css | grep background.*asset/.*\.svg | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
-	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo -i - -o - --datauri=base64)~" target/toolbar.css
-done
+## Convert SVGs to data
+#cat toolbar.css | grep background.*asset/.*\.svg | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
+#	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo -i - -o - --datauri=base64)~" target/toolbar.css
+#done
 
 
 # Firefox
