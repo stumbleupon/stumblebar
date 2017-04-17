@@ -229,9 +229,9 @@
 
 						<div class="convo-recipients-container">
 							<span class="icon clickable show-contacts active" title="Invite contacts" id="convo-show-contacts" action="convo-show-contacts"></span>
-							<div id="convo-recipients-hidden-count" class="convo-recipients-hidden-count"></div>
-							<div id="convo-recipients-thumbs-container" class="convo-recipients-thumbs-container" action="expand-convo-recipients"></div>
-							<div class="convo-recipients-list-container clearfix" action="expand-convo-recipients">
+							<div id="convo-recipients-hidden-count" class="convo-recipients-hidden-count clickable"></div>
+							<div id="convo-recipients-thumbs-container" class="convo-recipients-thumbs-container clickable" action="expand-convo-recipients"></div>
+							<div class="convo-recipients-list-container clickable clearfix" action="expand-convo-recipients">
 								<div id="convo-recipients-list"></div>
 								<!-- a search input -->
 							</div>
@@ -260,7 +260,7 @@
 							</span>
 						</div>
 					</div>
-					<button class="stub pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub pill secondary-background clickable" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></button>
 					<div class="stub convo-recipient-thumb-container" id="convo-recipient-thumb-stub" title="{{contact-name}}" hidden></div>
 
