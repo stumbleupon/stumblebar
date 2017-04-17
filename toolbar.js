@@ -695,6 +695,11 @@ var Toolbar = {
 		}
 		if (action == 'convo-add-recipient') {
 			document.querySelector('#convo-contacts-container').toggleClass("hidden");
+			var el = document.querySelector('#convo-contacts-search');
+			el.value = '';
+			el.focus();
+			el = document.querySelector('#convo-new-email-add');
+			el.addClass('disabled');
 			return this.getNewConvoParticipantData(value);
 		}
 		if (action == 'save-share') {
