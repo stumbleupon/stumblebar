@@ -242,13 +242,19 @@ var Toolbar = {
 	updateConvoParticipants: function _updateConvoParticipants() {
 		var searchEl = document.querySelector('#convo-contacts-search'),
 			contactsEl = document.querySelector('#convo-contacts-container'),
+			hiddenCountEl = document.querySelector('#convo-recipients-hidden-count'),
 			contactIds = this.convoContactList.search(searchEl.value),
 			i = 0,
 			attributeMap = [{attributeName: 'title', propertyName: 'name'}]; // the name goes into the stub's title attribute
 		this.convoContactList.render('convo-recipient-thumb-stub', attributeMap, 'convo-recipients-thumbs-container', function(contact) {
-			return (3 > i++) && contact.isParticipant();
+			return contact.isParticipant() && (3 > i++);
 		}, false);
-
+		i = i - 3;
+		if(i > 0) {
+			hiddenCountEl.innerText = '+' + i;
+		} else {
+			hiddenCountEl.innerText = '';
+		}
 		attributeMap = [
 			{attributeName: 'value', propertyName: 'userid'}, // the contact id goes into the stub's value attribute
 			{attributeName: 'innerHTML', propertyName: 'name'} // the contact name goes into the stub's innerHTML

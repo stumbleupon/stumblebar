@@ -397,6 +397,7 @@ input.invalid:focus {
 }
 .convo-recipients-container {
 	position: relative;
+	margin-top: 5px;
 }
 .convo-recipients-container #convo-new-email-add,
 .convo-recipients-container #convo-contacts-search {
@@ -410,6 +411,12 @@ input.invalid:focus {
 .convo-recipients-container .convo-recipients-thumbs-container {
 	max-width: 90px;
 	float: right;
+}
+.convo-recipients-container .convo-recipients-hidden-count {
+	float: right;
+	color: red;
+	line-height: 24px;
+	margin-right: 5px;
 }
 .convo-recipients-container .convo-recipients-thumbs-container .convo-recipient-thumb-container {
 	display: block;
@@ -430,7 +437,8 @@ input.invalid:focus {
 	color: white;
 	text-align: center;
 }
-.convo-recipients-container.expanded .convo-recipients-thumbs-container {
+.convo-recipients-container.expanded .convo-recipients-thumbs-container,
+.convo-recipients-container.expanded .convo-recipients-hidden-count {
 	display: none;
 }
 
