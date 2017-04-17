@@ -404,8 +404,7 @@ input.invalid:focus {
 	line-height: 24px;
 }
 .convo-recipients-container #convo-contacts-search {
-	width: calc(100% - 36px);
-	border-width: 0;
+	border-width: 1px;
 	border-radius: 2px;
 }
 .convo-recipients-container .convo-recipients-thumbs-container {
@@ -560,6 +559,9 @@ input.invalid:focus {
 .primary-background {
 	background-color: #E94A2F;
 	color: white;
+}
+.primary-background.disabled {
+	color: #888888;
 }
 .primary-color {
 	color: #E94A2F;
@@ -1436,14 +1438,21 @@ INPUT[type="text"] {
 }
 
 .convo-response-container {
-	margin-bottom: 24px;
+	padding: 12px;
+	margin-bottom: 12px;
 }
 
 .convo-response-container INPUT {
-	width: 100%;
+	width: calc(100% - 36px);
+	border-width: 1px;
+	border-radius: 2px;
+	height: 24px;
+	line-height: 24px;
 }
 
-.convo-response-container .btn {
+.convo-response-container .btn-success {
 	float: right;
 	margin: 0;
+	height: 24px;
+	line-height: 24px;
 }

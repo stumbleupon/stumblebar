@@ -237,9 +237,7 @@
 							<div class="clearfix"></div>
 							<div class="convo-contacts-search-container hidden" id="convo-contacts-search-container">
 								<input type="search" id="convo-contacts-search" placeholder="search">
-								<span class="toolbar-action disabled" id="convo-new-email-add" action="convo-add-recipient-button">
-									<img src="asset/arrowUp.svg">
-								</span>
+								<span class="toolbar-action btn primary-background primary-border disabled" id="convo-new-email-add" action="convo-add-recipient-button">Add Contact</span>
 								<div class="clearfix"></div>
 								<div id="convo-contacts-container" class="toolbar-container-section convo-contacts-container" action="cancel-bubble">
 									<!-- the list of contacts to be invited -->
@@ -255,10 +253,10 @@
 
 						<div class="convo-response-container clearfix">
 							<input type="hidden" id="convo-id">
-							<div>
 							<input type="text" id="convo-reply" action-on-enter="#convo-send">
-							</div>
-							<span class="btn float-right btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">Send</span>
+							<span class="btn-success clickable" action="reply-convo" id="convo-send" values="id=#convo-id,comment=#convo-reply">
+								<img src="asset/arrowUp.svg">
+							</span>
 						</div>
 					</div>
 					<button class="stub pill secondary-background" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
