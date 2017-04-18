@@ -627,6 +627,8 @@ ToolbarEvent.openConvo = function(request, sender) {
 		return Promise.resolve(Page.getUrlByUrlid(request.data.urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(request.data.urlid))
 			.then(function(url) {
 				Page.state[sender.tab.id] = { convo: request.data.id };
+				Page.note(sender.tab.id, url);
+				Page.tab[sender.tab.id].stumbling = true;
 				chrome.tabs.update(sender.tab.id, {
 					"url": url.url
 				});
