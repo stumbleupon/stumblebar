@@ -253,6 +253,5 @@ function strToDarkRGB(str) {
 			c = c.substr(0, 2) + '7777'
 			break;
 	}
-	console.log(str, c, i%12);
 	return "#" + c;
 }

@@ -881,7 +881,7 @@ var Toolbar = {
 		});
 		this.shareContactList.render('toolbar-share-contact-stub', attributeMap, 'toolbar-share-recipients-list', function(contact) {
 			return contact.isParticipant() && contact.isMine();
-		});
+		}, true);
 		if (searchEl.value.length > 0) {
 			contactsEl.removeClass('hidden');
 		} else {
@@ -1180,7 +1180,7 @@ var Toolbar = {
 
 		// Hack for chrome to handle disappearing SVG background images
 		if( /webkit/gi.test(navigator.userAgent.toLowerCase()) ){
-			(svg || []).forEach(function(svgpath) {
+			(window.svg || []).forEach(function(svgpath) {
 				var obj = document.createElement("img");
 				obj.setAttribute("type", "image/svg+xml");
 				obj.setAttribute("src", svgpath);

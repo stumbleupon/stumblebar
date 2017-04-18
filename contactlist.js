@@ -134,28 +134,47 @@ ContactList.prototype = {
 	 */
 	render: function renderContactList(stubId, attributeMappings, appendToElementId, filter, preserveExisting) {
 		preserveExisting = !!preserveExisting;
-		var appendToElement = document.getElementById(appendToElementId);
+		var toRemove = [],
+			els,
+			appendToElement = document.getElementById(appendToElementId);
 		if(!appendToElement) {
 			return false;
 		}
 		var contacts = this.contacts;
-		if(!preserveExisting) {
-			appendToElement.innerHTML = '';
-		};
 		if(filter) {
 			contacts = this.find(filter);
 		}
 		if(preserveExisting) {
-			contacts.forEach(function(contact) {
-				var el = document.getElementById(appendToElementId + "-" + contact.id);
-				if(el && el.remove) {
-					el.remove();
-				}
-			}.bind(this));
-		}
+			els = document.querySelectorAll("#" + appendToElementId + " .participant");
+			if(els) {
+				els.forEach(function(el) {
+					var id = el.getAttribute('value');
+					for(var i = 0; i < contacts.length; i++) {
+						contact = contacts[i];
+						if(contact.id == id) {
+							return false;
+						}
+					}
+					toRemove.push(el);
+					return true;
+				}.bind(this));
+				toRemove.forEach(function(el) {
+					el.remove && el.remove();
+				});
+			}
+		} else {
+			appendToElement.innerHTML = '';
+		};
 		for(var i = 0; i < contacts.length; i++) {
-			var contact = contacts[i];
-			contact.render(stubId, attributeMappings, appendToElementId);
+			var render = true,
+				contact = contacts[i];
+			if(preserveExisting) {
+				var el = document.getElementById(appendToElementId + "-" + contact.id);
+				render = !el;
+			}
+			if(render) {
+				contact.render(stubId, attributeMappings, appendToElementId);
+			}
 		}
 	},
 	/**

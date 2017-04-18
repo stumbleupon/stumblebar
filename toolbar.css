@@ -501,11 +501,22 @@ input.invalid:focus {
 	border-radius: 5px;
 	padding: 1px;
 }
+.toolbar-share-container textarea {
+	width: 300px;
+	height: 72px;
+	line-height: 18px;
+}
+.toolbar-share-container label {
+	display: block;
+	margin-bottom: 5px;
+}
 .toolbar-share-container-section {
 	display: block;
 	position: relative;
+	width: 300px;
 	clear: left;
 	min-height: 13px;
+	margin-bottom: 10px;
 }
 .toolbar-share-recipients-container:focus {
 	border: 2px thick blue;
