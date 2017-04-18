@@ -115,13 +115,18 @@ button.pill.delete:before {
 button.add-contact:not(.stub) {
 	display: list-item;
 	line-height: 19px;
-	width: 100%;
+	width: 250px;
 	text-align: left;
+	padding-left: 24px;
+	overflow: hidden;
+	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 button.add-contact:not(.stub) .contact-thumbnail {
 	display: block;
-	float: left;
+	position: absolute;
+	top: 3px;
+	left: 0;
 	margin-right: 5px;
 	height: 19px;
 	width: 19px;
@@ -200,7 +205,7 @@ input.invalid:focus {
 	box-sizing: border-box;
 }
 .toolbar:not(.mini-mode) .toolbar-section {
-	min-width: 240px;
+	min-width: 328px;
 }
 .toolbar-action-container {
 	font-size: 0;
@@ -382,7 +387,7 @@ input.invalid:focus {
 }
 
 .toolbar-share-container {
-	width: 240px;
+	width: 328px;
 }
 #toolbar-share-contacts-container,
 #convo-contacts-container {
