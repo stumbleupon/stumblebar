@@ -811,7 +811,6 @@ input.invalid:focus {
 	background-size: 18px 13px;
 }
 .theme-all-light .toolbar-settings-icon {
-	background-image: url("asset/Settings.svg");
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
@@ -893,7 +892,6 @@ input.invalid:focus {
 	background-position: center; 
 }
 .theme-all-dark .toolbar-settings-icon {
-	background-image: url("asset/Settings.svg");
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
