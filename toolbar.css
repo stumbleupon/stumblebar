@@ -394,11 +394,6 @@ input.invalid:focus {
 	margin: 0px !important;
 	z-index: 1;
 }
-.toolbar:not(.mini-mode) .toolbar-settings-icon.enabled {
-	background-image: url("asset/Close.svg") !important;
-	background-color: #444;
-	display: none;
-}
 
 .close-icon {
 	background-image: url("asset/Close.svg") !important;
@@ -754,78 +749,66 @@ input.invalid:focus {
 
 
 
-
 /**
  * All Light
  */
-.theme-all-light .toolbar-background-logo {
 /*
-	background-color: white;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	opacity: 0.777;
-*/
-}
-.theme-all-light .toolbar-background {
-	background-color: white;
-	opacity: 0.777;
-}
-.theme-all-light .toolbar-border-bottom {
-	border-bottom: 1px;
-	border-style: solid !important;
-	border-color: #ccc !important;
-}
-.theme-all-light .toolbar-border-top {
-	border-top: 1px;
-	border-style: solid !important;
-	border-color: #ccc !important;
-}
-.theme-all-light .alternate-colors {
-	background: #fff;
-}
-.theme-all-light .alternate-colors > div:nth-of-type(odd) {
-	background: #ddd;
-}
-.theme-all-light .toolbar-logo-container {
-	/*
-	position: relative;
-	float: left;
-	*/
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: auto;
-	display: inline-block;
-	height: 100%;
-	margin-right: 10px;
-	border-right: 1px solid #ccc;
-}
-.theme-all-light .toolbar-logo {
-	background-image: url("asset/Logo Dark.svg");
-	padding: 8px;
-	width: 17px;
-	height: 17px;
-	display: inline-block;
-	position: relative;
-	background-repeat: no-repeat;
-	background-position: center; 
-	background-size: 18px 13px;
-}
-.theme-all-light .toolbar-settings-icon {
-	width: 34px;
-	height: 34px;
-	margin: 0px !important;
-	filter: invert(69%);
-}
-.theme-all-light .toolbar-settings-icon.enabled {
-	filter: none;
-}
-.theme-all-light .close-icon {
-	background-image: url("asset/Close Dark.svg") !important;
-}
+ * .theme-all-light .toolbar-background-logo {
+ * }
+ * .theme-all-light .toolbar-background {
+ * 	background-color: white;
+ * 	opacity: 0.777;
+ * }
+ * .theme-all-light .toolbar-border-bottom {
+ * 	border-bottom: 1px;
+ * 	border-style: solid !important;
+ * 	border-color: #ccc !important;
+ * }
+ * .theme-all-light .toolbar-border-top {
+ * 	border-top: 1px;
+ * 	border-style: solid !important;
+ * 	border-color: #ccc !important;
+ * }
+ * .theme-all-light .alternate-colors {
+ * 	background: #fff;
+ * }
+ * .theme-all-light .alternate-colors > div:nth-of-type(odd) {
+ * 	background: #ddd;
+ * }
+ * .theme-all-light .toolbar-logo-container {
+ * 	position: absolute;
+ * 	left: 0;
+ * 	top: 0;
+ * 	width: auto;
+ * 	display: inline-block;
+ * 	height: 100%;
+ * 	margin-right: 10px;
+ * 	border-right: 1px solid #ccc;
+ * }
+ * .theme-all-light .toolbar-logo {
+ * 	background-image: url("asset/Logo Dark.svg");
+ * 	padding: 8px;
+ * 	width: 17px;
+ * 	height: 17px;
+ * 	display: inline-block;
+ * 	position: relative;
+ * 	background-repeat: no-repeat;
+ * 	background-position: center; 
+ * 	background-size: 18px 13px;
+ * }
+ * .theme-all-light .toolbar-settings-icon {
+ * 	width: 34px;
+ * 	height: 34px;
+ * 	margin: 0px !important;
+ * 	filter: invert(69%);
+ * }
+ * .theme-all-light .toolbar-settings-icon.enabled {
+ * 	filter: none;
+ * }
+ * .theme-all-light .close-icon {
+ * 	background-image: url("asset/Close Dark.svg") !important;
+ * }
+ */
 
 
 
