@@ -318,6 +318,8 @@ input.invalid:focus {
 }
 .inline-info-expanded .toolbar-action-container .action-inline-info {
 	background-image: url("asset/Expand Horizontal.svg");
+	background-repeat: no-repeat;
+	background-position: center; 
 	transform: rotate(-180deg);
 }
 .right-handed .inline-info-expanded .toolbar-action-container .action-inline-info {
@@ -327,6 +329,8 @@ input.invalid:focus {
 	content: '';
 	position: relative;
 	background-image: url("asset/Expand Horizontal.svg");
+	background-repeat: no-repeat;
+	background-position: center; 
 	width: 34px;
 	height: 34px;
 	transform: rotate(0deg);
@@ -363,6 +367,8 @@ input.invalid:focus {
 }
 .toolbar-expand-icon {
 	background-image: url("asset/Expand.svg");
+	background-repeat: no-repeat;
+	background-position: center; 
 	width: 34px;
 	height: 34px;
 	transform: rotate(-180deg);
@@ -370,6 +376,8 @@ input.invalid:focus {
 }
 .toolbar-settings-icon, .mini-mode .toolbar-settings-icon {
 	background-image: url("asset/Settings.svg");
+	background-repeat: no-repeat;
+	background-position: center; 
 	width: 34px;
 	height: 34px;
 	margin: 0px !important;
