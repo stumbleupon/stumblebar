@@ -350,6 +350,9 @@ input.invalid:focus {
 	vertical-align: text-bottom;
 }
 
+.toolbar-logo {
+	background-image: url("asset/Logo Light.svg");
+}
 .toolbar-action-container .action-rate {
 	background-image: url("asset/Icon/Like.svg");
 }
@@ -733,7 +736,6 @@ input.invalid:focus {
 	margin-right: 10px;
 }
 .theme-dark-sidebar .toolbar-logo {
-	background-image: url("asset/Logo Light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
@@ -882,7 +884,6 @@ input.invalid:focus {
 	border-right: 1px solid #666;
 }
 .theme-all-dark .toolbar-logo {
-	background-image: url("asset/Logo Light.svg");
 	padding: 8px;
 	width: 17px;
 	height: 17px;
