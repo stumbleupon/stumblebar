@@ -205,7 +205,7 @@ input.invalid:focus {
 	box-sizing: border-box;
 }
 .toolbar:not(.mini-mode) .toolbar-section {
-	min-width: 328px;
+	min-width: 250px;
 }
 .toolbar-action-container {
 	font-size: 0;
