@@ -260,7 +260,7 @@
 							</span>
 						</div>
 					</div>
-					<button class="stub pill secondary-background clickable" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub pill secondary-background clickable participant" id="convo-recipient-stub" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="convo-add-contact-stub" action="convo-add-recipient" value="{{contact-id+convo-id}}" hidden>{{contact-name}}></button>
 					<div class="stub convo-recipient-thumb-container" id="convo-recipient-thumb-stub" title="{{contact-name}}" hidden></div>
 
@@ -277,11 +277,7 @@
 						<div class="share-loading hidden spinner-container">
 							<span class="spinner toolbar-logo"></span> Loading...
 						</div>
-						<div class="toolbar-share-container-section toolbar-share-comment-container">
-							<!-- a message to send with the share -->
-							<label for="toolbar-share-comment">Say something</label><br>
-							<textarea id="toolbar-share-comment">Check this out</textarea>
-						</div>
+						<label for="share-contacts-search">Search/Add Contacts</label>
 						<div class="toolbar-share-container-section toolbar-share-recipients-container">
 							<!-- contacts who have been selected for share -->
 							<div id="toolbar-share-recipients-list"></div>
@@ -294,6 +290,11 @@
 								</ul>
 							</div>
 						</div>
+						<div class="toolbar-share-container-section toolbar-share-comment-container">
+							<!-- a message to send with the share -->
+							<label for="toolbar-share-comment">Say something</label>
+							<textarea id="toolbar-share-comment">Check this out</textarea>
+						</div>
 						<div class="toolbar-share-container-section toolbar-share-buttons-container">
 							<!-- buttons to initiate actions -->
 							<span class="toolbar-action action-stumble btn secondary-background primary-border" action="share" id="cancel-share">Cancel</span>
@@ -301,7 +302,7 @@
 						</div>
 					</div>
 					<button class="stub toolbar-action action-theme clickable add-contact" id="toolbar-share-add-contact-stub" action="share-add-contact" value="{{contact-id}}" hidden>{{contact-name}}></button>
-					<button class="stub pill delete secondary-background" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
+					<button class="stub pill delete secondary-background participant" id="toolbar-share-contact-stub" action="share-delete-contact" value="{{contact-id}}" hidden>{{contact-name}}</button>
 					<div class="invalid stub" id="toolbar-share-empty-recipient" hidden>add recipients by clicking in the list below.</div>
 
 
