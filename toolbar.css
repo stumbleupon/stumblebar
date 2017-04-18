@@ -1078,14 +1078,17 @@ input.invalid:focus {
 	from { -webkit-transform: rotate(0deg);   }
 	to   { -webkit-transform: rotate(359deg); }
 }
+.spinner-container {
+	font-size: 2em;
+}
 .spinner {
-	background-image: url("asset/Logo Light.svg");
 	width: 17px;
 	height: 17px;
 	display: inline-block;
 	background-position: center;
 	background-color: #666;
-	border-radius: 8px;
+	border-radius: 17px;
+	vertical-align: sub;
 
 	-webkit-animation: rotation 2s infinite linear;
 }
