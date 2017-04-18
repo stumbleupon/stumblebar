@@ -301,12 +301,6 @@ input.invalid:focus {
 	-webkit-filter: none !important;
     filter: none !important;
 }
-.toolbar-action-container .action-dislike {
-	background-image: url("asset/Icon/Down.svg");
-}
-.toolbar-action-container .action-dislike.enabled {
-	background-image: url("asset/Icon/Down-enabled.svg");
-}
 .toolbar-action-container .action-report {
 	background-image: url("asset/reportInactiveIcon.svg");
 }
@@ -356,11 +350,21 @@ input.invalid:focus {
 	vertical-align: text-bottom;
 }
 
-.toolbar-action-container .action-like {
+.toolbar-action-container .action-rate {
 	background-image: url("asset/Icon/Like.svg");
 }
-.toolbar-action-container .action-like.enabled {
+.toolbar-action-container .action-rate.enabled {
 	background-image: url("asset/Icon/Like-enabled.svg");
+}
+.toolbar-action-container .action-like {
+}
+.toolbar-action-container .action-like.enabled {
+}
+.toolbar-action-container .action-dislike {
+	transform: rotate(180deg);
+}
+.toolbar-action-container .action-dislike.enabled {
+	transform: rotate(180deg);
 }
 .toolbar-action-container .action-share {
 	background-image: url("asset/Icon/Share.svg");
