@@ -307,21 +307,25 @@ input.invalid:focus {
 .toolbar-action-container .action-report.enabled {
 	background-image: url("asset/reportActiveIcon.svg");
 }
-.toolbar-action-container .action-inline-info {
+.toolbar-container:not(.inline-info-expanded) .action-inline-info:before {
 	background-image: url("asset/DotDotDot.svg");
 }
-.inline-info-expanded .toolbar-action-container .action-inline-info {
-	background-image: url("asset/Expand Horizontal.svg");
+.inline-info-expanded .toolbar-action-container .action-inline-info:before {
 	background-repeat: no-repeat;
 	background-position: center; 
-	transform: rotate(-180deg);
+	transform: rotate(-180deg) translateY(3px);
 }
 .right-handed .inline-info-expanded .toolbar-action-container .action-inline-info {
 	transform: rotate(0deg);
 }
 .collapse-icon {
-	content: '';
 	position: relative;
+	width: 34px;
+	height: 34px;
+}
+.collapse-icon:before {
+	content: '';
+	position: absolute;
 	background-image: url("asset/Expand Horizontal.svg");
 	background-repeat: no-repeat;
 	background-position: center; 
@@ -330,8 +334,8 @@ input.invalid:focus {
 	transform: rotate(0deg);
 	transition: transform .2s;
 }
-.collapse-icon.horizontal {
-	transform: rotate(180deg);
+.collapse-icon:before.horizontal {
+	transform: rotate(-180deg) translateY(3px);
 }
 .right-handed .collapse-icon.horizontal {
 	transform: rotate(0deg);
