@@ -37,7 +37,7 @@ done
 
 # Remove unused assets
 find target/asset -name \*.svg -exec rm {} \;
-rmdir target/asset/Icon target/asset/utils
+rmdir target/asset/Icon
 rm target/asset/Logo.png
 
 
