@@ -27,7 +27,13 @@ done
 cat toolbar.css | grep '^\s*background.*asset/.*\.svg' | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
 	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo -i - -o - --datauri=base64)~" target/toolbar.css
 done
+
+
+# Remove unused assets
 find target/asset -name \*.svg -exec rm {} \;
+rmdir target/asset/Icon
+rm target/asset/Logo.png
+
 
 
 # Firefox
