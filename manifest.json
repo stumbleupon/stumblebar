@@ -30,7 +30,7 @@
 
   "description": "Discover the best of the web",
   "icons": {
-    :"48":  "asset/Logo-128.png",
+    "48":  "asset/Logo-128.png",
     "64":  "asset/Logo-128.png",
     "128": "asset/Logo-128.png"
   },
