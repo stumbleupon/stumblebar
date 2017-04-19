@@ -16,9 +16,15 @@ mkdir -p artifact
 
 # Add tracked files to target
 git ls-tree -r master --name-only | while read FILE; do
+	# Create missing directories
 	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
-	if [[ "$(dirname "$FILE")" == "utils" ]]; then continue; fi
+
+	# Don't package utils
+	if [[ ( "$(dirname "$FILE")" == "utils"  ) ]]; then continue; fi
+
+	# Don't package SVGs
 	if [[ ( "$(dirname "$FILE")" == "assets" ) && ( "$(echo "$FILE" | grep "\.svg$")" ) ]]; then continue; fi
+
 	cp -rp {,target/}"$FILE"
 done
 
@@ -31,7 +37,7 @@ done
 
 # Remove unused assets
 find target/asset -name \*.svg -exec rm {} \;
-rmdir target/asset/Icon
+rmdir target/asset/Icon target/asset/utils
 rm target/asset/Logo.png
 
 
