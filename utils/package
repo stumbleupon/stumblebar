@@ -32,12 +32,6 @@ cat toolbar.css | grep '^\s*background.*asset/.*\.svg' | sed -e 's/.*url..//g' -
 done
 
 
-# Remove unused assets
-find target/asset -name \*.svg -exec rm {} \;
-rmdir target/asset/Icon
-rm target/asset/Logo.png
-
-
 
 # Firefox
 echo -e "\n\n\n========= START Firefox"
