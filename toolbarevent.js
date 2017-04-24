@@ -270,7 +270,8 @@ ToolbarEvent.dislike = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
+		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to dislike url that doesn't exist", request);
@@ -282,7 +283,7 @@ ToolbarEvent.dislike = function(request, sender) {
 			return ToolbarEvent.api.dislike(urlid)
 				.then(function() {
 					if (!sender.tab.incognito)
-						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 				});
 		})
 		.catch(function(e) {
@@ -306,7 +307,8 @@ ToolbarEvent.unrate = function(request, sender) {
 	
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) })
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
+		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; })
 		.then(function(urlid) { 
 			if (!urlid) {
 				debug("Attempt to unrate url that doesn't exist", request);
@@ -318,7 +320,7 @@ ToolbarEvent.unrate = function(request, sender) {
 			return ToolbarEvent.api.unrate(urlid)
 				.then(function() {
 					if (!sender.tab.incognito)
-						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 				});
 		})
 		.catch(function(e) {
@@ -346,12 +348,14 @@ ToolbarEvent.like = function(request, sender) {
 	return ToolbarEvent
 		._sanity()
 		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
+		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; })
+		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); })
 		.then(function(urlid) {
 			return ToolbarEvent.api.like(urlid)
 				.then(function() {
 					if (!sender.tab.incognito)
-						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 				});
 		})
 		.catch(function(e) {
