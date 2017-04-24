@@ -49,9 +49,9 @@ git ls-tree -r master --name-only | while read FILE; do
 done
 
 
-# Convert SVGs to data
+# Convert SVGs to data (Chrome sometimes disappears SVG assets, so we convert them into blobs)
 cat toolbar.css | grep '^\s*background.*asset/.*\.svg' | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
-	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo -i - -o - --datauri=base64)~" target/toolbar.css
+	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo --enable='removeViewBox,removeComments,removeUselessStrokeAndFill' -i - -o - --datauri=base64)~" target/toolbar.css
 done
 
 
