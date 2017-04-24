@@ -264,7 +264,7 @@ ToolbarEvent.dislike = function(request, sender) {
 	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
 
-	var oldRating = request.url.userRating;
+	var oldRating = request.url.userRating || { type: 0, subtype: 0 };
 	request.url.userRating = { type: -1, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
@@ -279,9 +279,11 @@ ToolbarEvent.dislike = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
-			return ToolbarEvent.api.dislike(urlid);
+			return ToolbarEvent.api.dislike(urlid)
+				.then(function() {
+					if (!sender.tab.incognito)
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				});
 		})
 		.catch(function(e) {
 			request.url.userRating = oldRating;
@@ -298,7 +300,7 @@ ToolbarEvent.dislike = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.unrate = function(request, sender) {
-	var oldRating = request.url.userRating;
+	var oldRating = request.url.userRating || { type: 0, subtype: 0 };
 	request.url.userRating = { type: 0, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 	
@@ -313,9 +315,11 @@ ToolbarEvent.unrate = function(request, sender) {
 			return urlid;
 		})
 		.then(function(urlid) {
-			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
-			return ToolbarEvent.api.unrate(urlid);
+			return ToolbarEvent.api.unrate(urlid)
+				.then(function() {
+					if (!sender.tab.incognito)
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				});
 		})
 		.catch(function(e) {
 			request.url.userRating = oldRating;
@@ -335,7 +339,7 @@ ToolbarEvent.like = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
 		return ToolbarEvent.unrate(request, sender);
 
-	var oldRating = request.url.userRating;
+	var oldRating = request.url.userRating || { type: 0, subtype: 0 };
 	request.url.userRating = { type: 1, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
@@ -344,9 +348,11 @@ ToolbarEvent.like = function(request, sender) {
 		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); })
 		.then(function(urlid) {
-			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
-			return ToolbarEvent.api.like(urlid);
+			return ToolbarEvent.api.like(urlid)
+				.then(function() {
+					if (!sender.tab.incognito)
+						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				});
 		})
 		.catch(function(e) {
 			request.url.userRating = oldRating;
