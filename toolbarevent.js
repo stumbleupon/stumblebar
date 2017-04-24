@@ -349,7 +349,7 @@ ToolbarEvent.like = function(request, sender) {
 		._sanity()
 		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
 		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; })
-		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }); })
+		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }).catch(function(e) { return false; }); })
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); })
 		.then(function(urlid) {
 			return ToolbarEvent.api.like(urlid)
