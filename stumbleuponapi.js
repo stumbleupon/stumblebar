@@ -399,7 +399,7 @@ StumbleUponApi.prototype = {
 		this.userCache = null;
 		this._flushStumbles();
 		return this.cache.mset({
-			accessToken: null,
+			accessToken: this.config.accessToken = null,
 		});
 	},
 
@@ -430,7 +430,7 @@ StumbleUponApi.prototype = {
 					return Promise.reject(new ToolbarError('SUAPI', 'notoken', accessToken));
 
 				debug("Extracted auth token", accessToken.value);
-				this.cache.mset({accessToken: accessToken.value});
+				this.cache.mset({accessToken: this.config.accessToken = accessToken.value});
 				this.api.addHeaders({[this.config.accessTokenHeader]: accessToken.value});
 				return accessToken.value;
 			}.bind(this));
