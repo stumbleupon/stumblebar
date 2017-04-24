@@ -79,23 +79,25 @@ git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --outp
 # Firefox
 echo
 echo "== Package Firefox"
-cd target
 FFBUILD="artifact/StumbleBar Firefox $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+rm -f "$FFBUILD"
+cd target
 zip -r "../$FFBUILD" .
 if [ "$PUSH_MOZILLA" ]; then
 	# It's okay if this fails. We expect it to fail.  
 	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
 fi
+cd ..
 
 
 # Chrome
 echo
 echo "== Package Chrome"
-cd ..
+CHBUILD="artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+rm -f "$CHBUILD"
 rm -rf StumbleBar
 cp -rp target StumbleBar
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
-CHBUILD="artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
 zip -r "$CHBUILD" StumbleBar
 if [ "$PUSH_CHROME" ]; then
 	#WEBSTORE_TOKEN="$(chrome-webstore-manager token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET)"
