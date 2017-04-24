@@ -764,6 +764,11 @@ ToolbarEvent.loginPage = function(request, sender) {
  *
  * @return {Promise} toolbar config response
  */
+ToolbarEvent.testLogin = function(e) {
+	if (e && e.type == 'API' && e.context && e.context.code === 0)
+		return Promise.reject(e); // We got disconnected
+	return ToolbarEvent.needsLogin();
+}
 ToolbarEvent.needsLogin = function() {
 	debug('Needs login', arguments);
 	ToolbarEvent.cache.mset({ authed: config.authed = false });
@@ -794,7 +799,7 @@ ToolbarEvent.ping = function() {
 				.then(Page.preload)
 				.catch(function(e) { warning('Expected to preload next url', e); });
 		})
-		.catch(ToolbarEvent.needsLogin);
+		.catch(ToolbarEvent.testLogin);
 }
 
 /*************** END AUTH *****************/
