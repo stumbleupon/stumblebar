@@ -1,8 +1,28 @@
 #!/bin/bash
 # Dependencies
-# npm install -g svgo chrome-webstore-manager web-ext
+# npm install -g svgo chrome-webstore-manager web-ext uglifycss
 
-set -ue
+this="$0"
+
+failed() {
+	set +e
+	local code="$?"
+	local line="$1"
+
+	echo "=== Packaging failed ==="
+	echo "Error ${code} on line ${line}:"
+	echo "| $(cat "${this}" | sed $((line-2))'q;d')"
+	echo "| $(cat "${this}" | sed $((line-1))'q;d')"
+	echo "> $(cat "${this}" | sed $((line))'q;d')"
+	echo "| $(cat "${this}" | sed $((line+1))'q;d')"
+	echo "| $(cat "${this}" | sed $((line+2))'q;d')"
+
+	exit $code
+}
+
+trap 'failed ${LINENO}' ERR
+
+set -ue -o pipefail -o errtrace
 
 PUSH_MOZILLA=${PUSH_MOZILLA-}
 PUSH_CHROME=${PUSH_CHROME-}
