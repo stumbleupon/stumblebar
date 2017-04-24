@@ -1422,6 +1422,10 @@ INPUT[type="text"] {
 .convo-response-container .btn-success {
 	float: right;
 	margin: 0;
-	height: 24px;
-	line-height: 24px;
+}
+
+.btn-arrow-up {
+	width: 24px;
+	height: 25px;
+	border-radius: 4px;
 }
