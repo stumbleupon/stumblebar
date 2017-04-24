@@ -41,7 +41,7 @@ var Toolbar = {
 		else
 			document.querySelector('.error-message').innerText = error;
 		document.querySelector('.error-message').addEventListener('mousedown', function() { document.querySelector('.error-message').addClass('hidden') });
-		//Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
+		Toolbar.state.errorMessageDisplay = setTimeout(function() { document.querySelector('.error-message').addClass('hidden') }, 3000);
 	},
 
 	clearError: function _clearError(error, sourceEl) {

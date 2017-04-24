@@ -1082,6 +1082,7 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 			e = e.stack;
 		else
 			e = (e.message || (e.type + '::' + e.name)) + "\n" + e.stack;
+		e = "A network error occurred";
 	}
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }
