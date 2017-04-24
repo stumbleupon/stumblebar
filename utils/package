@@ -35,15 +35,9 @@ mkdir -p artifact
 
 
 # Add tracked files to target
-git ls-tree -r master --name-only | while read FILE; do
+git ls-tree -r master --name-only | egrep -v '^(utils/|asset/|.*\.md)' | while read FILE; do
 	# Create missing directories
 	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
-
-	# Don't package utils
-	if [[ ( "$(dirname "$FILE")" == "utils"  ) ]]; then continue; fi
-
-	# Don't package SVGs
-	if [[ ( "$(dirname "$FILE")" == "assets" ) && ( "$(echo "$FILE" | grep "\.svg$")" ) ]]; then continue; fi
 
 	cp -rp {,target/}"$FILE"
 done
@@ -55,10 +49,12 @@ cat toolbar.css | grep '^\s*background.*asset/.*\.svg' | sed -e 's/.*url..//g' -
 done
 
 
-# Remove unused assets
-find target/asset -name \*.svg -exec rm {} \;
-rmdir target/asset/Icon
-rm target/asset/Logo.png
+# Package used assets
+git ls-tree -r master --name-only | egrep '\.(js|html?|css|json)' | xargs -I {} egrep "asset/[^\"']*" target/{} | sed -e "s@.*\(asset/[^\"']*\).*@\1@" | sort -u | while read ASSET; do
+	mkdir -p "target/$(dirname "$ASSET")"
+	cp "$ASSET" "target/$ASSET"
+done
+
 
 # Compress CSS
 git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
