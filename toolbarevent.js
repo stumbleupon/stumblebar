@@ -134,7 +134,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
 		.then(function(urlid) {
 			ToolbarEvent._notify("Marked as Spam");
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 			return ToolbarEvent.api.reportSpam(urlid);
 		});
 }
@@ -166,7 +166,7 @@ ToolbarEvent.blockSite = function(request, sender) {
 		.then(function(urlid) {
 			ToolbarEvent._notify("Domain Blocked");
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 			return ToolbarEvent.api.blockSite(urlid);
 		})
 }
@@ -247,7 +247,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
 		.then(function(urlid) {
 			ToolbarEvent._notify("Reported Missing");
 			if (!sender.tab.incognito)
-				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 			return ToolbarEvent.api.reportMissing(urlid);
 		})
 }

@@ -349,9 +349,9 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 		if (!tab.incognito) {
 			Page.tab[tabid].status = { state: info.status, url: tab.url };
 			Page.tab[tabid].info = tab;
-			Page.tab[tabid].stumbling = false;
-			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl)
+			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl && Page.tab[tabid].stumbling)
 				Page.tab[tabid].url.finalUrl = info.url || tab.url;
+			Page.tab[tabid].stumbling = false;
 		}
 		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}
