@@ -1062,6 +1062,8 @@ ToolbarEvent._init = function() {
  * @return {Promise} rejection
  */
 ToolbarEvent._error = function(request, sender, e, tabid) {
+	var orig = e;
+	var report = false;
 	error(e);
 	ToolbarEvent.ping();
 	if (!e || e.message == 'Attempting to use a disconnected port object')
@@ -1074,15 +1076,32 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 	if (e.error == 'nourl' && ['dislike', 'unrate'].indexOf(e.name) != -1)
 		e = 'Page not found on StumbleUpon';
 	if (e.error && e.error._reason && e.error._reason[0] && e.error._reason[0].message)
-		e = e.error._reason[0].message;
+		e = report = e.error._reason[0].message;
 	if (e.error && e.error._reason && e.error._reason && e.error._reason.message)
-		e = e.error._reason.message;
+		e = report = e.error._reason.message;
 	if (e.stack) {
 		if (e.stack.split("\n")[0] == e.message)
-			e = e.stack;
+			e = report = e.stack;
 		else
-			e = (e.message || (e.type + '::' + e.name)) + "\n" + e.stack;
+			e = report = (e.message || (e.type + '::' + e.name)) + "\n" + e.stack;
 		e = "A network error occurred";
+		if (!report)
+			report = "Unknown";
+	}
+	if (report) {
+		ToolbarEvent.api.reportError(report, {
+			error: orig,
+			url: Page.lastUrl(tabid),
+			state: Page.lastState(tabid),
+			tab: Page.tab[tabid],
+			version: chrome.runtime.getManifest().version,
+			config: {
+				modeinfo: config.modeinfo,
+				mode: config.mode,
+				accessToken: config.accessToken,
+				authed: config.authed,
+			},
+		});
 	}
 	return ToolbarEvent._buildResponse({error: e}, tabid);
 }

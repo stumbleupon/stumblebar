@@ -35,6 +35,10 @@ StumbleUponApi.prototype = {
 		this.userCache = userCache;
 	},
 
+	reportError: function(error, info) {
+		return this.api.req(this.config.endpoint.report.form({ report: 'error' }), { error: error, domain: 'stumblebar', details: JSON.stringify(info) });
+	},
+
 	reportInfo: function(urlid) {
 		return this.api.get(this.config.endpoint.report.form({ report: 'info' }), { urlid: urlid })
 			.then(function(r) { return StumbleUponApi.expectSuccess(r); });
