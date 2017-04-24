@@ -1,6 +1,8 @@
 #!/bin/bash
+#
 # Dependencies
 # npm install -g svgo chrome-webstore-manager web-ext uglifycss
+# brew install pcregrep # OSX only
 
 this="$0"
 
@@ -8,9 +10,12 @@ failed() {
 	set +e
 	local code="$?"
 	local line="$1"
+	local message="${2-}"
 
 	echo "=== Packaging failed ==="
 	echo "Error ${code} on line ${line}:"
+	echo 
+	echo "${message}"
 	echo "| $(cat "${this}" | sed $((line-2))'q;d')"
 	echo "| $(cat "${this}" | sed $((line-1))'q;d')"
 	echo "> $(cat "${this}" | sed $((line))'q;d')"
@@ -21,6 +26,9 @@ failed() {
 }
 
 trap 'failed ${LINENO}' ERR
+
+pcregrep 2>/dev/null || alias pcregrep=grep
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > /dev/null || failed ${LINENO} "pcregrep required: brew install pcre"
 
 set -ue -o pipefail -o errtrace
 
