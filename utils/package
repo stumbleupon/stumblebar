@@ -10,7 +10,7 @@ failed() {
 	set +e
 	local code="$?"
 	local line="$1"
-	local message="${2-}"
+	local message="${2-""}"
 
 	echo "=== Packaging failed ==="
 	echo "Error ${code} on line ${line}:"
@@ -27,10 +27,13 @@ failed() {
 
 trap 'failed ${LINENO}' ERR
 
+
 pcregrep 2>/dev/null || alias pcregrep=grep
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > /dev/null || failed ${LINENO} "pcregrep required: brew install pcre"
 
-set -ue -o pipefail -o errtrace
+
+set -ue -o errtrace -o pipefail
+
 
 PUSH_MOZILLA=${PUSH_MOZILLA-}
 PUSH_CHROME=${PUSH_CHROME-}
@@ -42,7 +45,8 @@ mkdir -p target
 mkdir -p artifact
 
 
-# Add tracked files to target
+echo
+echo "== Add tracked files to build"
 git ls-tree -r master --name-only | egrep -v '^(utils/|asset/|.*\.md)' | while read FILE; do
 	# Create missing directories
 	if [[ "$(echo "$FILE" | grep /)" ]]; then mkdir -p "target/$(dirname "$FILE")"; fi
@@ -51,55 +55,59 @@ git ls-tree -r master --name-only | egrep -v '^(utils/|asset/|.*\.md)' | while r
 done
 
 
-# Convert SVGs to data (Chrome sometimes disappears SVG assets, so we convert them into blobs)
+echo
+echo "== Convert SVGs to data (Chrome sometimes disappears SVG assets, so we convert them into blobs)"
 cat toolbar.css | grep '^\s*background.*asset/.*\.svg' | sed -e 's/.*url..//g' -e 's/svg.*/svg/g' | sort -u | while read SVG; do
 	sed -i '' -e "s~['\"]$SVG['\"]~$(cat "$SVG" | svgo --enable='removeViewBox,removeComments,removeUselessStrokeAndFill' -i - -o - --datauri=base64)~" target/toolbar.css
 done
 
 
-# Package used assets
-git ls-tree -r master --name-only | egrep '\.(js|html?|css|json)' | xargs -I {} egrep "asset/[^\"']*" target/{} | sed -e "s@.*\(asset/[^\"']*\).*@\1@" | sort -u | while read ASSET; do
+echo
+echo "== Package used assets"
+git ls-tree -r master --name-only | egrep '\.(js|html?|css|json)' | ( xargs -I {} egrep "asset/[^\"']*" target/{} || true ) | sed -e "s@.*\(asset/[^\"']*\).*@\1@" | sort -u | while read ASSET; do
 	mkdir -p "target/$(dirname "$ASSET")"
+	echo "$ASSET"
 	cp "$ASSET" "target/$ASSET"
 done
 
 
-# Compress CSS
+echo
+echo "== Compress CSS"
 git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
 
 
 # Firefox
-echo -e "\n\n\n========= START Firefox"
+echo
+echo "== Package Firefox"
 cd target
-zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
+FFBUILD="artifact/StumbleBar Firefox $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+zip -r "../$FFBUILD" .
 if [ "$PUSH_MOZILLA" ]; then
 	# It's okay if this fails. We expect it to fail.  
 	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
 fi
-#sed -i '' 's/\(version": "0.[0-9]*\)/\1rc1/' manifest.json
-#zip -r ../artifact/StumbleBar\ Firefox\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip .
-#if [ "$PUSH_MOZILLA" ]; then
-#	# It's okay if this fails. We expect it to fail.  
-#	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
-#fi
-echo -e "========= END Firefox\n\n\n"
 
 
 # Chrome
-echo -e "========= START Chrome"
+echo
+echo "== Package Chrome"
 cd ..
-cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > target/manifest.json
 rm -rf StumbleBar
 cp -rp target StumbleBar
-zip -r artifact/StumbleBar\ Chrome\ $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip StumbleBar
-rm -rf target StumbleBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
+CHBUILD="artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+zip -r "$CHBUILD" StumbleBar
 if [ "$PUSH_CHROME" ]; then
 	#WEBSTORE_TOKEN="$(chrome-webstore-manager token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET)"
 	WEBSTORE_TOKEN="$(chrome-webstore-manager refresh_token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET --refresh_token $WEBSTORE_REFRESH_TOKEN)"
-	chrome-webstore-manager update  -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID "artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+	chrome-webstore-manager update  -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID "$CHBUILD"
 	chrome-webstore-manager publish -t $WEBSTORE_TOKEN $WEBSTORE_EXTENSION_ID
 fi;
-echo -e "========= END Chrome\n\n\n"
+
+
+echo
+echo 'Firefox build: "'"$FFBUILD"'"'
+echo 'Chrome  build: "'"$CHBUILD"'"'
 
 popd
 
