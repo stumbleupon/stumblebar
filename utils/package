@@ -60,6 +60,8 @@ find target/asset -name \*.svg -exec rm {} \;
 rmdir target/asset/Icon
 rm target/asset/Logo.png
 
+# Compress CSS
+git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
 
 
 # Firefox
