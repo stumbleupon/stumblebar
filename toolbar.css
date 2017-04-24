@@ -449,7 +449,9 @@ input.invalid:focus {
 	float: left;
 	width: 25px;
 	height: 25px;
-	margin-right: 5px;
+	margin-right: 3px;
+	border: 1px solid gray;
+	border-radius: 13px;
 }
 .convo-recipients-container .convo-recipients-thumbs-container .convo-recipient-thumb-container .contact-thumbnail {
 	display: block;
