@@ -722,6 +722,7 @@ var Toolbar = {
 		}
 		if ( action == 'expand-convo-recipients') {
 			document.querySelector('.convo-recipients-container').toggleClass('expanded');
+			Toolbar.handleRedraw();
 			return false;
 		}
 		return true;
