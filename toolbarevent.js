@@ -264,6 +264,7 @@ ToolbarEvent.dislike = function(request, sender) {
 	if ((request.action == 'dislike' && request.url && request.url.userRating && request.url.userRating.type) == -1)
 		return ToolbarEvent.unrate(request, sender);
 
+	var oldRating = request.url.userRating;
 	request.url.userRating = { type: -1, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
@@ -281,7 +282,12 @@ ToolbarEvent.dislike = function(request, sender) {
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.dislike(urlid);
-		});
+		})
+		.catch(function(e) {
+			request.url.userRating = oldRating;
+			ToolbarEvent._buildResponse(request, sender.tab.id);
+			return Promise.reject(e);
+		})
 }
 
 /**
@@ -292,6 +298,7 @@ ToolbarEvent.dislike = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.unrate = function(request, sender) {
+	var oldRating = request.url.userRating;
 	request.url.userRating = { type: 0, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 	
@@ -309,7 +316,12 @@ ToolbarEvent.unrate = function(request, sender) {
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.unrate(urlid);
-		});
+		})
+		.catch(function(e) {
+			request.url.userRating = oldRating;
+			ToolbarEvent._buildResponse(request, sender.tab.id);
+			return Promise.reject(e);
+		})
 }
 
 /**
@@ -323,6 +335,7 @@ ToolbarEvent.like = function(request, sender) {
 	if ((request.url && request.url.userRating && request.url.userRating.type) == 1)
 		return ToolbarEvent.unrate(request, sender);
 
+	var oldRating = request.url.userRating;
 	request.url.userRating = { type: 1, subtype: 0 };
 	ToolbarEvent._buildResponse(request, sender.tab.id);
 
@@ -334,7 +347,12 @@ ToolbarEvent.like = function(request, sender) {
 			if (!sender.tab.incognito)
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }));
 			return ToolbarEvent.api.like(urlid);
-		});
+		})
+		.catch(function(e) {
+			request.url.userRating = oldRating;
+			ToolbarEvent._buildResponse(request, sender.tab.id);
+			return Promise.reject(e);
+		})
 }
 
 /*************** END RATINGS *****************/
