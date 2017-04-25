@@ -347,16 +347,15 @@ ToolbarEvent.like = function(request, sender) {
 
 	return ToolbarEvent
 		._sanity()
-		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); })
-		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; })
-		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }).catch(function(e) { return false; }); })
-		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); })
-		.then(function(urlid) {
-			return ToolbarEvent.api.like(urlid)
-				.then(function() {
-					if (!sender.tab.incognito)
-						Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
-				});
+		.then(function() { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); }) // Find urlid by tab
+		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; }) // Find urlid by url in page cache
+		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }).catch(function(e) { return false; }); }) // Find urlid by url in SU
+		.then(function(urlid) { return urlid && ToolbarEvent.api.like(urlid).then(function() { return urlid; }); }) // Like urlid if we have one
+		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
+		.then(function(urlid) { // Note the like
+			if (!sender.tab.incognito)
+				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
+			return urlid;
 		})
 		.catch(function(e) {
 			request.url.userRating = oldRating;
@@ -1161,11 +1160,17 @@ ToolbarEvent._notify = function(message, tabid) {
 ToolbarEvent._discover = function(request, sender) {
 	return Page.getUrl(sender.tab.id)
 		.then(function(url) {
-			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike);
+			return ToolbarEvent.api.submit(url, request.data.nsfw, request.data.nolike)
+				.then(function(url) {
+					ToolbarEvent._notify("You discovered a new URL.");
+					return url;
+				});
 		})
 		.then(function(url) { 
 			if (!sender.tab.incognito) {
 				// Super hacky rewrite of urlid to make stuff work correctly
+				if (!request.data.nolike)
+					url.userRating = { type: 1, subtype: 0 };
 				Page.note(sender.tab.id, Object.assign(url, {urlid: url.publicid})); 
 			}
 			ToolbarEvent._buildResponse({url: url}, sender.tab.id);
