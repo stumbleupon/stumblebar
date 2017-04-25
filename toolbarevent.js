@@ -1127,6 +1127,9 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 			state: Page.lastState(tabid),
 			tab: Page.tab[tabid],
 			version: chrome.runtime.getManifest().version,
+			request: request,
+			sender: sender,
+			tabid: tabid,
 			config: {
 				modeinfo: config.modeinfo,
 				mode: config.mode,
