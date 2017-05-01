@@ -606,7 +606,8 @@ input.invalid:focus {
 	color: white;
 }
 .primary-background.disabled {
-	color: #888888;
+	background-color: #888888;
+	color: #aaa;
 }
 .primary-color {
 	color: #E94A2F;
