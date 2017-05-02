@@ -273,26 +273,15 @@
 						</div>
 					</div>
 
-					<div class="toolbar-section toolbar-share-container show-when-share-expanded toolbar-border-top hidden">
+					<div class="toolbar-section toolbar-section-standalone toolbar-share-container show-when-share-expanded toolbar-border-top hidden">
+						<div class="inset-input-container toolbar-section-header toolbar-entry-container toolbar-border-bottom">
+							Share
+						</div>
 						<div class="share-loading hidden spinner-container">
 							<span class="spinner toolbar-logo"></span> Loading...
 						</div>
-						<div class="share-container">
-							Share To...
-							<div>
-								<span action="choose" value="stumble"   class="share-to share-to-stumble enabled"></span>
-								<span action="choose" value="facebook"  class="share-to share-to-facebook"></span>
-								<span action="choose" value="reddit"    class="share-to share-to-reddit"></span>
-								<span action="choose" value="twitter"   class="share-to share-to-twitter"></span>
-								<span action="choose" value="tumblr"    class="share-to share-to-tumblr"></span>
-								<span action="choose" value="pinterest" class="share-to share-to-pinterest"></span>
-								<span action="choose" value="mix"       class="share-to share-to-mix"></span>
-							</div>
-						</div>
 						<label for="share-contacts-search">Search/Add Contacts</label>
 						<div class="toolbar-share-container-section toolbar-share-recipients-container">
-							<!-- contacts who have been selected for share -->
-							<div id="toolbar-share-recipients-list"></div>
 							<!-- a search input -->
 							<input type="search" id="share-contacts-search" placeholder="search">
 							<div class="clearfix"></div>
@@ -300,6 +289,18 @@
 								<!-- the list of contacts to be invited -->
 								<ul id="toolbar-share-contacts-list" class="scrollable">
 								</ul>
+							</div>
+							<!-- contacts who have been selected for share -->
+							<div>
+								<div id="toolbar-share-recipients-list"></div>
+							</div>
+							<div id="external-share" class="share-container toolbar-entry-container">
+								<span action="choose" value="facebook"  class="share-to share-to-facebook"></span>
+								<span action="choose" value="reddit"    class="share-to share-to-reddit"></span>
+								<span action="choose" value="twitter"   class="share-to share-to-twitter"></span>
+								<span action="choose" value="tumblr"    class="share-to share-to-tumblr"></span>
+								<span action="choose" value="pinterest" class="share-to share-to-pinterest"></span>
+								<span action="choose" value="mix"       class="share-to share-to-mix"></span>
 							</div>
 						</div>
 						<div class="toolbar-share-container-section toolbar-share-comment-container">

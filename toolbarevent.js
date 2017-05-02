@@ -80,26 +80,25 @@ ToolbarEvent.share = function handleShare(request, sender) {
 }
 
 
-ToolbarEvent.shareTo = function(request, sender) {
-	ToolbarEvent._buildResponse(request, sender.tab.id);
-
+ToolbarEvent.shareToExternal = function(request, sender) {
+	console.log(request);
 	return ToolbarEvent
 		._sanity()
-		.then(function()      { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); }) // Find urlid by tab
+		.then(function()      { return (request.url && request.url.urlid) || (request.data.contentId) || Page.getUrlId(sender.tab.id); }) // Find urlid by tab
 		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; }) // Find urlid by url in page cache
 		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }).catch(function(e) { return false; }); }) // Find urlid by url in SU
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
 		.then(function(urlid) { return urlid && (Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid)); }) // Get the SU Url Object
- 		.then(function(suurl) { // SHARE IT!!!!
+ 		.then(function(SUurl) { // SHARE IT!!!!
 			var shareableUrl = config.suPages.stumble.form({
 				baseProto: config.baseProto,
 				baseUrl:   config.baseUrl,
-				urlid:     suurl.urlid,
-				code:      suurl.tracking_code,
-				slug:      suurl.url.replace(/^.*:\/\/'/, '').replace(/[?#:].*/g, '')
+				urlid:     SUurl.urlid,
+				code:      SUurl.tracking_code,
+				slug:      SUurl.url.replace(/^.*:\/\/'/, '').replace(/[?#:].*/g, '')
 			});
 			var shareToUrl = config.externalShare[request.data.value].form({
-				title: suurl.title,
+				title: SUurl.title,
 				url:   shareableUrl
 			});
 			console.log('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
@@ -116,6 +115,19 @@ ToolbarEvent.shareTo = function(request, sender) {
  * @param {chrome.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
+	// Handle external sharing
+	request.data.external.forEach(function(site) {
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+			var url = (request && request.url && request.url.url) || (Page.tab[sender.tab.id] && Page.tab[sender.tab.id].url && Page.tab[sender.tab.id].url.url) || (tabs[0] && tabs[0].url);
+			var data = {value: site, contentId: request.data.contentId}
+			ToolbarEvent.shareToExternal({url: {url: url}, data: data}, sender);
+		});
+	})
+
+	// Bail if no internal sharing
+	if (!request.data.suUserIds.length && !request.data.emails.length)
+		return ToolbarEvent._buildResponse({shareSent: true}, sender.tab.id);
+
 	return ToolbarEvent
 		._sanity()
 		.then(function() { return request.data.contentId || Page.getUrlId(sender.tab.id) })

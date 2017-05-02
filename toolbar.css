@@ -89,15 +89,18 @@ button.pill {
 	position: relative;
 	float: left;
 	width: auto;
+	/*
 	height: 13px;
+	*/
 	margin: 2px;
-	padding: 0 9px 0 18px;
+	padding: 2px 11px 2px 20px;
 	border-radius: 9px;
 	border:none;
 	background-image:none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
+	background-color: #E94A2F;
 }
 button.pill.delete {
 	cursor: pointer;
@@ -415,9 +418,11 @@ input.invalid:focus {
 }
 #toolbar-share-recipients-list,
 #convo-recipients-list-container {
-	display: block;
+	display: inline-block;
 	position: relative;
+	/*
 	float: left;
+	*/
 }
 .convo-recipients-container {
 	position: relative;
@@ -1447,10 +1452,6 @@ INPUT[type="text"] {
 	border-radius: 4px;
 	margin: 0 4px;
 	cursor: pointer;
-}
-.share-to-stumble {
-	background-image: url("asset/stumbleupon.svg");
-	background-color: #E94A2F;
 }
 .share-to-facebook {
 	background-image: url("asset/facebook.svg");

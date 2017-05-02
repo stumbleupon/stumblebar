@@ -127,6 +127,10 @@ var Toolbar = {
 		}
 	},
 
+	handleShareSent: function() {
+		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
+	},
+
 	handleShare: function(shareResponse) {
 		document.querySelector('.toolbar-share-sending-container').addClass('hidden');
 		this.shareContactList = new ContactList(Toolbar.config.authed);
@@ -751,7 +755,8 @@ var Toolbar = {
 			contentType:'url',
 			contentId:null,
 			suUserIds:null,
-			initialMessage:null
+			initialMessage:null,
+			external:[]
 		};
 		if(Toolbar.url && Toolbar.url.urlid) {
 			data.contentId = Toolbar.url.urlid;
@@ -763,6 +768,9 @@ var Toolbar = {
 			return contact.name;
 		});
 		data.initialMessage = document.querySelector('#toolbar-share-comment').value;
+		(document.querySelectorAll('#external-share .enabled') || []).forEach(function(elem) {
+			data.external.push(elem.getAttribute('value'));
+		})
 		return data;
 	},
 	validateShare: function _validateShare() {
@@ -770,7 +778,7 @@ var Toolbar = {
 		var recipients = this.shareContactList.find(function(contact) {
 			return contact.isParticipant() && contact.isMine();
 		});
-		if(recipients.length === 0) {
+		if(recipients.length === 0 && !document.querySelector('#external-share .enabled')) {
 			document.getElementById('toolbar-share-recipients-list').innerText = '';
 			newFromTemplate('toolbar-share-empty-recipient', {}, 'toolbar-share-recipients-list');
 			return false;
