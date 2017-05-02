@@ -330,7 +330,8 @@ Page.urlChange = function(href, tabid, incog, state) {
  * @param {Object} tab The new state of the tab
  */
 Page.handleTabUpdate = function(tabid, info, tab) {
-	console.log('update', tabid, info, tab);
+	var shouldLog = false;
+	shouldLog && console.log('update', tabid, info, tab);
 	Page.ping().catch(function() {});
 
 	if (!Page.tab[tabid])
