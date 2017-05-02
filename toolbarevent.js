@@ -28,7 +28,8 @@ ToolbarEvent = {};
  * @returns {boolean}
  */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
-	console.log("ToolbarEvent.handleRequest", request);
+	var shouldLog = !(request && request.action == 'mouse');
+	shouldLog && console.log("ToolbarEvent.handleRequest", request);
 	var action = request.action;
 	var requestedAction = request.action,
 		action = requestedAction && requestedAction.replace(/-[a-z]/g, function (x) {
@@ -40,7 +41,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
 			if (response && response !== true) {
-				console.log("ToolbarEvent.sendResponse", request, response);
+				shouldLog && console.log("ToolbarEvent.sendResponse", request, response);
 				try {
 					sendResponse(response);
 				} catch (e) {
@@ -1198,7 +1199,6 @@ ToolbarEvent._generateModeInfo = function(request, sender) {
 }
 
 ToolbarEvent.mouse = function(request, sender) {
-	console.log(request, sender.tab.id);
 	return ToolbarEvent._buildResponse(request, sender.tab.id);
 }
 

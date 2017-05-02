@@ -246,6 +246,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 		ToolbarEvent._sanity();
 		var urlid = webtbPath[config.webtbPathNames.urlid];
 		if (urlid) {
+			debug('SUPATH MATCH ' + href);
 			// Stop current page from loading
 			chrome.tabs.executeScript(tabid, {
 				code: "window.stop();",
