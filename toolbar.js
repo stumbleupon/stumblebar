@@ -708,6 +708,9 @@ var Toolbar = {
 			el.addClass('disabled');
 			return this.getNewConvoParticipantData(value);
 		}
+		if (action == 'choose') {
+			elem.toggleClass('enabled');
+		}
 		if (action == 'save-share') {
 			if(this.validateShare()) {
 				document.querySelector('.toolbar-share-sending-container').removeClass('hidden');

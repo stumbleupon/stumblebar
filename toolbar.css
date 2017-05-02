@@ -1435,3 +1435,49 @@ INPUT[type="text"] {
 	height: 25px;
 	border-radius: 4px;
 }
+
+
+.share-to {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-size: 32px 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 4px;
+	margin: 0 4px;
+	cursor: pointer;
+}
+.share-to-stumble {
+	background-image: url("asset/stumbleupon.svg");
+	background-color: #E94A2F;
+}
+.share-to-facebook {
+	background-image: url("asset/facebook.svg");
+	background-color: #3C5A99;
+}
+.share-to-reddit {
+	background-image: url("asset/reddit.svg");
+	background-color: orangered;
+}
+.share-to-tumblr {
+	background-image: url("asset/tumblr.svg");
+	background-color: rgb(82, 158, 204);
+}
+.share-to-twitter {
+	background-image: url("asset/twitter.svg");
+	background-color: #1da1f2;
+}
+.share-to-mix {
+	background-image: url("asset/mix.svg");
+	background-color: transparent !important;
+}
+.share-to-pinterest {
+	background-image: url("asset/pinterest.svg");
+	background-color: #bd081c;
+}
+.share-to:not(.enabled) {
+	background-color: gray !important;
+	-webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}

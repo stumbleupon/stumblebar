@@ -79,6 +79,37 @@ ToolbarEvent.share = function handleShare(request, sender) {
 		});
 }
 
+
+ToolbarEvent.shareTo = function(request, sender) {
+	ToolbarEvent._buildResponse(request, sender.tab.id);
+
+	return ToolbarEvent
+		._sanity()
+		.then(function()      { return (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id); }) // Find urlid by tab
+		.then(function(urlid) { return urlid || (Page.getUrlByHref(request.url.url, config.mode) || {}).urlid; }) // Find urlid by url in page cache
+		.then(function(urlid) { return urlid || ToolbarEvent.api.getUrlByHref(request.url.url).then(function(url) { return url.urlid; }).catch(function(e) { return false; }); }) // Find urlid by url in SU
+		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
+		.then(function(urlid) { return urlid && (Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid)); }) // Get the SU Url Object
+ 		.then(function(suurl) { // SHARE IT!!!!
+			var shareableUrl = config.suPages.stumble.form({
+				baseProto: config.baseProto,
+				baseUrl:   config.baseUrl,
+				urlid:     suurl.urlid,
+				code:      suurl.tracking_code,
+				slug:      suurl.url.replace(/^.*:\/\/'/, '').replace(/[?#:].*/g, '')
+			});
+			var shareToUrl = config.externalShare[request.data.value].form({
+				title: suurl.title,
+				url:   shareableUrl
+			});
+			console.log('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
+			chrome.tabs.create({
+				url: shareToUrl
+			});
+		});
+}
+
+
 /**
  * after the share save, marke the page state, return a convo object to the ui.
  * @param {MessageRequest} request

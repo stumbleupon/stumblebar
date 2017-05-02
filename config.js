@@ -32,6 +32,14 @@ config.unloadNonVisibleBars = false;
 
 config.miniModeTimeout = 500;
 config.suPagesNeedAuth = ['profile', 'settings', 'interests'];
+config.externalShare = {
+	reddit:    'https://www.reddit.com/submit?url=:url&title=:title',
+	twitter:   'https://twitter.com/intent/tweet?text=:title+:url',
+	tumblr:    'https://www.tumblr.com/share?url=:url&title=:title',
+	facebook:  'https://www.facebook.com/sharer/sharer.php?u=:url&title=:title&src=sdkpreparse',
+	pinterest: 'https://www.pinterest.com/pin/create/button/?url=:url&description=:title',
+	mix:       'https://mix.com/mixit?url=:url',
+}
 config.suPages = {
 	profile:   ':baseProto://:baseUrl/stumbler',
 	settings:  ':baseProto://:baseUrl/settings',
@@ -40,6 +48,7 @@ config.suPages = {
 	signin:    ':baseProto://:baseUrl/login',
 	help:      'http://help.stumbleupon.com/',
 	interests: ':baseProto://:baseUrl/discover/interests',
+	stumble:   ':baseProto://:baseUrl/su/:urlid/:code/:slug',
 }
 config.url = {
   info:    '/content/:urlid',
