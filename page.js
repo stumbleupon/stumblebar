@@ -241,7 +241,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 	});
 
 	// Handle http://su/su/{urlid} urls.  Stop the request, redirect directly to page, return a promise
-	webtbPath = href.match(new RegExp("https?://" + config.baseUrl + config.webtbPath));
+	webtbPath = href.match(new RegExp("^https?://" + config.baseUrl + config.webtbPath));
 	if (webtbPath) {
 		ToolbarEvent._sanity();
 		var urlid = webtbPath[config.webtbPathNames.urlid];
@@ -276,14 +276,14 @@ Page.urlChange = function(href, tabid, incog, state) {
 		}
 	}
 
-	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/logout'));
+	suPath = href.match(new RegExp("^https?://" + config.baseUrl + '/logout'));
 	if (suPath) {
 		debug('LOGGING OUT');
 		return;
 	}
 
 	// If we're hitting http://su/..., revalidate our auth
-	suPath = href.match(new RegExp("https?://" + config.baseUrl + '/(.*)'));
+	suPath = href.match(new RegExp("^https?://" + config.baseUrl + '/(.*)'));
 	if (suPath && !config.authed) {
 		if (suPath)
 			ToolbarEvent._sanity();
@@ -291,7 +291,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 	}
 
 	// If we're hitting http://su/convo/..., set the conversation id on the page state
-	convoPath = href.match(new RegExp("https?://" + config.baseUrl + config.convoPath));
+	convoPath = href.match(new RegExp("^https?://" + config.baseUrl + config.convoPath));
 	if (convoPath) {
 		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
 		console.log('CONVO ON ' + tabid);
