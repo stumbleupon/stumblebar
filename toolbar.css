@@ -1452,6 +1452,7 @@ INPUT[type="text"] {
 	border-radius: 4px;
 	margin: 0 4px;
 	cursor: pointer;
+	position: relative;
 }
 .share-to-facebook {
 	background-image: url("asset/facebook.svg");
@@ -1471,7 +1472,7 @@ INPUT[type="text"] {
 }
 .share-to-mix {
 	background-image: url("asset/mix.svg");
-	background-color: transparent !important;
+	background-size: 32px 32px;
 }
 .share-to-pinterest {
 	background-image: url("asset/pinterest.svg");
@@ -1479,6 +1480,7 @@ INPUT[type="text"] {
 }
 .share-to:not(.enabled) {
 	background-color: gray !important;
-	-webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
+}
+.share-to-mix:not(.enabled) {
+	background-image: url("asset/mix-disabled.svg");
 }

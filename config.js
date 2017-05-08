@@ -38,7 +38,7 @@ config.externalShare = {
 	tumblr:    'https://www.tumblr.com/share?url=:url&title=:title',
 	facebook:  'https://www.facebook.com/sharer/sharer.php?u=:url&title=:title&src=sdkpreparse',
 	pinterest: 'https://www.pinterest.com/pin/create/button/?url=:url&description=:title',
-	mix:       'https://mix.com/mixit?url=:url',
+	mix:       'https://mix.com/mixit?url=:url&title=:title',
 }
 config.suPages = {
 	profile:   ':baseProto://:baseUrl/stumbler',
