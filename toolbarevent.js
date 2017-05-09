@@ -90,16 +90,18 @@ ToolbarEvent.shareToExternal = function(request, sender) {
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
 		.then(function(urlid) { return urlid && (Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid)); }) // Get the SU Url Object
  		.then(function(SUurl) { // SHARE IT!!!!
-			var shareableUrl = config.suPages.stumble.form({
+			var shareableUrl = config.suPages.stumble
+			.form({
 				baseProto: config.baseProto,
 				baseUrl:   config.baseUrl,
 				urlid:     SUurl.urlid,
 				code:      SUurl.tracking_code,
-				slug:      SUurl.url.replace(/^.*:\/\/'/, '').replace(/[?#:].*/g, '')
+				slug:      SUurl.url.replace(/^.*:\/\//, '').replace(/[?#:].*/g, '')
 			});
-			var shareToUrl = config.externalShare[request.data.value].form({
-				title: SUurl.title,
-				url:   shareableUrl
+			var shareToUrl = config.externalShare[request.data.value].eform({
+				title:  SUurl.title,
+				url:    shareableUrl,
+				rawurl: SUurl.url
 			});
 			console.log('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
 			chrome.tabs.create({

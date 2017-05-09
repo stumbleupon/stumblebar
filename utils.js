@@ -49,10 +49,14 @@ function error() {
 	console.log('%cERROR', 'color: red', arguments, e.stack);
 }
 
-String.prototype.form = function(map) {
+String.prototype.eform = function(map) { return this.form(map, true); }
+String.prototype.form = function(map, encode) {
 	var newstr = this + '';
 	(this.match(/:[-_a-zA-Z0-9]+/g) || []).forEach(function(key) {
-		newstr = newstr.replace(key, map[key.slice(1)]);
+		var val = map[key.slice(1)];
+		if (encode)
+			val = encodeURIComponent(val);
+		newstr = newstr.replace(key, val);
 	});
 	return newstr;
 }

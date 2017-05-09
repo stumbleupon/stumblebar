@@ -37,7 +37,7 @@ config.externalShare = {
 	twitter:   'https://twitter.com/intent/tweet?text=:title+:url',
 	tumblr:    'https://www.tumblr.com/share?url=:url&title=:title',
 	facebook:  'https://www.facebook.com/sharer/sharer.php?u=:url&title=:title&src=sdkpreparse',
-	pinterest: 'https://www.pinterest.com/pin/create/button/?url=:url&description=:title',
+	pinterest: 'https://www.pinterest.com/pin/create/button/?url=:url&description=:title&media=:rawurl',
 	mix:       'https://mix.com/mixit?url=:url&title=:title',
 }
 config.suPages = {
