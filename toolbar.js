@@ -1060,6 +1060,12 @@ var Toolbar = {
 		document.querySelector('#share-contacts-search').addEventListener('input', function(e) {
 			this.clearError();
 			this.validateShareSearch();
+			var el = document.querySelector('.toolbar-share-contacts-container');
+			if (e.target.value.length > 0) {
+				el.removeClass('hidden');
+			} else {
+				el.addClass('hidden');
+			}
 			if(this.shareContactList) {
 				var contactIds = this.shareContactList.search(e.target.value),
 					attributeMap = [
@@ -1087,12 +1093,6 @@ var Toolbar = {
 				// escape key
 				e.target.value = '';
 				e.target.focus();
-			}
-			var el = document.querySelector('.toolbar-share-contacts-container');
-			if (e.target.value.length > 0) {
-				el.removeClass('hidden');
-			} else {
-				el.addClass('hidden');
 			}
 		}.bind(this));
 
