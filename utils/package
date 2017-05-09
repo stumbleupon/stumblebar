@@ -98,6 +98,10 @@ rm -f "$CHBUILD"
 rm -rf StumbleBar
 cp -rp target StumbleBar
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
+echo '2i
+  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7zdc2iM/A4FIj7dXfd5zH6xzk8JNaLoAbupMqY3OO6HGCeHWcN2O8IbCnbBBaw37GPobhkBu9HpHdLJ8d7h74j2/mhIMPqgh4zlps2ZErJ7MkGSCARbz3VPuWkRQDw4ZEUGWR0qwhPzfxD6elCoYlj2F0D9/hNhPVLtW4DzrM3QIDAQAB",
+.
+wq' | ed StumbleBar/manifest.json > /dev/null
 zip -r "$CHBUILD" StumbleBar
 if [ "$PUSH_CHROME" ]; then
 	#WEBSTORE_TOKEN="$(chrome-webstore-manager token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET)"

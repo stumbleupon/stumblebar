@@ -79,6 +79,10 @@
 		remove: function() {
 			if (document.getElementById(this.id))
 				document.getElementById(this.id).parentNode.removeChild(document.getElementById(this.id));
+			if (document.getElementById('__su__toolbar')) {
+				document.getElementById('__su__toolbar').parentNode.removeChild(document.getElementById('__su__toolbar'));
+				document.body.style.marginTop = 0;
+			}
 		},
 
 		registerFullscreenListner: function() {
