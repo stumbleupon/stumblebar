@@ -407,7 +407,16 @@ Page.handleFreshen = function() {
 	chrome.tabs.query({}, function(tabs) {
 		tabs.forEach(function(tab) {
 			try {
-				chrome.tabs.executeScript(tab.id, {code: "document.getElementById('discoverbar') && document.documentElement.removeChild(document.getElementById('discoverbar'), document.documentElement)"});
+				chrome.tabs.executeScript(tab.id, {
+					code: "" +
+						  "if (document.getElementById('discoverbar')) {" +
+						  "  document.documentElement.removeChild(document.getElementById('discoverbar'), document.documentElement); " +
+						  "}" +
+						  "if (document.getElementById('__su__toolbar')) { " +
+						  "  document.body.removeChild(document.getElementById('__su__toolbar'), document.body); " +
+						  "  try { document.body.style.marginTop = 0; } catch (e) {}" +
+						  "}"
+				});
 			} catch(e) {}
 		});
 	});
