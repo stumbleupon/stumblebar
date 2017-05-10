@@ -43,7 +43,6 @@
   }, 
 
   "permissions": [
-    "bookmarks",
     "tabs",
     "cookies",
     "<all_urls>",
