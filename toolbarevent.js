@@ -45,7 +45,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 				try {
 					sendResponse(response);
 				} catch (e) {
-					if (Page.tab[sender.tab.id].status.state == 'incog') {
+					if ((Page.tab[sender.tab.id].status || {}).state == 'incog') {
 						warning(e);
 						return; // Sometimes we get incognito races.  They are safe to ignore.
 					}
