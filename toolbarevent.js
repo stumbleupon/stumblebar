@@ -399,7 +399,7 @@ ToolbarEvent.like = function(request, sender) {
 		.then(function(urlid) { return urlid && ToolbarEvent.api.like(urlid).then(function() { return urlid; }); }) // Like urlid if we have one
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
 		.then(function(urlid) { // Note the like
-			if (!sender.tab.incognito)
+			if (!sender.tab.incognito && Page.getUrlByUrlid(urlid, config.mode))
 				Page.note(sender.tab.id, Object.assign(Page.getUrlByUrlid(urlid, config.mode), { userRating: request.url.userRating }), true);
 			return urlid;
 		})
