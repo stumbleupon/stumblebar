@@ -283,9 +283,8 @@ input.invalid:focus {
 }
 .toolbar-logo-container .toolbar-settings-icon {
 	position: absolute;
-	bottom: 0;
-	left: 0;
-	margin: 8px;
+	top: 32px;
+	left: 11px;
 }
 .toolbar-action-container .action-lists, .lists-icon {
 	background-image: url("asset/Icon/Bookmark.svg");
@@ -397,8 +396,9 @@ input.invalid:focus {
 	background-image: url("asset/Settings.svg");
 	background-repeat: no-repeat;
 	background-position: center; 
-	width: 34px;
-	height: 34px;
+	background-size: contain;
+	width: 12px;
+	height: 12px;
 	margin: 0px !important;
 	z-index: 1;
 }
@@ -406,6 +406,20 @@ input.invalid:focus {
 .close-icon {
 	background-image: url("asset/Close.svg") !important;
 	background-size: cover;
+}
+
+.toolbar-close-icon {
+	width: 16px;
+	height: 16px;
+	color: white;
+	position: absolute;
+	left: 9px;
+	bottom: 9px;
+	filter: brightness(0) invert(1);
+}
+
+.mini-mode .toolbar-close-icon {
+	bottom: 9px;
 }
 
 .toolbar-share-container {
@@ -1251,13 +1265,6 @@ input.invalid:focus {
 	clear: both;
 }
 
-.close-icon {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 36px;
-	height: 36px;
-}
 
 .scrollable {
 	overflow-y: auto;
