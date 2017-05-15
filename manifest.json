@@ -38,7 +38,7 @@
   "applications": {
     "gecko": {
       "id": "discover@mix.com",
-      "strict_min_version": "10.983"
+      "strict_min_version": "52.0"
     }
   }, 
 
