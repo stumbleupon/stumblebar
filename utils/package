@@ -76,10 +76,13 @@ echo "== Compress CSS"
 git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
 
 
+export BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')$(cat .git/HEAD | sed -e 's@.*/@@g' -e 's/^/-/g' -e 's/^-master$//g')"
+
+
 # Firefox
 echo
 echo "== Package Firefox"
-FFBUILD="artifact/StumbleBar Firefox $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+FFBUILD="artifact/StumbleBar Firefox $BUILD_VERSION.zip"
 rm -f "$FFBUILD"
 cd target
 zip -r "../$FFBUILD" .
@@ -93,7 +96,7 @@ cd ..
 # Chrome
 echo
 echo "== Package Chrome"
-CHBUILD="artifact/StumbleBar Chrome $(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//').zip"
+CHBUILD="artifact/StumbleBar Chrome $BUILD_VERSION.zip"
 rm -f "$CHBUILD"
 rm -rf StumbleBar
 cp -rp target StumbleBar
