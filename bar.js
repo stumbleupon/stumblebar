@@ -56,7 +56,7 @@
 				this.iframe = this.createIframe();
 				this.drag = new DragNDrop(this.iframe, this.origin, this.hash);
 				this.drag.onMessageSendFail(this.handleMessageSendFail.bind(this))
-				this.registerFullscreenListner();
+				this.registerFullscreenListener();
 				this.attemptInjection();
 				return true;
 			}
@@ -91,7 +91,7 @@
 			}
 		},
 
-		registerFullscreenListner: function() {
+		registerFullscreenListener: function() {
 			['webkit', 'MS', '', 'mozilla'].forEach(function(platform) {
 				document.addEventListener(platform + 'fullscreenchange', function(e) {
 					try {
