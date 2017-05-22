@@ -108,13 +108,14 @@ DragNDrop.prototype = {
 
 
 	handleRepos: function(rpos, noMargin) {
+		this.estyle['-stumble-dirty-style'] = '1';
+
 		this.estyle[rpos.vside] = this.elem.style[rpos.vside] = rpos.v + '%';
 		this.estyle[rpos.hside] = this.elem.style[rpos.hside] = rpos.h + '%';
 		this.estyle[this.oside[rpos.vside]] = this.elem.style[this.oside[rpos.vside]] = 'initial';
 		this.estyle[this.oside[rpos.hside]] = this.elem.style[this.oside[rpos.hside]] = 'initial';
 
 		this.handleTrySnap(rpos)
-		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
 	handleTrySnap: function(rpos) {
@@ -131,6 +132,11 @@ DragNDrop.prototype = {
 			this.estyle[rpos.hside] = this.elem.style[rpos.hside] = '0';
 		} else {
 			this.estyle['margin-' + rpos.hside] = this.elem.style['margin-' + rpos.hside] = 'initial';
+		}
+		if (this.theme == 'classic') {
+			this.estyle['margin-right'] = this.elem.style['margin-right'] = 0;
+			this.estyle['margin-left'] = this.elem.style['margin-left'] = 0;
+			this.estyle['right'] = this.elem.style['right'] = 0;
 		}
 		this.estyle['-stumble-dirty-style'] = '1';
 	},
@@ -197,10 +203,22 @@ DragNDrop.prototype = {
 	},
 
 	handleRedrawMessage: function(message) {
+		if (message.toolbar.theme)
+			this.theme = message.toolbar.theme;
 		if (message.toolbar.h && message.toolbar.w) {
+			if (message.toolbar.theme == 'classic') {
+				message.toolbar.h = '54';
+				message.toolbar.w = window.innerWidth;
+			}
 			this.elem.style.height = this.estyle.height = message.toolbar.h + 'px';
 			this.elem.style.width  = this.estyle.width  = message.toolbar.w + 'px';
 			this.updateIframePos();
+		}
+		if (message.toolbar.theme == 'classic') {
+			message.toolbar.rpos = { vside: 'top', hside: 'left', v: '0', h: '0' };
+			document.documentElement.style.marginTop = message.toolbar.h + 'px !important';
+			document.documentElement.style.marginTop = message.toolbar.h + 'px';
+			document.documentElement.style.position  = 'relative';
 		}
 		if (message.toolbar.rpos)
 			this.handleRepos(message.toolbar.rpos);

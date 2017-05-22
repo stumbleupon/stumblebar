@@ -36,6 +36,8 @@ BODY.top-handed {
 	text-align: left;
 	overflow: hidden;
 	white-space: nowrap;
+}
+.draggable {
 	cursor: move;
 }
 .toolbar-background {
@@ -856,6 +858,79 @@ input.invalid:focus {
 	background-position: center; 
 }
 .theme-all-dark .toolbar-settings-icon {
+}
+
+
+/**
+ * Classic
+ */
+.theme-classic, .theme-classic .default-color {
+	color: white;
+}
+#toolbar.theme-classic {
+	width: 100%;
+}
+.theme-classic .toolbar-background-logo {
+/*
+	background-color: #444;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.777;
+*/
+}
+.theme-classic .entry-background {
+	background-color: black;
+}
+.theme-classic .entry-background-secondary {
+	background-color: #333;
+}
+.theme-classic .alternate-colors {
+	background: #000;
+}
+.theme-classic .alternate-colors > div:nth-of-type(odd) {
+	background: #333;
+}
+.theme-classic .toolbar-background {
+	background-color: #111;
+	opacity: 0.777;
+}
+.theme-classic .toolbar-border-bottom {
+	border-bottom: 1px;
+	border-style: solid !important;
+	border-color: #666 !important;
+}
+.theme-classic .toolbar-border-top {
+	border-top: 1px;
+	border-style: solid !important;
+	border-color: #666 !important;
+}
+.theme-classic .toolbar-logo-container {
+	/*
+	position: relative;
+	float: left;
+	*/
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: auto;
+	display: inline-block;
+	height: 100%;
+	margin-right: 10px;
+	border-right: 1px solid #666;
+}
+.theme-classic .toolbar-logo {
+	padding: 8px;
+	width: 17px;
+	height: 17px;
+	display: inline-block;
+	position: relative;
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.theme-classic .toolbar-settings-icon {
 }
 
 

@@ -302,6 +302,7 @@ var Toolbar = {
 				if (classes[i].indexOf('theme-') === 0)
 					document.querySelector("#toolbar").removeClass(classes[i]);
 			document.querySelector("#toolbar").addClass('theme-' + config.theme);
+			document.querySelector("#toolbar").changeClass('draggable', config.theme != 'classic');
 			document.querySelectorAll(".action-theme").forEach(function(elem) {
 				elem.removeClass('enabled');
 				try {
@@ -356,6 +357,9 @@ var Toolbar = {
 		for (var key in config) {
 			Toolbar.config[key] = config[key];
 		}
+
+		if (config.theme == 'classic')
+			Toolbar.config.stayExpanded = true;
 
 		Toolbar.handleRedraw();
 	},
@@ -912,6 +916,8 @@ var Toolbar = {
 				node = node.parentNode;
 			} while (node);
 		}
+		if (Toolbar.config.theme == 'classic')
+			return false;
 		Toolbar.mouse = { state: 'down', pos: { x: e.screenX, y: e.screenY } };
 		window.top.postMessage({ type: "down", message: { zoom: Toolbar.state.zoom, screen: { x: e.screenX, y: e.screenY }, client: { x: e.clientX, y: e.clientY } } }, "*");
 	},
@@ -1035,6 +1041,7 @@ var Toolbar = {
 			document.querySelector('body').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
 		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
+			theme: Toolbar.config.theme,
 			w: Toolbar.state.w = document.querySelector(".toolbar-section-container").offsetWidth,
 			h: Toolbar.state.h = document.querySelector(".toolbar-section-container").offsetHeight,
 			rpos: Toolbar.config.rpos,
