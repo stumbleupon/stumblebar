@@ -300,8 +300,8 @@ var Toolbar = {
 			var classes = document.querySelector("#toolbar").classList;
 			for (var i = 0; i < classes.length; i++)
 				if (classes[i].indexOf('theme-') === 0)
-					document.querySelector("#toolbar").removeClass(classes[i]);
-			document.querySelector("#toolbar").addClass('theme-' + config.theme);
+					document.querySelector("body").removeClass(classes[i]);
+			document.querySelector("body").addClass('theme-' + config.theme);
 			document.querySelector("#toolbar").changeClass('draggable', config.theme != 'classic');
 			document.querySelectorAll(".action-theme").forEach(function(elem) {
 				elem.removeClass('enabled');
@@ -327,13 +327,15 @@ var Toolbar = {
 		if (config.mode) {
 			//document.querySelector(".toolbar-mode-selection").addClass("hidden");
 			//document.querySelector(".toolbar-mode").removeClass("hidden");
-			document.querySelector("#mode").innerText = config.modes[config.mode].name;
-			if (config.mode == "domain")
-				document.querySelector("#mode").innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
-			if (config.mode == "interest")
-				document.querySelector("#mode").innerText = config.modeinfo.keyword || '';
-			if (config.mode == "keyword")
-				document.querySelector("#mode").innerText = (config.modeinfo.keyword || '').replace(/(^| +)/g, '$1#');
+			document.querySelectorAll('.toolbar-mode').forEach(function(elem) {
+				elem.innerText = config.modes[config.mode].name;
+				if (config.mode == "domain")
+					elem.innerText = config.modes[config.mode].name + " " + (config.modeinfo.domains || [])[0];
+				if (config.mode == "interest")
+					elem.innerText = config.modeinfo.keyword || '';
+				if (config.mode == "keyword")
+					elem.innerText = (config.modeinfo.keyword || '').replace(/(^| +)/g, '$1#');
+			});
 		}
 
 		if (config.hasOwnProperty('numShares')) {
@@ -439,7 +441,7 @@ var Toolbar = {
 	},
 
 	_handleResponse: function(r) {
-		console.log('Toolbar.handleResponse', r);
+		//console.log('Toolbar.handleResponse', r);
 		if (r && r.config)
 			Toolbar.handleConfig(r.config);
 		if (r && r.url)
@@ -451,8 +453,8 @@ var Toolbar = {
 			try {
 				if (Toolbar[method])
 					Toolbar[method](r[key]);
-				else
-					console.log("No handler found", method, r[key]);
+				//else
+				//	console.log("No handler found", method, r[key]);
 			} catch(e) {
 				console.log("Exception caught in _handleResponse", method, r[key], e);
 			}
@@ -1037,7 +1039,7 @@ var Toolbar = {
 	},
 	handleRedraw: function() {
 		if (Toolbar.config.rpos) {
-			document.querySelector('body').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top');
+			document.querySelector('body').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top' || Toolbar.config.theme == 'classic');
 			document.querySelector('body').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
 		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {

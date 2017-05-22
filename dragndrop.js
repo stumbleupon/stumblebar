@@ -27,7 +27,15 @@ DragNDrop.prototype = {
 
 		window.addEventListener("mousemove", this.mouseMoveHandler = this.handleMouseMove.bind(this));
 		window.addEventListener("message",   this.messageHandler = this.handleMessage.bind(this))
-		this.handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
+		chrome.storage.sync.get('redrawCache', function(res) {
+			try {
+				if (res.redrawCache) {
+					this.handleRedrawMessage(res.redrawCache);
+					return;
+				}
+			} catch (e) {}
+			this.handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
+		}.bind(this));
 	},
 
 	uninit: function() {
@@ -107,8 +115,48 @@ DragNDrop.prototype = {
 	},
 
 
+	useClassicTheme: function() {
+		try {
+			document.body.suMoved = true;
+			document.body.style.marginTop = '56px';
+			document.body.style.marginTop = '56px !important';
+			document.body.style.position  = 'relative';
+			this.estyle['border-radius'] = '0';
+			this.estyle['border'] = '0';
+			this.estyle['background'] = '#fff';
+		} catch(e) {}
+
+		this.moveFixedElements();
+	},
+
+	useFloatingTheme: function() {
+		if (document.body.suMoved) {
+			document.body.style.marginTop = '0';
+			document.body.style.position  = '';
+			document.body.suMoved = false;
+			delete this.estyle['border-radius'];
+			delete this.estyle['border'];
+			delete this.estyle['background'];
+		}
+
+		this.restoreFixedElements();
+	},
+
+
+	handleTheme: function() {
+		if (this.theme == 'classic' && this.estyle.display !== 'none') {
+			this.useClassicTheme();
+		} else {
+			this.useFloatingTheme();
+		}
+	},
+	
+
 	handleRepos: function(rpos, noMargin) {
 		this.estyle['-stumble-dirty-style'] = '1';
+
+		if (this.theme == 'classic')
+			var rpos = { vside: 'top', hside: 'left', v: '0', h: '0' };
 
 		this.estyle[rpos.vside] = this.elem.style[rpos.vside] = rpos.v + '%';
 		this.estyle[rpos.hside] = this.elem.style[rpos.hside] = rpos.h + '%';
@@ -136,6 +184,7 @@ DragNDrop.prototype = {
 		if (this.theme == 'classic') {
 			this.estyle['margin-right'] = this.elem.style['margin-right'] = 0;
 			this.estyle['margin-left'] = this.elem.style['margin-left'] = 0;
+			this.estyle['margin-top'] = this.elem.style['margin-top'] = 0;
 			this.estyle['right'] = this.elem.style['right'] = 0;
 		}
 		this.estyle['-stumble-dirty-style'] = '1';
@@ -202,33 +251,83 @@ DragNDrop.prototype = {
 		//document.body.overflow = event.data.hover ? 'hidden' : 'initial';
 	},
 
+
+    moveFixedElements: function() {
+		["div", "header"].forEach(function(tag) {
+			var els = document.querySelectorAll(tag);
+			for(var i=0; i<els.length; i++) {
+				var elem = els[i];
+				if(elem.suMoved)
+					return;
+
+				var style = window.getComputedStyle(elem);
+				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
+					if(elem.getAttribute("id") != 'discoverbar') {
+						var top = style.top;
+						var nOldSpot = top ? parseInt(top) : 0;
+						var nNewSpot = nOldSpot + 55;
+						elem.style.top = nNewSpot + "px";
+						elem.suMoved = true;
+					}
+				}
+			}
+		}.bind(this));
+	},
+
+
+    restoreFixedElements: function() {
+		["div", "header"].forEach(function(tag) {
+			var els = document.querySelectorAll(tag);
+			for(var i=0; i<els.length; i++) {
+				var elem = els[i];
+				if(!elem.suMoved)
+					return;
+
+				var style = window.getComputedStyle(elem);
+				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
+					if(elem.getAttribute("id") != 'discoverbar') {
+						var top = style.top;
+						var nOldSpot = top ? parseInt(top) : 0;
+						var nNewSpot = nOldSpot - 55;
+						els[i].style.top = nNewSpot + "px";
+						els[i].suMoved = false;
+					}
+				}
+			}
+		}.bind(this));
+	},
+
+
 	handleRedrawMessage: function(message) {
 		if (message.toolbar.theme)
 			this.theme = message.toolbar.theme;
+
 		if (message.toolbar.h && message.toolbar.w) {
 			if (message.toolbar.theme == 'classic') {
-				message.toolbar.h = '54';
+				//message.toolbar.h = '54';
 				message.toolbar.w = window.innerWidth;
 			}
 			this.elem.style.height = this.estyle.height = message.toolbar.h + 'px';
 			this.elem.style.width  = this.estyle.width  = message.toolbar.w + 'px';
 			this.updateIframePos();
 		}
-		if (message.toolbar.theme == 'classic') {
-			message.toolbar.rpos = { vside: 'top', hside: 'left', v: '0', h: '0' };
-			document.documentElement.style.marginTop = message.toolbar.h + 'px !important';
-			document.documentElement.style.marginTop = message.toolbar.h + 'px';
-			document.documentElement.style.position  = 'relative';
-		}
+
 		if (message.toolbar.rpos)
 			this.handleRepos(message.toolbar.rpos);
+
 		if (message.toolbar.hidden)
 			this.estyle.display = 'none';
 		else
 			this.estyle.display = 'block';
+
+		if (this.theme)
+			this.handleTheme(this.theme);
+
 		this.estyle['-stumble-dirty-style'] = '1';
 		if (!this.isFullscreen)
 			this.elem.style.display = this.estyle.display;
+
+		chrome.storage.sync.set({'redrawCache': {toolbar:message.toolbar}});
 	},
 
 	fullscreen: function(fullscreen) {

@@ -25,8 +25,8 @@
 					<div class="toolbar-section-header"></div>
 
 					<div class="toolbar-section toolbar-mode-container toolbar-entry-container toolbar-section-contains-entries hide-when-convo-expanded hide-in-mini-mode hide-when-share-expanded hide-when-miscat-expanded clickable handed">
-						<div class="toolbar-mode toolbar-entry-container hide-when-mode-expanded" action="expand" value="mode" title="Stumble mode">
-							<span class="toolbar-mode" id="mode">All Interests</span>
+						<div class="toolbar-entry-container toolbar-mode-text hide-when-mode-expanded" action="expand" value="mode" title="Stumble mode">
+							<span class="toolbar-mode">All Interests</span>
 							<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode" title="Expand"></span>
 						</div>
 						<div class="toolbar-mode-selection show-when-mode-expanded reverse-when-top-handed">
@@ -324,22 +324,6 @@
 
 
 
-					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed always-show-during-expand hide-when-share-expanded hide-when-miscat-expanded">
-						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
-						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
-						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">
-							<span class="toolbar-action action-rate action-like   " title="Like" action="like"    id="like"></span>
-							<span class="toolbar-action action-share  " title="Share" action="share"   id="share"></span>
-							<span class="toolbar-action action-rate action-dislike" title="Dislike" action="dislike" id="dislike"></span>
-							<span class="toolbar-action action-report default-icon-gray show-when-inline-info-expanded" title="Report" action="expand" value="dislike-menu" id="dislike-menu"></span>
-							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" title="Conversations" action="inbox"  id="inbox"><span class="badge"></span></span>
-							<span class="toolbar-action action-lists  show-when-inline-info-expanded" title="Add to list" action="lists"  id="lists"></span>
-							<span class="toolbar-action action-info   default-icon-gray show-when-inline-info-expanded" title="See more info" action="info"  id="info"></span>
-							<span class="toolbar-action action-inline-info collapse-icon " title="Expand" action="expand" value="inline-info" id="inline-info"></span>
-						</span>
-					</div>
-
-
 					<div class="toolbar-section toolbar-settings-container toolbar-section-contains-entries toolbar-border-top hide-in-mini-mode hide-when-share-expanded show-when-settings-expanded">
 						<div class="toolbar-entry-container	larger-font">
 							<span class="toolbar-version-container">Version <span id="toolbar-version"></span></span>
@@ -365,6 +349,27 @@
 						</div>
 						<span class="clickable collapse-icon vertical" action="expand" value="settings"></span>
 					</div>
+
+
+					<div class="toolbar-section toolbar-action-container toolbar-border-top handed reverse-when-right-handed always-show-during-expand hide-when-share-expanded hide-when-miscat-expanded">
+						<span class="toolbar-action action-stumble btn primary-background primary-border" action="stumble" id="stumble">Stumble</span>
+						<span class="toolbar-action action-signin btn primary-background primary-border hidden" action="signin" id="signin">Sign In</span>
+						<span class="hide-in-mini-mode handed reverse-when-right-handed toolbar-action-icons">
+							<span class="toolbar-action toolbar-mode-text" action="expand" value="mode" title="Stumble mode">
+								<span class="toolbar-mode" id="mode">All Interests</span>
+								<span class="toolbar-expand-icon clickable toolbar-icon-right" action="expand" value="mode" title="Expand"></span>
+							</span>
+							<span class="toolbar-action action-rate action-like   " title="Like" action="like"    id="like"></span>
+							<span class="toolbar-action action-share  " title="Share" action="share"   id="share"></span>
+							<span class="toolbar-action action-rate action-dislike" title="Dislike" action="dislike" id="dislike"></span>
+							<span class="toolbar-action action-report default-icon-gray show-when-inline-info-expanded" title="Report" action="expand" value="dislike-menu" id="dislike-menu"></span>
+							<span class="toolbar-action action-inbox  show-when-inline-info-expanded" title="Conversations" action="inbox"  id="inbox"><span class="badge"></span></span>
+							<span class="toolbar-action action-lists  show-when-inline-info-expanded" title="Add to list" action="lists"  id="lists"></span>
+							<span class="toolbar-action action-info   default-icon-gray show-when-inline-info-expanded" title="See more info" action="info"  id="info"></span>
+							<span class="toolbar-action action-inline-info collapse-icon " title="Expand" action="expand" value="inline-info" id="inline-info"></span>
+						</span>
+					</div>
+
 
 					<div class="toolbar-section-footer"></div>
 				</div>
