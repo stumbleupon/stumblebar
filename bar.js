@@ -62,9 +62,15 @@
 			}
 		},
 
+
+		log: function() {
+			//this.log.apply(arguments);
+		},
+
+
 		// Handle https://bugs.chromium.org/p/chromium/issues/detail?id=649947
 		handleMessageSendFail: function(dnd) {
-			console.log('UNINIT');
+			this.log('UNINIT');
 			if (IframeBar.pingListener) {
 				try {
 				chrome.runtime.onMessage.removeListener(IframeBar.pingListener);
@@ -91,7 +97,7 @@
 					try {
 						this.drag.fullscreen(document.fullscreen || document.webkitIsFullScreen);
 					} catch(ex) {
-						console.log(document.webkitIsFullScreen || document.fullscreen, ex);
+						this.log(document.webkitIsFullScreen || document.fullscreen, ex);
 					}
 				}.bind(this));
 			}.bind(this));
@@ -131,7 +137,7 @@
 
 		handleBodyInjectionEvent: function(e) {
 			if (e && e.animationName == 'nodeInserted') {
-				console.log('BODY appears, StumbleBar time');
+				this.log('BODY appears, StumbleBar time');
 				this.remove();
 				this.attemptInjection();
 				document.removeEventListener('animationstart',       this.handleBodyInjectionEvent.bind(this), false);
@@ -150,11 +156,11 @@
 				if (!document.body)
 					return setTimeout(this.attemptInjection.bind(this), 10);
 				document.documentElement.appendChild(this.iframe);
-				console.log('StumbleBar created');
+				this.log('StumbleBar created');
 				discoverbar = document.getElementById(this.id);
 			}
 			if (discoverbar && (discoverbar.nextSibling || !discoverbar.parentNode)) {
-				console.log('StumbleBar relayered', (!!discoverbar.nextSibling && 'sibling') || (!discoverbar.parentNode && 'parent'));
+				this.log('StumbleBar relayered', (!!discoverbar.nextSibling && 'sibling') || (!discoverbar.parentNode && 'parent'));
 				document.getElementsByTagName('html')[0].insertBefore(discoverbar, null);
 			}
 		}
