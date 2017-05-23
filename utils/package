@@ -76,8 +76,10 @@ echo "== Compress CSS"
 git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
 
 
-export BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')$(cat .git/HEAD | sed -e 's@.*/@@g' -e 's/^/-/g' -e 's/^-master$//g')"
-
+export BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')"
+if [ ! "$(egrep 'heads/master$' .git/HEAD)" ]; then
+	export BUILD_VERSION="${BUILD_VERSION}$(cat .git/HEAD | sed -e 's@.*/@@g' -e 's/^/-beta-/g')"
+fi
 
 # Firefox
 echo
