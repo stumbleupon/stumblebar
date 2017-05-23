@@ -25,16 +25,26 @@ DragNDrop.prototype = {
 			this.sendToBackground({mouse: this.mpos, action: 'mouse'});
 		}.bind(this), 100);
 
-		window.addEventListener("mousemove", this.mouseMoveHandler = this.handleMouseMove.bind(this));
-		window.addEventListener("message",   this.messageHandler = this.handleMessage.bind(this))
-		chrome.storage.sync.get('redrawCache', function(res) {
+		chrome.storage.local.get('redrawCache', function(res) {
 			try {
-				if (res.redrawCache) {
-					this.handleRedrawMessage(res.redrawCache);
+				this.redrawCache = res.redrawCache;
+				if (this.redrawCache) {
+					this.handleRedrawMessage(this.redrawCache);
 					return;
 				}
 			} catch (e) {}
 			this.handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
+		}.bind(this));
+
+		window.addEventListener("mousemove", this.mouseMoveHandler = this.handleMouseMove.bind(this));
+		window.addEventListener("message",   this.messageHandler = this.handleMessage.bind(this))
+
+		// Fire after all onload listeners have fired
+		window.addEventListener('load', function() {
+			window.setTimeout(function() {
+				if (this.theme == 'classic')
+					this.moveFixedElements(true);
+			}.bind(this), 10);
 		}.bind(this));
 	},
 
@@ -252,23 +262,27 @@ DragNDrop.prototype = {
 	},
 
 
-    moveFixedElements: function() {
+	fixedElementsMoved: false,
+	moveFixedElements: function(force) {
+		if (!force && this.fixedElementsMoved)
+			return;
+		if (!this.fixedElementsMoved)
+			this.fixedElementsMoved = true;
+
 		["div", "header"].forEach(function(tag) {
 			var els = document.querySelectorAll(tag);
 			for(var i=0; i<els.length; i++) {
 				var elem = els[i];
-				if(elem.suMoved)
+				if (elem.suMoved && parseInt(elem.style.top))
 					return;
 
 				var style = window.getComputedStyle(elem);
 				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
-					if(elem.getAttribute("id") != 'discoverbar') {
-						var top = style.top;
-						var nOldSpot = top ? parseInt(top) : 0;
-						var nNewSpot = nOldSpot + 55;
-						elem.style.top = nNewSpot + "px";
-						elem.suMoved = true;
-					}
+					var top = style.top;
+					var nOldSpot = top ? parseInt(top) : 0;
+					var nNewSpot = nOldSpot + 55;
+					elem.style.top = nNewSpot + "px";
+					elem.suMoved = true;
 				}
 			}
 		}.bind(this));
@@ -285,13 +299,11 @@ DragNDrop.prototype = {
 
 				var style = window.getComputedStyle(elem);
 				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
-					if(elem.getAttribute("id") != 'discoverbar') {
-						var top = style.top;
-						var nOldSpot = top ? parseInt(top) : 0;
-						var nNewSpot = nOldSpot - 55;
-						els[i].style.top = nNewSpot + "px";
-						els[i].suMoved = false;
-					}
+					var top = style.top;
+					var nOldSpot = top ? parseInt(top) : 0;
+					var nNewSpot = nOldSpot - 55;
+					els[i].style.top = nNewSpot + "px";
+					els[i].suMoved = false;
 				}
 			}
 		}.bind(this));
@@ -299,8 +311,11 @@ DragNDrop.prototype = {
 
 
 	handleRedrawMessage: function(message) {
-		if (message.toolbar.theme)
+		if (message.toolbar.theme) {
+			if (this.theme != message.toolbar.theme && message.toolbar.theme == 'classic')
+				this.moveFixedElements(true);
 			this.theme = message.toolbar.theme;
+		}
 
 		if (message.toolbar.h && message.toolbar.w) {
 			if (message.toolbar.theme == 'classic') {
@@ -327,8 +342,11 @@ DragNDrop.prototype = {
 		if (!this.isFullscreen)
 			this.elem.style.display = this.estyle.display;
 
-		chrome.storage.sync.set({'redrawCache': {toolbar:message.toolbar}});
+		this.redrawCache = {toolbar:message.toolbar};
+		this.storeRedrawCache(this.redrawCache);
 	},
+
+	storeRedrawCache: debounce(function(c) { chrome.storage.local.set({'redrawCache': c}); }, 250),
 
 	fullscreen: function(fullscreen) {
 		this.isFullscreen = fullscreen;
