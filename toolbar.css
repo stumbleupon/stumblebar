@@ -889,6 +889,7 @@ input.invalid:focus {
 	right: 2em;
 	bottom: 0;
 	top: 0.9em;
+	z-index: 1;
 }
 /*
 .theme-classic .toolbar-action-container .toolbar-mode-text {
