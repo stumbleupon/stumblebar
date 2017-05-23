@@ -297,7 +297,7 @@ var Toolbar = {
 
 	handleConfig: function(config) {
 		if (config.theme && config.theme != Toolbar.config.theme) {
-			var classes = document.querySelector("#toolbar").classList;
+			var classes = document.querySelector("body").classList;
 			for (var i = 0; i < classes.length; i++)
 				if (classes[i].indexOf('theme-') === 0)
 					document.querySelector("body").removeClass(classes[i]);
@@ -1040,7 +1040,7 @@ var Toolbar = {
 	handleRedraw: function() {
 		if (Toolbar.config.rpos) {
 			document.querySelector('body').changeClass('top-handed',   Toolbar.config.rpos.vside == 'top' || Toolbar.config.theme == 'classic');
-			document.querySelector('body').changeClass('right-handed', Toolbar.config.rpos.hside == 'right');
+			document.querySelector('body').changeClass('right-handed', Toolbar.config.rpos.hside == 'right' && Toolbar.config.theme != 'classic');
 		}
 		window.top.postMessage({ type: "redraw", message: { toolbar: {
 			theme: Toolbar.config.theme,
