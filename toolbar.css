@@ -909,6 +909,12 @@ input.invalid:focus {
 	transform: rotate(0deg);
 }
 
+.toolbar-action.toolbar-mode-text  {
+	display: none;
+}
+.theme-classic .toolbar-action.toolbar-mode-text  {
+	display: inline-block;
+}
 
 .theme-classic .toolbar-action-container {
 	border-bottom: 0px !important;
