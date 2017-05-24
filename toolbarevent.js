@@ -564,7 +564,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			ToolbarEvent.api.reportStumble([url.urlid], url.mode, url.modeinfo);
 			request.url = url;
 
-			Page.tab[sender.tab.id].stumbling = true;
+			Page.tab[sender.tab.id].stumbling = url.urlid;
 			chrome.tabs.update(sender.tab.id, { url: url.url });
 
 			return ToolbarEvent._buildResponse({});
@@ -701,7 +701,7 @@ ToolbarEvent.openConvo = function(request, sender) {
 			.then(function(url) {
 				Page.state[sender.tab.id] = { convo: request.data.id };
 				Page.note(sender.tab.id, url);
-				Page.tab[sender.tab.id].stumbling = true;
+				Page.tab[sender.tab.id].stumbling = url.urlid;
 				chrome.tabs.update(sender.tab.id, {
 					"url": url.url
 				});

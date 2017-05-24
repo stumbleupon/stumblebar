@@ -306,6 +306,9 @@ Page.urlChange = function(href, tabid, incog, state) {
 			return url && Page.getUrlByUrlid(url.urlid, config.mode);
 		})
 		.then(function(url) {
+			return url || (Page.tab[tabid].stumbling && Page.getUrlByUrlid(Page.tab[tabid].stumbling, config.mode));
+		})
+		.then(function(url) {
 			//return url || (!incog && ToolbarEvent.api.getUrlByHref(href)) || Promise.reject(new ToolbarError('Page', 'nourl-incog', Page.tab[tabid])); // No URL fetching in private mode
 			return url || Promise.reject(new ToolbarError('Page', 'nourl', Page.tab[tabid])); // No URL fetching in general
 		})
@@ -316,6 +319,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
+			Page.tab[tabid].url = {};
 			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
 				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
@@ -351,9 +355,16 @@ Page.handleTabUpdate = function(tabid, info, tab) {
 		if (!tab.incognito) {
 			Page.tab[tabid].status = { state: info.status, url: tab.url };
 			Page.tab[tabid].info = tab;
-			if (Page.tab[tabid].url && !Page.tab[tabid].url.finalUrl && Page.tab[tabid].stumbling)
+			if (Page.tab[tabid].url && (!Page.tab[tabid].stumbling || Page.tab[tabid].url.urlid == Page.tab[tabid].stumbling))
 				Page.tab[tabid].url.finalUrl = info.url || tab.url;
-			Page.tab[tabid].stumbling = false;
+
+			// Fudge stumbling timeout to handle meta refreshes and youtube
+			if (Page.stumblingTimeout)
+				window.clearTimeout(Page.stumblingTimeout);
+			Page.stumblingTimeout = window.setTimeout(function() {
+				if (Page.tab[tabid].stumbling && (!Page.tab[tabid].url.urlid || Page.tab[tabid].url.urlid == Page.tab[tabid].stumbling))
+					Page.tab[tabid].stumbling = false;
+			}, 1000);
 		}
 		Page.urlChange(info.url || tab.url, tabid, tab.incognito, info.status);
 	}
