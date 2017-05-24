@@ -45,6 +45,10 @@ DragNDrop.prototype = {
 				if (this.theme == 'classic')
 					this.moveFixedElements(true);
 			}.bind(this), 10);
+			document.body.addEventListener("DOMNodeInserted", function() {
+				if (this.theme == 'classic')
+					this.moveFixedElements(true);
+			}.bind(this));
 		}.bind(this));
 	},
 
@@ -127,13 +131,31 @@ DragNDrop.prototype = {
 
 	useClassicTheme: function() {
 		try {
-			document.body.suMoved = true;
-			document.body.style.marginTop = '56px';
-			document.body.style.marginTop = '56px !important';
-			document.body.style.position  = 'relative';
+			// Handle inline content in a consistent manner
+			if (document.body.childNodes.length == 1 && !document.body.childNodes[0].childNodes.length) {// && window.getComputedStyle(document.body.childNodes[0]).position == 'absolute') {
+				if (!document.body.suMoved) {
+					var style = document.createElement('style');
+					style.type = 'text/css';
+					var css = ""
+						+ "body *:not(.overflowingVertical) { -webkit-transform: translateY(27px); -moz-transform: translateY(0px); -moz-max-height: calc(100vh - 56px); width: auto; } "// max-height: calc(100vh - 56px); width: auto; }"
+						+ ".shrinkToFit { transform: translateY(-27px); max-height: calc(100vh - 56px); width: auto; }"
+						+ "body { min-height: calc(100vh - 56px); margin-top: 56px; position: relative; }"
+					if (style.styleSheet){
+						style.styleSheet.cssText = css;
+					} else {
+						style.appendChild(document.createTextNode(css));
+					}
+					document.head.appendChild(style);
+				}
+			} else {
+				document.body.style.marginTop = '56px';
+				document.body.style.marginTop = '56px !important';
+				document.body.style.position  = 'relative';
+			}
 			this.estyle['border-radius'] = '0';
 			this.estyle['border'] = '0';
 			this.estyle['background'] = '#fff';
+			document.body.suMoved = true;
 		} catch(e) {}
 
 		this.moveFixedElements();
