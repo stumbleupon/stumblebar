@@ -887,9 +887,9 @@ input.invalid:focus {
 	text-align: right;
 	position: absolute;
 	right: 2em;
-	bottom: 0;
 	top: 0.9em;
 	z-index: 1;
+	border-bottom: 0 !important;
 }
 /*
 .theme-classic .toolbar-action-container .toolbar-mode-text {
