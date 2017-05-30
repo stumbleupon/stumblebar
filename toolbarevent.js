@@ -1077,6 +1077,7 @@ ToolbarEvent.su = function(request, sender) {
  * @return {Promise} toolbar config response
  */
 ToolbarEvent._buildResponse = function(change, tabid) {
+	config.theme = config.theme || config.defaults.theme;
 	var response = Object.assign({}, { config: config }, change);
 	if (tabid) {
 		if (tabid === true || tabid === '*') {

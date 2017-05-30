@@ -21,7 +21,7 @@ config.convoPathNames = { path: 0, convoid: 1, stateId: 3 }
 
 config.defaults = {
 	mode: 'all',
-	theme: '',
+	theme: 'dark-sidebar',
 	user: 0,
 	stumble: { list: [], pos: -1, mode: 'all' },
 	interests: [],
