@@ -296,10 +296,11 @@ var Toolbar = {
 	},
 
 	handleConfig: function(config) {
+		chrome.storage.local.set({'toolbarConfigCache': config});
 		if (config.theme && config.theme != Toolbar.config.theme) {
 			var classes = document.querySelector("body").classList;
 			for (var i = 0; i < classes.length; i++)
-				if (classes[i].indexOf('theme-') === 0)
+				if (classes[i].indexOf('theme-') === 0 || classes[i] === 'hidden')
 					document.querySelector("body").removeClass(classes[i]);
 			document.querySelector("body").addClass('theme-' + config.theme);
 			document.querySelector("#toolbar").changeClass('draggable', config.theme != 'classic');
@@ -1164,6 +1165,11 @@ var Toolbar = {
 	},
 
 	init: function() {
+		chrome.storage.local.get('toolbarConfigCache', function(res) {
+			if (res && res.toolbarConfigCache)
+				Toolbar.handleConfig(res.toolbarConfigCache);
+		});
+
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
 		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);

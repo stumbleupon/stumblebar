@@ -71,8 +71,10 @@ BODY {
 	z-index:2147483647;
 	border:0;
 	overflow:hidden;
+	/*
 	box-shadow: 0 0 16px -4px #000;
-	border-radius:4px;
 	border: 1px solid #aaa;
+	border-radius:4px;
+	*/
 	transition: width 0.2s, height 0.2s;
 }

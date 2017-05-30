@@ -149,7 +149,6 @@
 		attemptInjection: function() {
 			if (!this.iframe || this.onHold)
 				return false;
-			this.drag.applyEstyle();
 			this.iframe.className = '';
 			var discoverbar = document.getElementById(this.id);
 			if (!discoverbar) {
@@ -163,6 +162,7 @@
 				this.log('StumbleBar relayered', (!!discoverbar.nextSibling && 'sibling') || (!discoverbar.parentNode && 'parent'));
 				document.getElementsByTagName('html')[0].insertBefore(discoverbar, null);
 			}
+			this.drag.applyEstyle();
 		}
 	}
 

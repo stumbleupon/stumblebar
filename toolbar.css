@@ -894,10 +894,10 @@ input.invalid:focus {
 .theme-classic .toolbar-section-container .toolbar-close-icon {
 	display: block !important;
 	position: absolute;
-	right: 1em;
-	top: 15px;
-	width: 24px;
-	height: 24px;
+	right: 1.5em;
+	top: 21px;
+	width: 16px;
+	height: 16px;
 	z-index: 1;
 	border-bottom: 0 !important;
 	left: unset;
@@ -1002,8 +1002,8 @@ input.invalid:focus {
 	background: #333;
 }
 .theme-classic .toolbar-background {
-	background-color: #111;
-	opacity: 0.777;
+	background-color: #444;
+	opacity: unset;
 	border-radius: 0;
 }
 .theme-classic .toolbar-border-bottom {

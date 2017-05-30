@@ -29,7 +29,8 @@ DragNDrop.prototype = {
 			try {
 				this.redrawCache = res.redrawCache;
 				if (this.redrawCache) {
-					this.handleRedrawMessage(this.redrawCache);
+					this.redrawCache.fromCache = true;
+					this.handleRedrawMessage(this.redrawCache, true);
 					return;
 				}
 			} catch (e) {}
@@ -119,13 +120,16 @@ DragNDrop.prototype = {
 			cssText = '';
 			this.estyle['-stumble-dirty-style'] = '0';
 			for (var p in this.estyle)
-				cssText += p+':'+this.estyle[p]+';';
-			this.cachedCssText = cssText;
+				if (p != '-stumble-dirty-style' && this.estyle[p])
+					cssText += p+': '+this.estyle[p]+'; ';
+			cssText = cssText.trim();
 		}
 		if (this.isFullscreen)
 			cssText += 'display: none !important;';
-		if (this.elem.style.cssText != cssText)
+		if (this.elem.style.cssText != cssText) {
 			this.elem.style.cssText = cssText;
+			this.cachedCssText = this.elem.style.cssText;
+		}
 	},
 
 
@@ -152,18 +156,26 @@ DragNDrop.prototype = {
 				document.body.style.marginTop = '56px !important';
 				document.body.style.position  = 'relative';
 			}
-			this.estyle['border-radius'] = '0';
-			this.estyle['border'] = '0';
-			this.estyle['background'] = '#fff';
+			this.estyle['border-radius'] = '0px';
+			this.estyle['border']        = '0px none';
+			this.estyle['background']    = 'rgb(255, 255, 255) none repeat scroll 0% 0%';
+			this.estyle['box-shadow']    = this.elem.style['box-shadow'] = '0px 0px 16px -4px rgb(0, 0, 0)';
+			this.estyle['-stumble-dirty-style'] = '1';
 			document.body.suMoved = true;
 		} catch(e) {}
 
 		this.moveFixedElements();
 	},
 
-	useFloatingTheme: function() {
+	useFloatingTheme: function(fromCache) {
+		if (!fromCache) {
+			this.estyle['box-shadow'] = this.elem.style['box-shadow'] = '0px 0px 16px -4px rgb(0, 0, 0)';
+			this.estyle['border']     = this.elem.style['border']     = '1px solid #aaa';
+		}
+		this.estyle['border-radius'] = '4px';
+
 		if (document.body.suMoved) {
-			document.body.style.marginTop = '0';
+			document.body.style.marginTop = '0px';
 			document.body.style.position  = '';
 			document.body.suMoved = false;
 			delete this.estyle['border-radius'];
@@ -171,15 +183,16 @@ DragNDrop.prototype = {
 			delete this.estyle['background'];
 		}
 
+		this.estyle['-stumble-dirty-style'] = '1';
 		this.restoreFixedElements();
 	},
 
 
-	handleTheme: function() {
-		if (this.theme == 'classic' && this.estyle.display !== 'none') {
-			this.useClassicTheme();
+	handleTheme: function(theme, fromCache) {
+		if (theme == 'classic' && this.estyle.display !== 'none') {
+			this.useClassicTheme(fromCache);
 		} else {
-			this.useFloatingTheme();
+			this.useFloatingTheme(fromCache);
 		}
 	},
 	
@@ -190,8 +203,8 @@ DragNDrop.prototype = {
 		if (this.theme == 'classic')
 			var rpos = { vside: 'top', hside: 'left', v: '0', h: '0' };
 
-		this.estyle[rpos.vside] = this.elem.style[rpos.vside] = rpos.v + '%';
-		this.estyle[rpos.hside] = this.elem.style[rpos.hside] = rpos.h + '%';
+		this.estyle[rpos.vside]             = this.elem.style[rpos.vside]             = rpos.v + '%';
+		this.estyle[rpos.hside]             = this.elem.style[rpos.hside]             = rpos.h + '%';
 		this.estyle[this.oside[rpos.vside]] = this.elem.style[this.oside[rpos.vside]] = 'initial';
 		this.estyle[this.oside[rpos.hside]] = this.elem.style[this.oside[rpos.hside]] = 'initial';
 
@@ -200,24 +213,24 @@ DragNDrop.prototype = {
 
 	handleTrySnap: function(rpos) {
 		if (rpos.v <= 1) {
-			this.estyle['margin-' + rpos.vside] = this.elem.style['margin-' + rpos.vside] = '-3px';
+			this.estyle['margin-' + rpos.vside]             = this.elem.style['margin-' + rpos.vside]             = '-3px';
 			this.estyle['margin-' + this.oside[rpos.vside]] = this.elem.style['margin-' + this.oside[rpos.vside]] = 'initial';
-			this.estyle[rpos.vside] = this.elem.style[rpos.vside] = '0';
+			this.estyle[rpos.vside]                         = this.elem.style[rpos.vside]                         = '0px';
 		} else {
-			this.estyle['margin-' + rpos.vside] = this.elem.style['margin-' + rpos.vside] = 'initial';
+			this.estyle['margin-' + rpos.vside]             = this.elem.style['margin-' + rpos.vside]             = 'initial';
 		}
 		if (rpos.h <= 1) {
-			this.estyle['margin-' + rpos.hside] = this.elem.style['margin-' + rpos.hside] = '-3px';
+			this.estyle['margin-' + rpos.hside]             = this.elem.style['margin-' + rpos.hside]             = '-3px';
 			this.estyle['margin-' + this.oside[rpos.hside]] = this.elem.style['margin-' + this.oside[rpos.hside]] = 'initial';
-			this.estyle[rpos.hside] = this.elem.style[rpos.hside] = '0';
+			this.estyle[rpos.hside]                         = this.elem.style[rpos.hside]                         = '0px';
 		} else {
-			this.estyle['margin-' + rpos.hside] = this.elem.style['margin-' + rpos.hside] = 'initial';
+			this.estyle['margin-' + rpos.hside]             = this.elem.style['margin-' + rpos.hside]             = 'initial';
 		}
 		if (this.theme == 'classic') {
-			this.estyle['margin-right'] = this.elem.style['margin-right'] = 0;
-			this.estyle['margin-left'] = this.elem.style['margin-left'] = 0;
-			this.estyle['margin-top'] = this.elem.style['margin-top'] = 0;
-			this.estyle['right'] = this.elem.style['right'] = 0;
+			this.estyle['margin-right'] = this.elem.style['margin-right'] = '0px';
+			this.estyle['margin-left']  = this.elem.style['margin-left']  = '0px';
+			this.estyle['margin-top']   = this.elem.style['margin-top']   = '0px';
+			this.estyle['right']        = this.elem.style['right']        = '0px';
 		}
 		this.estyle['-stumble-dirty-style'] = '1';
 	},
@@ -251,7 +264,7 @@ DragNDrop.prototype = {
 	},
 
 	handleHideMessage: function(message) {
-		this.elem.style.display = this.estyle.display = 'none';
+		this.estyle.display = 'none';
 		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
@@ -358,11 +371,11 @@ DragNDrop.prototype = {
 			this.estyle.display = 'block';
 
 		if (this.theme)
-			this.handleTheme(this.theme);
+			this.handleTheme(this.theme, message.fromCache);
 
 		this.estyle['-stumble-dirty-style'] = '1';
-		if (!this.isFullscreen)
-			this.elem.style.display = this.estyle.display;
+		//if (!this.isFullscreen)
+		//	this.elem.style.display = this.estyle.display;
 
 		this.redrawCache = {toolbar:message.toolbar};
 		this.storeRedrawCache(this.redrawCache);
