@@ -41,16 +41,20 @@ DragNDrop.prototype = {
 		window.addEventListener("message",   this.messageHandler = this.handleMessage.bind(this))
 
 		// Fire after all onload listeners have fired
-		window.addEventListener('load', function() {
+		var afterLoad = function() {
 			window.setTimeout(function() {
 				if (this.theme == 'classic')
 					this.moveFixedElements(true);
 			}.bind(this), 10);
-			document.body.addEventListener("DOMNodeInserted", function() {
-				if (this.theme == 'classic')
-					this.moveFixedElements(true);
-			}.bind(this));
-		}.bind(this));
+//			else
+//				observer.disconnect();
+
+			//document.body.addEventListener("DOMNodeInserted", function() {
+			//	if (this.theme == 'classic')
+			//		this.moveFixedElements(true);
+			//}.bind(this));
+		}.bind(this);
+		window.addEventListener('load', afterLoad);
 	},
 
 	uninit: function() {
@@ -164,7 +168,17 @@ DragNDrop.prototype = {
 			document.body.suMoved = true;
 		} catch(e) {}
 
-		this.moveFixedElements();
+		if (!this.observer) {
+			this.observer = new MutationObserver(debounce(function(mutations) {
+				if (this.theme == 'classic')
+					this.moveFixedElements(true);
+			}.bind(this), 333));
+		}
+		try {
+			this.observer.observe(document.documentElement, { childList: true, subtree: true });
+		} catch(e) {}
+
+		this.moveFixedElements(true);
 	},
 
 	useFloatingTheme: function(fromCache) {
@@ -173,6 +187,9 @@ DragNDrop.prototype = {
 			this.estyle['border']     = this.elem.style['border']     = '1px solid #aaa';
 		}
 		this.estyle['border-radius'] = '4px';
+
+		if (this.observer)
+			this.observer.disconnect();
 
 		if (document.body.suMoved) {
 			document.body.style.marginTop = '0px';
@@ -309,7 +326,7 @@ DragNDrop.prototype = {
 			for(var i=0; i<els.length; i++) {
 				var elem = els[i];
 				if (elem.suMoved && parseInt(elem.style.top))
-					return;
+					continue;
 
 				var style = window.getComputedStyle(elem);
 				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
