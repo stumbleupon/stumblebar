@@ -77,4 +77,5 @@ BODY {
 	border-radius:4px;
 	*/
 	transition: width 0.2s, height 0.2s;
+	padding: 0 !important;
 }
