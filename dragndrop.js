@@ -124,15 +124,15 @@ DragNDrop.prototype = {
 			cssText = '';
 			this.estyle['-stumble-dirty-style'] = '0';
 			for (var p in this.estyle)
-				if (p != '-stumble-dirty-style' && this.estyle[p])
+				if (p != '-stumble-dirty-style' && this.estyle[p].length)
 					cssText += p+': '+this.estyle[p]+'; ';
 			cssText = cssText.trim();
+			this.cachedCssText = cssText;
 		}
 		if (this.isFullscreen)
-			cssText += 'display: none !important;';
+			cssText += ' display: none !important;';
 		if (this.elem.style.cssText != cssText) {
 			this.elem.style.cssText = cssText;
-			this.cachedCssText = this.elem.style.cssText;
 		}
 	},
 
@@ -377,6 +377,7 @@ DragNDrop.prototype = {
 			this.elem.style.height = this.estyle.height = message.toolbar.h + 'px';
 			this.elem.style.width  = this.estyle.width  = message.toolbar.w + 'px';
 			this.updateIframePos();
+			this.estyle['-stumble-dirty-style'] = '1';
 		}
 
 		if (message.toolbar.rpos)
