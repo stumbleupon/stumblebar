@@ -43,7 +43,7 @@ DragNDrop.prototype = {
 		// Fire after all onload listeners have fired
 		var afterLoad = function() {
 			window.setTimeout(function() {
-				if (this.theme == 'classic')
+				if (this.theme == 'classic' && this.estyle.display == 'block')
 					this.moveFixedElements(true);
 			}.bind(this), 10);
 //			else
@@ -170,8 +170,8 @@ DragNDrop.prototype = {
 
 		if (!this.observer) {
 			this.observer = new MutationObserver(debounce(function(mutations) {
-				if (this.theme == 'classic')
-					this.moveFixedElements(true);
+				if (this.theme == 'classic' && this.estyle.display != 'none')
+					this.useClassicTheme(true);
 			}.bind(this), 333));
 		}
 		try {
@@ -179,6 +179,16 @@ DragNDrop.prototype = {
 		} catch(e) {}
 
 		this.moveFixedElements(true);
+	},
+
+	resetPage: function() {
+		if (document.body && document.body.suMoved) {
+			document.body.style.marginTop = '0px';
+			document.body.style.position  = '';
+			document.body.suMoved = false;
+		}
+
+		this.restoreFixedElements();
 	},
 
 	useFloatingTheme: function(fromCache) {
@@ -191,14 +201,8 @@ DragNDrop.prototype = {
 		if (this.observer)
 			this.observer.disconnect();
 
-		if (document.body && document.body.suMoved) {
-			document.body.style.marginTop = '0px';
-			document.body.style.position  = '';
-			document.body.suMoved = false;
-		}
-
 		this.estyle['-stumble-dirty-style'] = '1';
-		this.restoreFixedElements();
+		this.resetPage();
 	},
 
 
@@ -279,6 +283,7 @@ DragNDrop.prototype = {
 
 	handleHideMessage: function(message) {
 		this.estyle.display = 'none';
+		this.resetPage();
 		this.estyle['-stumble-dirty-style'] = '1';
 	},
 
@@ -315,6 +320,8 @@ DragNDrop.prototype = {
 	moveFixedElements: function(force) {
 		if (!force && this.fixedElementsMoved)
 			return;
+		if (this.estyle.display == 'none')
+			return this.resetPage();
 		if (!this.fixedElementsMoved)
 			this.fixedElementsMoved = true;
 
@@ -344,15 +351,15 @@ DragNDrop.prototype = {
 			for(var i=0; i<els.length; i++) {
 				var elem = els[i];
 				if(!elem.suMoved)
-					return;
+					continue;
 
 				var style = window.getComputedStyle(elem);
 				if(["fixed"].indexOf(style.position) !== -1 && elem != this.elem) {
 					var top = style.top;
 					var nOldSpot = top ? parseInt(top) : 0;
 					var nNewSpot = nOldSpot - 55;
-					els[i].style.top = nNewSpot + "px";
-					els[i].suMoved = false;
+					elem.style.top = nNewSpot + "px";
+					elem.suMoved = false;
 				}
 			}
 		}.bind(this));
@@ -363,6 +370,8 @@ DragNDrop.prototype = {
 		if (message.toolbar.theme) {
 			if (this.theme != message.toolbar.theme && message.toolbar.theme == 'classic' && !message.toolbar.hidden)
 				this.moveFixedElements(true);
+			else if (this.theme != message.toolbar.theme && message.toolbar.theme != 'classic' && !message.toolbar.hidden)
+				this.resetPage(true);
 			this.theme = message.toolbar.theme;
 		}
 
@@ -380,15 +389,18 @@ DragNDrop.prototype = {
 		if (message.toolbar.rpos)
 			this.handleRepos(message.toolbar.rpos);
 
-		if (message.toolbar.hidden)
+		if (message.toolbar.hidden) {
 			this.estyle.display = 'none';
-		else
+			this.resetPage(true);
+		} else {
 			this.estyle.display = 'block';
+		}
 
 		if (this.theme && !message.toolbar.hidden)
 			this.handleTheme(this.theme, message.fromCache);
 
 		this.estyle['-stumble-dirty-style'] = '1';
+		this.applyEstyle();
 		//if (!this.isFullscreen)
 		//	this.elem.style.display = this.estyle.display;
 
