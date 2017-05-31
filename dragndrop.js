@@ -197,10 +197,6 @@ DragNDrop.prototype = {
 			document.body.suMoved = false;
 		}
 
-		delete this.estyle['border-radius'];
-		delete this.estyle['border'];
-		delete this.estyle['background'];
-
 		this.estyle['-stumble-dirty-style'] = '1';
 		this.restoreFixedElements();
 	},
