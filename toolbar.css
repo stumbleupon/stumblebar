@@ -397,7 +397,6 @@ input.invalid:focus {
 	background-image: url("asset/Settings.svg");
 	background-repeat: no-repeat;
 	background-position: center; 
-	background-size: contain;
 	width: 12px;
 	height: 12px;
 	margin: 0px !important;
