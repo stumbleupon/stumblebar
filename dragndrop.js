@@ -386,8 +386,8 @@ DragNDrop.prototype = {
 			this.estyle['-stumble-dirty-style'] = '1';
 		}
 
-		if (message.toolbar.rpos)
-			this.handleRepos(message.toolbar.rpos);
+		if (message.toolbar.rpos || this.theme == 'classic')
+			this.handleRepos(message.toolbar.rpos || {});
 
 		if (message.toolbar.hidden) {
 			this.estyle.display = 'none';
