@@ -361,7 +361,7 @@ DragNDrop.prototype = {
 
 	handleRedrawMessage: function(message) {
 		if (message.toolbar.theme) {
-			if (this.theme != message.toolbar.theme && message.toolbar.theme == 'classic')
+			if (this.theme != message.toolbar.theme && message.toolbar.theme == 'classic' && !message.toolbar.hidden)
 				this.moveFixedElements(true);
 			this.theme = message.toolbar.theme;
 		}
@@ -385,7 +385,7 @@ DragNDrop.prototype = {
 		else
 			this.estyle.display = 'block';
 
-		if (this.theme)
+		if (this.theme && !message.toolbar.hidden)
 			this.handleTheme(this.theme, message.fromCache);
 
 		this.estyle['-stumble-dirty-style'] = '1';
