@@ -33,7 +33,7 @@ DragNDrop.prototype = {
 					this.handleRedrawMessage(this.redrawCache, true);
 					return;
 				}
-			} catch (e) {}
+			} catch (e) { }
 			this.handleRepos({vside: 'bottom', hside: 'left', h: 0, v: 0});
 		}.bind(this));
 
@@ -191,14 +191,15 @@ DragNDrop.prototype = {
 		if (this.observer)
 			this.observer.disconnect();
 
-		if (document.body.suMoved) {
+		if (document.body && document.body.suMoved) {
 			document.body.style.marginTop = '0px';
 			document.body.style.position  = '';
 			document.body.suMoved = false;
-			delete this.estyle['border-radius'];
-			delete this.estyle['border'];
-			delete this.estyle['background'];
 		}
+
+		delete this.estyle['border-radius'];
+		delete this.estyle['border'];
+		delete this.estyle['background'];
 
 		this.estyle['-stumble-dirty-style'] = '1';
 		this.restoreFixedElements();
