@@ -424,7 +424,7 @@ StumbleUponApi.prototype = {
 	},
 
 	_extractAccessToken: function(result) {
-		return this.cookie.get('su_accesstoken')
+		return this.cookie.get('su_accesstoken', true)
 			.then(function(accessToken) {
 				if (!accessToken || !accessToken.value)
 					return Promise.reject(new ToolbarError('SUAPI', 'notoken', accessToken));
