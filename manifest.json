@@ -17,14 +17,7 @@
   }],
 
   "web_accessible_resources": [
-    "*://*.stumbleupon.com/*",
-    "bar.html",
-    "reset.css",
-    "toolbar.html",
-    "utils.js",
-    "contactlist.js",
-    "toolbar.js",
-    "toolbar.css"
+    "toolbar.html"
   ],
 
 
