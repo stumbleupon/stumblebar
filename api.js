@@ -47,7 +47,8 @@ Api.prototype = {
 			httpRequest.open(req.method, req.buildUrl(), true);
 
 			for (var name in req.headers)
-				httpRequest.setRequestHeader(name, req.headers[name]);
+				if (req.headers[name])
+					httpRequest.setRequestHeader(name, req.headers[name]);
 
 			if (data && req.method != 'GET')
 				httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");

@@ -3,13 +3,29 @@ var Cookie = function(config) {
 }
 
 Cookie.prototype = {
-	get: function(name) {
-    return new Promise(function(resolve, reject) {
-      chrome.cookies.get({
-          url:    'http://' + this.baseUrl,
-          name:   name
-        }, resolve
-      )
-    }.bind(this));
-  },
+	get: function(name, exhaustive) {
+		return new Promise(function(resolve, reject) {
+			chrome.cookies.get({
+				url:    'http://' + this.baseUrl,
+				name:   name
+			}, function(r) {
+				if (!exhaustive || (r && r.name))
+					return resolve(r);
+
+				// Hacky hack to handle cookie fetches in private mode browsing in Firefox
+				chrome.cookies.getAllCookieStores(function(stores) {
+					stores.forEach(function(store, key) {
+						chrome.cookies.getAll({ storeId: store.id, name: name }, function(cookies) {
+							if (!cookies || !cookies.some)
+								return;
+							cookies.some(function(c) {
+								if (c.name === name && c.domain.split(".").slice(-2).join(".") === this.baseUrl.split(".").slice(-2).join("."))
+									return resolve(c);
+							}.bind(this));
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	},
 }
