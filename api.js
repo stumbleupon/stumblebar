@@ -29,12 +29,12 @@ Api.prototype = {
 			});
 
 			httpRequest.addEventListener("error", function() {
-				console.log("ERR");
+				debug("ERR");
 				reject(new ToolbarError('API', 'error', this.statusText, { code: this.status, result: this.response, info: { req: req, data: data, url: req.buildUrl(), path: path } }));
 			});
 
 			httpRequest.addEventListener("abort", function() {
-				console.log("ABT");
+				debug("ABT");
 				reject(new ToolbarError('API', 'abort', this.statusText, { code: this.status, result: this.response, info: { req: req, data: data, url: req.buildUrl(), path: path } }));
 			});
 
@@ -113,7 +113,7 @@ Api.prototype = {
 	 */
 	once: function(path, data, opts) {
 		if (this.requests[path]) {
-			console.log('INFLIGHT', path);
+			debug('INFLIGHT', path);
 			return this.requests[path]; //Promise.reject(NOERR);
 		}
 		return this.requests[path] = this.req(path, data, opts)
