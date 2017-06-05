@@ -284,10 +284,10 @@ var Toolbar = {
 	},
 
 	listenConvoHelper: function() {
-			console.log('RECHECK START', Toolbar.state.listenConvoBackoff);
+			debug('RECHECK START', Toolbar.state.listenConvoBackoff);
 		clearTimeout(Toolbar.state.listenConvoTimeout);
 		Toolbar.state.listenConvoTimeout = setTimeout(function() {
-			console.log('RECHECK');
+			debug('RECHECK');
 			Toolbar.dispatch('load-convo', { value: document.querySelector('#convo-id').value, stamp: Array.prototype.slice.call(document.querySelectorAll('#convo-container .convo-entry-date'), -1)[0].value });
 			// Backoff -- 15s => 30s => 1m => 2m => 4m => 8m => 16m => ...
 			Toolbar.state.listenConvoBackoff = 2 * (Toolbar.state.listenConvoBackoff || 15000);
@@ -442,7 +442,7 @@ var Toolbar = {
 	},
 
 	_handleResponse: function(r) {
-		//console.log('Toolbar.handleResponse', r);
+		//debug('Toolbar.handleResponse', r);
 		if (r && r.config)
 			Toolbar.handleConfig(r.config);
 		if (r && r.url)
@@ -455,9 +455,9 @@ var Toolbar = {
 				if (Toolbar[method])
 					Toolbar[method](r[key]);
 				//else
-				//	console.log("No handler found", method, r[key]);
+				//	debug("No handler found", method, r[key]);
 			} catch(e) {
-				console.log("Exception caught in _handleResponse", method, r[key], e);
+				debug("Exception caught in _handleResponse", method, r[key], e);
 			}
 		});
 		/*
@@ -881,7 +881,7 @@ var Toolbar = {
 	 */
 	deleteParticipant: function toolbarDeleteParticipant(value, sourceEl) {
 		var id = sourceEl.getAttribute('value');
-		console.log('deleting participant', id);
+		debug('deleting participant', id);
 		this.shareContactList.get(id).setParticipant(false);
 		this.updateShare();
 	},

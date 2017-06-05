@@ -10,6 +10,7 @@ AssertError.prototype.constructor = AssertError;
 
 var assert = assert || function (val, message) { if (!val) throw AssertError(message); }
 var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
+var enableLogging = enableLogging || false;
 
 var TRACE = {};
 
@@ -38,15 +39,18 @@ function debug() {
 	var messages = ['DEBUG'].concat(Array.prototype.slice.call(arguments));
 	if (arguments.length && arguments[arguments.length - 1] === TRACE)
 		messages[messages.length - 1] = e.stack;
-	console.log.apply(console.log, messages);
+	if (enableLogging)
+		console.log.apply(console.log, messages);
 }
 function warning() {
 	var e = new Error;
-	console.log('WARNING', arguments, e.stack);
+	if (enableLogging)
+		console.log('WARNING', arguments, e.stack);
 }
 function error() {
 	var e = new Error;
-	console.log('%cERROR', 'color: red', arguments, e.stack);
+	if (enableLogging)
+		console.log('%cERROR', 'color: red', arguments, e.stack);
 }
 
 String.prototype.eform = function(map) { return this.form(map, true); }
