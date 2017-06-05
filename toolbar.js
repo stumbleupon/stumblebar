@@ -4,7 +4,7 @@ var Toolbar = {
 	},
 
 	handleInterests: function(interests) {
-		document.querySelector('#interests-container').innerHTML = '';
+		document.querySelector('#interests-container').textContent = '';
 
 		var addNode = document.querySelector(".interests-create-action.stub").cloneNode('deep');
 		addNode.removeClass('stub');
@@ -76,7 +76,7 @@ var Toolbar = {
 				document.querySelector("#dislike").addClass("enabled");
 		}
 
-		document.querySelector("#inline-info-body").innerHTML = '';
+		document.querySelector("#inline-info-body").textContent = '';
 		var message = "";
 		if (url.friend) {
 			var img = document.createElement('img');
@@ -153,7 +153,7 @@ var Toolbar = {
 		document.querySelector(".toolbar-container").addClass("convo-expanded");
 
 		if (!convo.position)
-			document.querySelector('#convo-container').innerHTML = '';
+			document.querySelector('#convo-container').textContent = '';
 
 		var currentOffset = document.querySelector('#convo-container').scrollHeight - document.querySelector('#convo-container').scrollTop;
 
@@ -369,7 +369,7 @@ var Toolbar = {
 
 	handleLists: function(lists) {
 		if (!lists.position)
-			document.querySelector('#lists-container').innerHTML = '';
+			document.querySelector('#lists-container').textContent = '';
 
 		lists.entries.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-lists-entry").cloneNode('deep');
@@ -392,7 +392,7 @@ var Toolbar = {
 
 	handleInbox: function(inbox) {
 		if (!inbox.position)
-			document.querySelector('#inbox-container').innerHTML = '';
+			document.querySelector('#inbox-container').textContent = '';
 
 		inbox.messages.forEach(function(entry) {
 			var entryNode = document.querySelector("#stub-inbox-entry").cloneNode('deep');
@@ -561,7 +561,7 @@ var Toolbar = {
 
 	handleMiscatInfo: function(info) {
 		var select = document.querySelector('#miscat-suggested-interest');
-		select.innerHTML = '';
+		select.textContent = '';
 
 		document.querySelector('#miscat-current-interest').innerText = info.current_category;
 
