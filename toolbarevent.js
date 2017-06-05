@@ -29,7 +29,7 @@ ToolbarEvent = {};
  */
 ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	var shouldLog = !(request && request.action == 'mouse');
-	shouldLog && console.log("ToolbarEvent.handleRequest", request);
+	shouldLog && debug("ToolbarEvent.handleRequest", request);
 	var action = request.action;
 	var requestedAction = request.action,
 		action = requestedAction && requestedAction.replace(/-[a-z]/g, function (x) {
@@ -41,7 +41,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 	ToolbarEvent[action](request, sender)
 		.then(function(response) {
 			if (response && response !== true) {
-				shouldLog && console.log("ToolbarEvent.sendResponse", request, response);
+				shouldLog && debug("ToolbarEvent.sendResponse", request, response);
 				try {
 					sendResponse(response);
 				} catch (e) {
@@ -53,7 +53,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 			}
 		})
 		.catch(function(err) {
-			console.log(err);
+			debug(err);
 			ToolbarEvent._error(request, sender, err, sender.tab.id);
 		});
 	return true;
@@ -81,7 +81,7 @@ ToolbarEvent.share = function handleShare(request, sender) {
 
 
 ToolbarEvent.shareToExternal = function(request, sender) {
-	console.log(request);
+	debug(request);
 	return ToolbarEvent
 		._sanity()
 		.then(function()      { return (request.url && request.url.urlid) || (request.data.contentId) || Page.getUrlId(sender.tab.id); }) // Find urlid by tab
@@ -103,7 +103,7 @@ ToolbarEvent.shareToExternal = function(request, sender) {
 				url:    shareableUrl,
 				rawurl: SUurl.url
 			});
-			console.log('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
+			debug('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
 			chrome.tabs.create({
 				url: shareToUrl
 			});

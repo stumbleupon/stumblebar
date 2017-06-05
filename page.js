@@ -294,7 +294,7 @@ Page.urlChange = function(href, tabid, incog, state) {
 	convoPath = href.match(new RegExp("^https?://" + config.baseUrl + config.convoPath));
 	if (convoPath) {
 		Page.state[tabid] = { convo: convoPath[config.convoPathNames.convoid] };
-		console.log('CONVO ON ' + tabid);
+		debug('CONVO ON ' + tabid);
 	}
 
 
@@ -335,7 +335,7 @@ Page.urlChange = function(href, tabid, incog, state) {
  */
 Page.handleTabUpdate = function(tabid, info, tab) {
 	var shouldLog = false;
-	shouldLog && console.log('update', tabid, info, tab);
+	shouldLog && debug('update', tabid, info, tab);
 	Page.ping().catch(function() {});
 
 	if (!Page.tab[tabid])
