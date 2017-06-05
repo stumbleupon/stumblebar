@@ -248,12 +248,12 @@ Page.urlChange = function(href, tabid, incog, state) {
 		if (urlid) {
 			debug('SUPATH MATCH ' + href);
 			// Stop current page from loading
-			chrome.tabs.executeScript(tabid, {
-				code: "window.stop();",
-			});
-			chrome.tabs.update(tabid, { url: 'about:blank' });
+			//chrome.tabs.executeScript(tabid, {
+			//	code: "window.stop();",
+			//});
+			//chrome.tabs.update(tabid, { url: 'about:blank' });
 
-			if (state == 'complete')
+			if (state != 'complete')
 				return;
 
 			// Override {urlid} if we have a returl (we're coming from a signup)

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Dependencies
-# npm install -g svgo chrome-webstore-manager web-ext uglifycss
+# npm install -g svgo chrome-webstore-manager web-ext uglifycss clean-css-cli
 # brew install pcregrep # OSX only
 
 this="$0"
@@ -72,8 +72,8 @@ done
 
 
 echo
-echo "== Compress CSS"
-git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} uglifycss --output target/{} target/{}
+echo "== Clean up CSS"
+git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} cleancss --format beautify -o target/{} target/{}
 
 
 export BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')"
