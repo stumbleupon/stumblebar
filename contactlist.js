@@ -163,7 +163,7 @@ ContactList.prototype = {
 				});
 			}
 		} else {
-			appendToElement.innerHTML = '';
+			appendToElement.textContent = '';
 		};
 		for(var i = 0; i < contacts.length; i++) {
 			var render = true,
