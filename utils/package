@@ -136,7 +136,7 @@ rm -rf StumbleBar
 cp -rp target StumbleBar
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
 pushd StumbleBar
-zip -q -r "$IEBUILD" .
+zip -q -r "../$IEBUILD" .
 popd
 
 
