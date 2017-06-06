@@ -100,14 +100,14 @@ echo
 echo "== Package Chrome"
 CHBUILD="artifact/StumbleBar Chrome $BUILD_VERSION.zip"
 rm -f "$CHBUILD"
-rm -rf StumbleBar
-cp -rp target StumbleBar
-cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
+rm -rf ChromeBar
+cp -rp target ChromeBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > ChromeBar/manifest.json
 echo '2i
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7zdc2iM/A4FIj7dXfd5zH6xzk8JNaLoAbupMqY3OO6HGCeHWcN2O8IbCnbBBaw37GPobhkBu9HpHdLJ8d7h74j2/mhIMPqgh4zlps2ZErJ7MkGSCARbz3VPuWkRQDw4ZEUGWR0qwhPzfxD6elCoYlj2F0D9/hNhPVLtW4DzrM3QIDAQAB",
 .
-wq' | ed StumbleBar/manifest.json > /dev/null
-zip -q -r "$CHBUILD" StumbleBar
+wq' | ed ChromeBar/manifest.json > /dev/null
+zip -q -r "$CHBUILD" ChromeBar
 if [ "$PUSH_CHROME" ]; then
 	#WEBSTORE_TOKEN="$(chrome-webstore-manager token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET)"
 	WEBSTORE_TOKEN="$(chrome-webstore-manager refresh_token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET --refresh_token $WEBSTORE_REFRESH_TOKEN)"
@@ -119,12 +119,14 @@ fi;
 # Opera
 echo
 echo "== Package Opera"
-OPBUILD="artifact/StumbleBar Opera $BUILD_VERSION.zip"
+OPBUILD="artifact/StumbleBar Opera $BUILD_VERSION.crx"
 rm -f "$OPBUILD"
-rm -rf StumbleBar
-cp -rp target StumbleBar
-cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
-zip -q -r "$OPBUILD" StumbleBar
+rm -rf OperaBar
+cp -rp target OperaBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > OperaBar/manifest.json
+cd OperaBar
+zip -q -r "../$OPBUILD" .
+cd ..
 
 
 # Edge
@@ -132,12 +134,12 @@ echo
 echo "== Package Edge"
 IEBUILD="artifact/StumbleBar Edge $BUILD_VERSION.zip"
 rm -f "$IEBUILD"
-rm -rf StumbleBar
-cp -rp target StumbleBar
-cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
-pushd StumbleBar
+rm -rf EdgeBar
+cp -rp target EdgeBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > EdgeBar/manifest.json
+cd EdgeBar
 zip -q -r "../$IEBUILD" .
-popd
+cd ..
 
 
 echo
