@@ -7,6 +7,23 @@ window.browser = (function () {
 		|| window.chrome;
 })();
 
+
+/**
+ * Edge needs to be able to iterate over NodeLists
+ */
+try {
+NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
+} catch(e) {}
+
+/**
+ * Edge doesn't support the Zoom apis
+ */
+try {
+browser.tabs.getZoom = browser.tabs.getZoom || function() {};
+browser.tabs.onZoomChange = browser.tabs.onZoomChange || { addListener: function() {} };
+} catch(e) {}
+
+
 /**
  * Object.assign
  */

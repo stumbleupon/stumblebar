@@ -1,8 +1,10 @@
 #!/bin/bash
 #
 # Dependencies
+# 
 # npm install -g svgo chrome-webstore-manager web-ext clean-css-cli
-# brew install pcregrep # OSX only
+# brew install imagemagick
+# brew install pcregrep  # OSX only
 
 this="$0"
 
@@ -138,6 +140,8 @@ rm -rf EdgeBar
 cp -rp target EdgeBar
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > EdgeBar/manifest.json
 cd EdgeBar
+convert asset/Logo-128.png -resize 40x40 asset/Logo-40.png
+sed -i '' -e 's~\("32" *: *"asset\/Logo-128.png"\)~\1, "40" : "asset/Logo-40.png"~g' manifest.json
 zip -q -r "../$IEBUILD" .
 cd ..
 
