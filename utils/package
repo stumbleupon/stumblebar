@@ -141,7 +141,8 @@ cp -rp target EdgeBar
 cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > EdgeBar/manifest.json
 cd EdgeBar
 convert asset/Logo-128.png -resize 40x40 asset/Logo-40.png
-sed -i '' -e 's~\("32" *: *"asset\/Logo-128.png"\)~\1, "40" : "asset/Logo-40.png"~g' manifest.json
+convert asset/Logo-128.png -resize 20x20 asset/Logo-20.png
+sed -i '' -e 's~\("32" *: *"asset\/Logo-128.png"\)~\1, "40" : "asset/Logo-40.png, "20" : "asset/Logo-20.png"~g' manifest.json
 zip -q -r "../$IEBUILD" .
 cd ..
 
