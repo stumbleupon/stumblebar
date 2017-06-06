@@ -4,7 +4,7 @@
 ToolbarEvent = {};
 
 /**
- * @typedef {Object} chrome.runtime.MessageSender
+ * @typedef {Object} browser.runtime.MessageSender
  * @property {tabs.Tab} tab Optional tabs.Tab. The tabs.Tab which opened the connection. This property will only be present when the connection was opened from a tab (including content scripts).
  * @property {Number} frameId Optional integer. The frame that opened the connection. Zero for top-level frames, positive for child frames. This will only be set when tab is set.
  * @property {String} id Optional string. The ID of the extension that sent the message, if the message was sent by an extension. Note that this is the extension's internal ID, not the ID in the manifest.json applications key.
@@ -23,7 +23,7 @@ ToolbarEvent = {};
 /**
  * route messages to handlers defined in this class and return the data via the provided callback
  * @param request {MessageRequest}
- * @property {chrome.runtime.MessageSender} sender -- provided by chrome
+ * @property {browser.runtime.MessageSender} sender -- provided by browser
  * @property {Function} sendResponse -- callback (technically optional, but required for this application)
  * @returns {boolean}
  */
@@ -66,7 +66,7 @@ ToolbarEvent.handleRequest = function(request, sender, sendResponse) {
 /**
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  */
 ToolbarEvent.share = function handleShare(request, sender) {
 	return ToolbarEvent
@@ -104,7 +104,7 @@ ToolbarEvent.shareToExternal = function(request, sender) {
 				rawurl: SUurl.url
 			});
 			debug('Share '+shareableUrl+' to '+request.data.value+" => "+shareToUrl);
-			chrome.tabs.create({
+			browser.tabs.create({
 				url: shareToUrl
 			});
 		});
@@ -114,12 +114,12 @@ ToolbarEvent.shareToExternal = function(request, sender) {
 /**
  * after the share save, marke the page state, return a convo object to the ui.
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  */
 ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
 	// Handle external sharing
 	request.data.external.forEach(function(site) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var url = (request && request.url && request.url.url) || (Page.tab[sender.tab.id] && Page.tab[sender.tab.id].url && Page.tab[sender.tab.id].url.url) || (tabs[0] && tabs[0].url);
 			var data = {value: site, contentId: request.data.contentId}
 			ToolbarEvent.shareToExternal({url: {url: url}, data: data}, sender);
@@ -159,7 +159,7 @@ ToolbarEvent.saveShare = function handleSaveShare(request, sender) {
  * Marks the current site as spam
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.reportSpam = function(request, sender) {
@@ -191,7 +191,7 @@ ToolbarEvent.reportSpam = function(request, sender) {
  * Blocks the current site
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.blockSite = function(request, sender) {
@@ -222,7 +222,7 @@ ToolbarEvent.blockSite = function(request, sender) {
  * Marks the current url as Not Available
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.miscat = function(request, sender) {
@@ -249,7 +249,7 @@ ToolbarEvent.miscat = function(request, sender) {
  * Marks the current url as Not Available
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.reportInfo = function(request, sender) {
@@ -272,7 +272,7 @@ ToolbarEvent.reportInfo = function(request, sender) {
  * Marks the current url as Not Available
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.reportMissing = function(request, sender) {
@@ -303,7 +303,7 @@ ToolbarEvent.reportMissing = function(request, sender) {
  * Dislikes the current url
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.dislike = function(request, sender) {
@@ -343,7 +343,7 @@ ToolbarEvent.dislike = function(request, sender) {
  * Unrates the current url
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.unrate = function(request, sender) {
@@ -380,7 +380,7 @@ ToolbarEvent.unrate = function(request, sender) {
  * Likes the current url
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.like = function(request, sender) {
@@ -420,7 +420,7 @@ ToolbarEvent.like = function(request, sender) {
  * Adds an item to a list
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.addToList = function(request, sender) {
@@ -446,7 +446,7 @@ ToolbarEvent.addToList = function(request, sender) {
  * Adds a list
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.addList = function(request, sender) {
@@ -464,7 +464,7 @@ ToolbarEvent.addList = function(request, sender) {
  * Gets a list of lists
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.lists = function(request, sender) {
@@ -486,7 +486,7 @@ ToolbarEvent.lists = function(request, sender) {
  * Gets a list of conversation threads
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.inbox = function(request, sender) {
@@ -526,7 +526,7 @@ ToolbarEvent.pendingUnread = function(request, sender) {
  * Record mode changes
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.mode = function(request, sender) {
@@ -543,7 +543,7 @@ ToolbarEvent.mode = function(request, sender) {
  * updates the url in the requesting frame.
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.stumble = function(request, sender) {
@@ -565,7 +565,7 @@ ToolbarEvent.stumble = function(request, sender) {
 			request.url = url;
 
 			Page.tab[sender.tab.id].stumbling = url.urlid;
-			chrome.tabs.update(sender.tab.id, { url: url.url });
+			browser.tabs.update(sender.tab.id, { url: url.url });
 
 			return ToolbarEvent._buildResponse({});
 		});
@@ -584,7 +584,7 @@ ToolbarEvent.stumble = function(request, sender) {
  * @param {MessageRequest} request
  * @param {String} request.data.id The conversation id
  * @param {String} request.data.comment The comment to be posted
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.replyConvo = function(request, sender) {
@@ -604,7 +604,7 @@ ToolbarEvent.replyConvo = function(request, sender) {
  * Closes a conversation
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.closeConvo = function(request, sender) {
@@ -617,7 +617,7 @@ ToolbarEvent.closeConvo = function(request, sender) {
  * Loads conversations messages
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.loadConvo = function(request, sender) {
@@ -682,7 +682,7 @@ ToolbarEvent.newEmailContact = function _newEmailContact(request, sender) {
  * If an url is provided, loads the stumbleupon url and relies on redirect
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.openConvo = function(request, sender) {
@@ -702,7 +702,7 @@ ToolbarEvent.openConvo = function(request, sender) {
 				Page.state[sender.tab.id] = { convo: request.data.id };
 				Page.note(sender.tab.id, url);
 				Page.tab[sender.tab.id].stumbling = url.urlid;
-				chrome.tabs.update(sender.tab.id, {
+				browser.tabs.update(sender.tab.id, {
 					"url": url.url
 				});
 				return ToolbarEvent._buildResponse({ });
@@ -711,7 +711,7 @@ ToolbarEvent.openConvo = function(request, sender) {
 				return ToolbarEvent.openConvo(request, sender);
 			});
 	} else if (request.data.url) {
-		chrome.tabs.update(sender.tab.id, {
+		browser.tabs.update(sender.tab.id, {
 			"url": request.data.url
 		});
 	}
@@ -781,13 +781,13 @@ ToolbarEvent.convoShowContacts = function(request, sender) {
  * Signs out of stumbleupon, marks as unathed
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.signout = function(request, sender) {
-	chrome.cookies.getAll({ domain: 'stumbleupon.com' }, function(cookies) {
+	browser.cookies.getAll({ domain: 'stumbleupon.com' }, function(cookies) {
 		cookies.forEach(function(cookie) {
-			chrome.cookies.remove({ url: 'https://' + cookie.domain + cookie.path, name: cookie.name });
+			browser.cookies.remove({ url: 'https://' + cookie.domain + cookie.path, name: cookie.name });
 		});
 	});
 	ToolbarEvent._notify("Signed Out");
@@ -799,15 +799,15 @@ ToolbarEvent.signout = function(request, sender) {
  * Loads the sign in page in the current active tab
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.signin =
 ToolbarEvent.loginPage = function(request, sender) {
 	ToolbarEvent.api._flush();
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		//Page.state[tabs[0].id] = { returl: tabs[0].url };
-		chrome.tabs.update((sender && sender.tab.id) || tabs[0].id, {
+		browser.tabs.update((sender && sender.tab.id) || tabs[0].id, {
 			"url": config.suPages.signin.form(config)
 		});
 	});
@@ -869,7 +869,7 @@ ToolbarEvent.ping = function() {
  * Gets the current toolbar state and url
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.init = function(request, sender) {
@@ -877,7 +877,7 @@ ToolbarEvent.init = function(request, sender) {
 	return ToolbarEvent._buildResponse({
 		url: Page.lastUrl(sender.tab.id),
 		state: Page.lastState(sender.tab.id),
-		version: chrome.runtime.getManifest().version,
+		version: browser.runtime.getManifest().version,
 		hash: Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
 	}, sender.tab.id);
 }
@@ -887,7 +887,7 @@ ToolbarEvent.init = function(request, sender) {
  * Record theme changes
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.theme = function(request, sender) {
@@ -900,7 +900,7 @@ ToolbarEvent.theme = function(request, sender) {
  * Record hide-toggle requests
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.toggleHidden = function(request, sender) {
@@ -913,7 +913,7 @@ ToolbarEvent.toggleHidden = function(request, sender) {
  * Record unhide requests
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.unhideToolbar = function(request, sender) {
@@ -926,7 +926,7 @@ ToolbarEvent.unhideToolbar = function(request, sender) {
  * Record hide requests
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.hideToolbar = function(request, sender) {
@@ -939,7 +939,7 @@ ToolbarEvent.hideToolbar = function(request, sender) {
  * Record reposition requests
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.repos = function(request, sender) {
@@ -952,12 +952,12 @@ ToolbarEvent.repos = function(request, sender) {
  * Handles url-change events, returns the su url
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.urlChange = function(request, sender) {
 	return new Promise(function(resolve, reject) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			var url = (request && request.url && request.url.url) || (tabs[0] && tabs[0].url);
 			if (url) {
 				Page.urlChange(url, tabs[0].id)
@@ -976,12 +976,12 @@ ToolbarEvent.urlChange = function(request, sender) {
  * Loads the stumbleupon info page in a new tab
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.info = function(request, sender) {
 	if ((request.url && request.url.urlid) || Page.getUrlId(sender.tab.id))
-		chrome.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) }) });
+		browser.tabs.create({ url: 'http://' + config.baseUrl + config.url.info.form({ urlid: (request.url && request.url.urlid) || Page.getUrlId(sender.tab.id) }) });
 	return Promise.resolve(true);
 }
 
@@ -990,7 +990,7 @@ ToolbarEvent.info = function(request, sender) {
  * Updates the active config.  Never called by the toolbar.
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent.updateConfig = function(request, sender) {
@@ -1019,7 +1019,7 @@ ToolbarEvent.interests = function() {
  * Toggle toolbar expanded state
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  */
 ToolbarEvent.stayExpanded = function(request, sender) {
 	ToolbarEvent.cache.mset({ stayExpanded: config.stayExpanded = !config.stayExpanded });
@@ -1031,7 +1031,7 @@ ToolbarEvent.stayExpanded = function(request, sender) {
  * Toggle toolbar expanded state
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  */
 ToolbarEvent.oneBar = function(request, sender) {
 	ToolbarEvent.cache.mset({ unloadNonVisibleBars: config.unloadNonVisibleBars = !config.unloadNonVisibleBars });
@@ -1043,7 +1043,7 @@ ToolbarEvent.oneBar = function(request, sender) {
  * Open an SU page
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  */
 ToolbarEvent.su = function(request, sender) {
 	if (config.suPagesNeedAuth.includes(request.data.value))
@@ -1053,9 +1053,9 @@ ToolbarEvent.su = function(request, sender) {
 	promise.then(function() {
 		if (!config.authed && config.suPagesNeedAuth.includes(request.data.value))
 			return Promise.reject();
-		chrome.tabs.create({ url: config.suPages[request.data.value].form(config) });
+		browser.tabs.create({ url: config.suPages[request.data.value].form(config) });
 	}).catch(function() {
-		chrome.tabs.create({ url: config.suPages['signin'].form(config) });
+		browser.tabs.create({ url: config.suPages['signin'].form(config) });
 	});
 };
 
@@ -1081,13 +1081,13 @@ ToolbarEvent._buildResponse = function(change, tabid) {
 	var response = Object.assign({}, { config: config }, change);
 	if (tabid) {
 		if (tabid === true || tabid === '*') {
-			chrome.tabs.query({}, function(tabs) {
+			browser.tabs.query({}, function(tabs) {
 				tabs.forEach(function (tab) {
-					chrome.tabs.sendMessage(tab.id, response);
+					browser.tabs.sendMessage(tab.id, response);
 				});
 			});
 		} else {
-			chrome.tabs.sendMessage(tabid, response);
+			browser.tabs.sendMessage(tabid, response);
 		}
 	}
 	return Promise.resolve(response);
@@ -1129,7 +1129,7 @@ ToolbarEvent._init = function() {
 	if (!config.interests || !config.interests.length)
 		ToolbarEvent.interests();
 
-	chrome.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
+	browser.runtime.onMessage.addListener(ToolbarEvent.handleRequest);
 
 	ToolbarEvent.ping();
 }
@@ -1173,7 +1173,7 @@ ToolbarEvent._error = function(request, sender, e, tabid) {
 			url: Page.lastUrl(tabid),
 			state: Page.lastState(tabid),
 			tab: Page.tab[tabid],
-			version: chrome.runtime.getManifest().version,
+			version: browser.runtime.getManifest().version,
 			request: request,
 			sender: sender,
 			tabid: tabid,
@@ -1204,7 +1204,7 @@ ToolbarEvent._notify = function(message, tabid) {
  * This is usually a side-effect of submit
  *
  * @param {MessageRequest} request
- * @param {chrome.runtime.MessageSender} sender
+ * @param {browser.runtime.MessageSender} sender
  * @return {Promise} toolbar config response
  */
 ToolbarEvent._discover = function(request, sender) {

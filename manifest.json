@@ -8,7 +8,7 @@
   "author": "StumbleUpon",
 
   "content_scripts": [{
-    "js": ["utils.js", "dragndrop.js", "bar.js"],
+    "js": ["polyfill.js", "utils.js", "dragndrop.js", "bar.js"],
     "css": ["bar.css"],
     "matches": ["<all_urls>"],
 	"match_about_blank": true,

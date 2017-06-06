@@ -5,7 +5,7 @@ var Cookie = function(config) {
 Cookie.prototype = {
 	get: function(name, exhaustive) {
 		return new Promise(function(resolve, reject) {
-			chrome.cookies.get({
+			browser.cookies.get({
 				url:    'http://' + this.baseUrl,
 				name:   name
 			}, function(r) {
@@ -13,9 +13,9 @@ Cookie.prototype = {
 					return resolve(r);
 
 				// Hacky hack to handle cookie fetches in private mode browsing in Firefox
-				chrome.cookies.getAllCookieStores(function(stores) {
+				browser.cookies.getAllCookieStores(function(stores) {
 					stores.forEach(function(store, key) {
-						chrome.cookies.getAll({ storeId: store.id, name: name }, function(cookies) {
+						browser.cookies.getAll({ storeId: store.id, name: name }, function(cookies) {
 							if (!cookies || !cookies.some)
 								return;
 							cookies.some(function(c) {

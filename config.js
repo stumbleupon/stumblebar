@@ -70,7 +70,7 @@ config.accessTokenHeader = 'X-Su-AccessTokenKey';
 config.defaultHeaders = { 
     "X-Su-ConsumerKey":    "fdca7c36dbe636926ba914ac07c6d00241ec3441",
     "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
-    "X-Su-Version"    :    "Unibar " + chrome.runtime.getManifest().version,
+    "X-Su-Version"    :    "Unibar " + browser.runtime.getManifest().version,
 };
 
 config.api = {}

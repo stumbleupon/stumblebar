@@ -84,10 +84,10 @@ Page.handleIconClick = function(e) {
  */
 Page.ping = function(tabid) {
 	return new Promise(function(resolve, reject) {
-		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			if (!tabs[0])
 				return;
-			chrome.tabs.sendMessage(tabid || tabs[0].id, {type: "ping", info: tabs[0]}, function(response) {
+			browser.tabs.sendMessage(tabid || tabs[0].id, {type: "ping", info: tabs[0]}, function(response) {
 				// Handle pages that we can't inject
 				if (!response || response.type != 'pong')
 					reject({tab: {id: tabid || tabs[0].id}, response});
@@ -135,7 +135,7 @@ Page.getUrl = function(tabid) {
 
 	if (!url) {
 		return new Promise(function(resolve, reject) {
-			chrome.tabs.get(tabid, function(tab) {
+			browser.tabs.get(tabid, function(tab) {
 				if (!tab || !tab.id || !tab.url)
 					return reject(new ToolbarError('Page', 'nourl', Page.tab[tabid]));
 				resolve(tab.url);
@@ -145,7 +145,7 @@ Page.getUrl = function(tabid) {
 
 	return Promise.resolve(url);
 
-//		chrome.tabs.get(tabid, function(tab) {
+//		browser.tabs.get(tabid, function(tab) {
 //			resolve(tab.url);
 //		});
 }
@@ -236,8 +236,8 @@ Page.note = function(tabid, url, onlynote) {
  * @return {Promise}
  */
 Page.urlChange = function(href, tabid, incog, state) {
-	chrome.tabs.getZoom(tabid, function(zoom) {
-		chrome.tabs.sendMessage(tabid, { zoom: zoom });
+	browser.tabs.getZoom(tabid, function(zoom) {
+		browser.tabs.sendMessage(tabid, { zoom: zoom });
 	});
 
 	// Handle http://su/su/{urlid} urls.  Stop the request, redirect directly to page, return a promise
@@ -248,10 +248,10 @@ Page.urlChange = function(href, tabid, incog, state) {
 		if (urlid) {
 			debug('SUPATH MATCH ' + href);
 			// Stop current page from loading
-			//chrome.tabs.executeScript(tabid, {
+			//browser.tabs.executeScript(tabid, {
 			//	code: "window.stop();",
 			//});
-			//chrome.tabs.update(tabid, { url: 'about:blank' });
+			//browser.tabs.update(tabid, { url: 'about:blank' });
 
 			if (state != 'complete')
 				return;
@@ -259,14 +259,14 @@ Page.urlChange = function(href, tabid, incog, state) {
 			// Override {urlid} if we have a returl (we're coming from a signup)
 			if (Page.state[tabid] && Page.state[tabid].returl) {
 				var url = Page.state[tabid].returl;
-				chrome.tabs.update(tabid, { url: url });
+				browser.tabs.update(tabid, { url: url });
 				ToolbarEvent.unhideToolbar();
 				return ToolbarEvent._buildResponse({ hidden: false });
 			}
 
 			return Promise.resolve(Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid))
 				.then(function(url) {
-					chrome.tabs.update(tabid, { url: url.url });
+					browser.tabs.update(tabid, { url: url.url });
 					ToolbarEvent.unhideToolbar();
 
 					return ToolbarEvent._buildResponse({ url: url, hidden: false })
@@ -316,12 +316,12 @@ Page.urlChange = function(href, tabid, incog, state) {
 			if (!incog)
 				Page.note(tabid, url, Page.tab[tabid].status.url != href);
 			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
-				chrome.tabs.sendMessage(tabid, { url: url }, function() {});
+				browser.tabs.sendMessage(tabid, { url: url }, function() {});
 		})
 		.catch(function(error) {
 			Page.tab[tabid].url = {};
 			if (!(Page.tab[tabid] || {}).status || Page.tab[tabid].status.url == href)
-				chrome.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
+				browser.tabs.sendMessage(tabid, { url: { url: href } }, function() {});
 		});
 	;
 }
@@ -376,21 +376,21 @@ Page.handleTabUpdate = function(tabid, info, tab) {
  */
 Page.handleTabSwitch = function(state) {
 	if (config.unloadNonVisibleBars) {
-		chrome.tabs.query({}, function(tabs) {
+		browser.tabs.query({}, function(tabs) {
 			tabs.forEach(function (tab) {
 				// We have to keep tabs persistent in incognito because we don't retain state for them
 				if (tab.incognito)
 					return;
 				if (state.tabId == tab.id)
-					chrome.tabs.sendMessage(tab.id, {type: 'add'});
+					browser.tabs.sendMessage(tab.id, {type: 'add'});
 				else
-					chrome.tabs.sendMessage(tab.id, {type: 'remove'});
+					browser.tabs.sendMessage(tab.id, {type: 'remove'});
 			});
 		});
 	}
 }
 Page.handleWindowSwitch = function(state) {
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		if (tabs && tabs[0] && tabs[0].id)
 			Page.handleTabSwitch({tabId: tabs[0].id})
 	})
@@ -411,14 +411,14 @@ Page.handleTabClose = function(tabid) {
 }
 
 Page.handleZoom = function(zoom) {
-	chrome.tabs.sendMessage(zoom.tabId, { zoom: zoom.newZoomFactor });
+	browser.tabs.sendMessage(zoom.tabId, { zoom: zoom.newZoomFactor });
 }
 
 Page.handleFreshen = function() {
-	chrome.tabs.query({}, function(tabs) {
+	browser.tabs.query({}, function(tabs) {
 		tabs.forEach(function(tab) {
 			try {
-				chrome.tabs.executeScript(tab.id, {
+				browser.tabs.executeScript(tab.id, {
 					code: "" +
 						  "if (document.getElementById('discoverbar')) {" +
 						  "  document.documentElement.removeChild(document.getElementById('discoverbar'), document.documentElement); " +
@@ -438,19 +438,19 @@ Page.handleFreshen = function() {
  */
 Page.init = function() {
 	// listen to tab URL changes
-	chrome.tabs.onUpdated.addListener(Page.handleTabUpdate);
+	browser.tabs.onUpdated.addListener(Page.handleTabUpdate);
 
 	// listen to tab switching
-	chrome.tabs.onActivated.addListener(Page.handleTabSwitch);
-	chrome.windows.onFocusChanged.addListener(Page.handleWindowSwitch);
+	browser.tabs.onActivated.addListener(Page.handleTabSwitch);
+	browser.windows.onFocusChanged.addListener(Page.handleWindowSwitch);
 
-	chrome.tabs.onRemoved.addListener(Page.handleTabClose);
+	browser.tabs.onRemoved.addListener(Page.handleTabClose);
 
-	chrome.tabs.onZoomChange.addListener(Page.handleZoom);
+	browser.tabs.onZoomChange.addListener(Page.handleZoom);
 
-	chrome.browserAction.onClicked.addListener(Page.handleIconClick);
+	browser.browserAction.onClicked.addListener(Page.handleIconClick);
 
-	chrome.runtime.onInstalled.addListener(Page.handleFreshen);
+	browser.runtime.onInstalled.addListener(Page.handleFreshen);
 
 
 	Page._prerender  = document.createElement('link');

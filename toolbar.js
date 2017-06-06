@@ -296,7 +296,7 @@ var Toolbar = {
 	},
 
 	handleConfig: function(config) {
-		chrome.storage.local.set({'toolbarConfigCache': config});
+		browser.storage.local.set({'toolbarConfigCache': config});
 		if (config.theme && config.theme != Toolbar.config.theme) {
 			var classes = document.querySelector("body").classList;
 			for (var i = 0; i < classes.length; i++)
@@ -494,7 +494,7 @@ var Toolbar = {
 
 	dispatch: function(a, data) {
 		return new Promise(function (resolve, reject) {
-			chrome.runtime.sendMessage({
+			browser.runtime.sendMessage({
 				action: a,
 				url: Toolbar.url || {},
 				data: data || {}
@@ -1165,14 +1165,14 @@ var Toolbar = {
 	},
 
 	init: function() {
-		chrome.storage.local.get('toolbarConfigCache', function(res) {
+		browser.storage.local.get('toolbarConfigCache', function(res) {
 			if (res && res.toolbarConfigCache)
 				Toolbar.handleConfig(res.toolbarConfigCache);
 		});
 
 		// Event and message handling
 		document.getElementById("toolbar").addEventListener("click", Toolbar.handleEvent);
-		chrome.runtime.onMessage.addListener(Toolbar._handleResponse);
+		browser.runtime.onMessage.addListener(Toolbar._handleResponse);
 		//window.addEventListener("message", Toolbar.handleIframeEvent, true);
 
 		// Toolbar initialization
@@ -1204,20 +1204,6 @@ var Toolbar = {
 
 		this._initShareContacts();
 		this._initConvoContacts();
-
-		// Hack for chrome to handle disappearing SVG background images
-		if( /webkit/gi.test(navigator.userAgent.toLowerCase()) ){
-			(window.svg || []).forEach(function(svgpath) {
-				var obj = document.createElement("img");
-				obj.setAttribute("type", "image/svg+xml");
-				obj.setAttribute("src", svgpath);
-				obj.setAttribute("width", "1");
-				obj.setAttribute("height", "1");
-				obj.setAttribute("style", "width: 0px; height: 0px; position: absolute;visibility : hidden");
-				document.getElementsByTagName("html")[0].appendChild(obj);
-			});
-		}
-
 	},
 	// @TODO: documentation -- why?  what depends on this?  -- please don't make me search.
 	_events: [{ ev: 'click', id: 'stumble', cb: 'stumble' }]

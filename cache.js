@@ -47,7 +47,7 @@ Cache.prototype = {
 	get: function(key, fallback) {
 		key = this.defaults.prefix + key;
 		return new Promise(function (resolve, reject) {
-			return chrome.storage.local.get(key, function(result) {
+			return browser.storage.local.get(key, function(result) {
 				if (!key)
 					resolve(result);
 				else if (result.hasOwnProperty(key)) {
@@ -76,7 +76,7 @@ Cache.prototype = {
 
 	mset: function(map) {
 		return new Promise(function (resolve, reject) {
-			return chrome.storage.local.set(map, resolve);
+			return browser.storage.local.set(map, resolve);
 		});
 	},
 

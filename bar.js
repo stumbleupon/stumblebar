@@ -1,7 +1,7 @@
 (function() {
 	IframeBar = function(id, origin) {
 		this.id = id || this.id;
-		this.origin = origin || chrome.extension.getURL('').slice(0, -1);
+		this.origin = origin || browser.extension.getURL('').slice(0, -1);
 
 		this.init();
 	}
@@ -38,7 +38,7 @@
 		createIframe: function() {
 			var iframe = document.createElement('iframe');
 			iframe.sandbox = "allow-scripts allow-forms allow-same-origin";
-			iframe.src = chrome.runtime.getURL(this.theme.url);
+			iframe.src = browser.runtime.getURL(this.theme.url);
 			iframe.style.cssText = '';
 			iframe.allowTransparency = "true";
 			iframe.scrolling = 'no';
@@ -73,7 +73,7 @@
 			this.log('UNINIT');
 			if (IframeBar.pingListener) {
 				try {
-				chrome.runtime.onMessage.removeListener(IframeBar.pingListener);
+				browser.runtime.onMessage.removeListener(IframeBar.pingListener);
 				} catch (e) {}
 				IframeBar.pingListener = false;
 			}
@@ -104,7 +104,7 @@
 		},
 
 		registerPingListener: function() {
-			chrome.runtime.onMessage.addListener(
+			browser.runtime.onMessage.addListener(
 				IframeBar.pingListener = 
 				function(request, sender, sendResponse) {
 					if (request.type == "ping") {

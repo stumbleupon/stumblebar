@@ -36,7 +36,7 @@ var Settings = {
 
 	update: function(e) {
 		var elem = e.target || e.currentTarget;
-		chrome.runtime.sendMessage({
+		browser.runtime.sendMessage({
 			action: 'updateConfig',
 			url: {},
 			data: { [elem.name] : ( elem.getAttribute('data-type') == 'scalar' ) ? elem.value : JSON.parse(elem.value) }
@@ -44,12 +44,12 @@ var Settings = {
 	},
 
 	init: function() {
-		chrome.runtime.sendMessage({
+		browser.runtime.sendMessage({
 			action: 'init',
 			url: {},
 			data: {}
 		}, Settings.buildSettings);
-		chrome.runtime.onMessage.addListener(Settings.buildSettings);
+		browser.runtime.onMessage.addListener(Settings.buildSettings);
 	}
 }
 

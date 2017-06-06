@@ -1,16 +1,6 @@
-function AssertError(message) {
-				this.message = message || 'Assertion Failed';
-				var last_part = new Error().stack.match(/[^\s]+$/);
-				this.stack = `${this.name} at ${last_part}`;
-}
-AssertError.prototype = Object.create(Error.prototype);
-AssertError.prototype.name = "AssertError";
-AssertError.prototype.message = "";
-AssertError.prototype.constructor = AssertError;
-
-var assert = assert || function (val, message) { if (!val) throw AssertError(message); }
-var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 var enableLogging = enableLogging || false;
+
+var bt = bt || function(e) { var e = e || new Error(); console.log(e.stack); }
 
 var TRACE = {};
 

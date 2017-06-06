@@ -25,7 +25,7 @@ DragNDrop.prototype = {
 			this.sendToBackground({mouse: this.mpos, action: 'mouse'});
 		}.bind(this), 100);
 
-		chrome.storage.local.get('redrawCache', function(res) {
+		browser.storage.local.get('redrawCache', function(res) {
 			try {
 				this.redrawCache = res.redrawCache;
 				if (this.redrawCache) {
@@ -68,7 +68,7 @@ DragNDrop.prototype = {
 
 	sendToBackground: function(msg) {
 		try {
-			chrome.runtime.sendMessage(msg, function(response) {});
+			browser.runtime.sendMessage(msg, function(response) {});
 		} catch(e) {
 			error(e);
 			if (this.messageSendFailCallback)
@@ -408,7 +408,7 @@ DragNDrop.prototype = {
 		this.storeRedrawCache(this.redrawCache);
 	},
 
-	storeRedrawCache: debounce(function(c) { chrome.storage.local.set({'redrawCache': c}); }, 250),
+	storeRedrawCache: debounce(function(c) { browser.storage.local.set({'redrawCache': c}); }, 250),
 
 	fullscreen: function(fullscreen) {
 		this.isFullscreen = fullscreen;
