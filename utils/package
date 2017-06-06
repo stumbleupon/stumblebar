@@ -87,7 +87,7 @@ echo "== Package Firefox"
 FFBUILD="artifact/StumbleBar Firefox $BUILD_VERSION.zip"
 rm -f "$FFBUILD"
 cd target
-zip -r "../$FFBUILD" .
+zip -q -r "../$FFBUILD" .
 if [ "$PUSH_MOZILLA" ]; then
 	# It's okay if this fails. We expect it to fail.  
 	web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET --artifacts-dir=../artifact/ || true
@@ -107,7 +107,7 @@ echo '2i
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7zdc2iM/A4FIj7dXfd5zH6xzk8JNaLoAbupMqY3OO6HGCeHWcN2O8IbCnbBBaw37GPobhkBu9HpHdLJ8d7h74j2/mhIMPqgh4zlps2ZErJ7MkGSCARbz3VPuWkRQDw4ZEUGWR0qwhPzfxD6elCoYlj2F0D9/hNhPVLtW4DzrM3QIDAQAB",
 .
 wq' | ed StumbleBar/manifest.json > /dev/null
-zip -r "$CHBUILD" StumbleBar
+zip -q -r "$CHBUILD" StumbleBar
 if [ "$PUSH_CHROME" ]; then
 	#WEBSTORE_TOKEN="$(chrome-webstore-manager token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET)"
 	WEBSTORE_TOKEN="$(chrome-webstore-manager refresh_token --client_id $WEBSTORE_CLIENT_ID --client_secret $WEBSTORE_CLIENT_SECRET --refresh_token $WEBSTORE_REFRESH_TOKEN)"
@@ -116,9 +116,35 @@ if [ "$PUSH_CHROME" ]; then
 fi;
 
 
+# Opera
+echo
+echo "== Package Opera"
+OPBUILD="artifact/StumbleBar Opera $BUILD_VERSION.zip"
+rm -f "$OPBUILD"
+rm -rf StumbleBar
+cp -rp target StumbleBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
+zip -q -r "$OPBUILD" StumbleBar
+
+
+# Edge
+echo
+echo "== Package Edge"
+IEBUILD="artifact/StumbleBar Edge $BUILD_VERSION.zip"
+rm -f "$IEBUILD"
+rm -rf StumbleBar
+cp -rp target StumbleBar
+cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > StumbleBar/manifest.json
+pushd StumbleBar
+zip -q -r "$IEBUILD" .
+popd
+
+
 echo
 echo 'Firefox build: "'"$FFBUILD"'"'
 echo 'Chrome  build: "'"$CHBUILD"'"'
+echo 'Opera   build: "'"$OPBUILD"'"'
+echo 'Edge    build: "'"$IEBUILD"'"'
 
 popd
 
