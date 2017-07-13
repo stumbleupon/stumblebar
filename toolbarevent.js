@@ -1,3 +1,8 @@
+chrome.runtime.onInstalled.addListener(function() {
+	console.log('installed')
+	chrome.tabs.create({url: 'http://help.stumbleupon.com/customer/en/portal/articles/665207-stumblebar-faq'});
+})
+
 /**
  * @class A class used to manage messaging to and from the background
  */
