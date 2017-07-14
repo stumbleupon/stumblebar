@@ -1,6 +1,7 @@
-chrome.runtime.onInstalled.addListener(function() {
-	console.log('installed')
-	chrome.tabs.create({url: 'http://help.stumbleupon.com/customer/en/portal/articles/665207-stumblebar-faq'});
+chrome.runtime.onInstalled.addListener(function(details) {
+	if(details.reason === 'install') {
+		chrome.tabs.create({url: 'http://help.stumbleupon.com/customer/en/portal/articles/665207-stumblebar-faq'});
+	}
 })
 
 /**
