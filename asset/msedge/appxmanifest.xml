@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package
+	xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+	xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+	xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+	IgnorableNamespaces="uap3">
+	<Identity
+		Name="StumbleUpon.StumbleBarbyStumbleUpon"
+		Publisher="CN=D2222613-D553-477F-BE8C-37F61E7C5DA5"
+		Version="SUBSTITUTE-VERSION-HERE" /> <!-- UPDATE IDENTITY -->
+
+	<Properties>
+		<DisplayName>StumbleBar by StumbleUpon</DisplayName>
+		<PublisherDisplayName>StumbleUpon</PublisherDisplayName> <!-- UPDATE PUBLISHER DISPLAY NAME -->
+		<Logo>Assets\StoreLogo.png</Logo>
+	</Properties>
+
+	<Dependencies>
+		<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.15063.0" MaxVersionTested="10.0.15063.0" />
+	</Dependencies>
+
+	<Resources>
+		<Resource Language="en-us" />
+		<Resource uap:Scale="200"/>
+	</Resources>
+
+	<Applications>
+		<Application Id="App">
+			<uap:VisualElements
+				AppListEntry="none"
+				DisplayName="StumbleBar by StumbleUpon"
+				Square150x150Logo="Assets\Square150x150Logo.png"
+        		Square44x44Logo="Assets\Square44x44Logo.png"
+				Description="Discover the best of the web"
+				BackgroundColor="transparent">
+			</uap:VisualElements>
+			<Extensions>
+				<uap3:Extension Category="windows.appExtension">
+					<uap3:AppExtension
+						Name="com.microsoft.edge.extension"
+						Id="EdgeExtension"
+						PublicFolder="Extension"
+						DisplayName="StumbleBar by StumbleUpon">
+						<uap3:Properties>
+							<Capabilities>
+								<Capability Name="websiteInfo"/>
+								<Capability Name="websiteCookies"/>
+								<Capability Name="websiteContent"/>
+								<Capability Name="browserStorage"/>
+							</Capabilities>
+						</uap3:Properties>
+					</uap3:AppExtension>
+				</uap3:Extension>
+			</Extensions>
+		</Application>
+	</Applications>
+</Package>
