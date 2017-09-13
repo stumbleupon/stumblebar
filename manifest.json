@@ -53,6 +53,7 @@
   "background": {
 	  "persistent": true,
 	  "scripts": [
+		  "guid.js",
 		  "polyfill.js",
 		  "utils.js",
 		  "config.js",
