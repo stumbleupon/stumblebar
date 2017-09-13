@@ -142,9 +142,9 @@ config.api.stumbleupon = {
 
 browser.storage.local.get('clientid', function(obj) {
 	if(obj && obj.clientid) {
-		config.defaultHeaders['X-Su-ClientId'] = obj.clientid.value
+		config.defaultHeaders['X-Su-ClientId'] = obj.clientid
 	} else {
-		var guid = Guid.create()
+		var guid = Guid.create().value
 		config.defaultHeaders['X-Su-ClientId'] = guid
 		return browser.storage.local.set({clientid: guid})
 	}
