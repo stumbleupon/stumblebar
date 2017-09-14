@@ -371,7 +371,7 @@ StumbleUponApi.prototype = {
 				if (this.seen[stumbles[stumblePos].urlid]) {
 					debug("Already seen", stumbles[stumblePos].urlid);
 					this.reportStumble([stumbles[stumblePos].urlid], stumbles[stumblePos].mode, stumbles[stumblePos].modeinfo);
-					return this.nextUrl(peek ? peek + 1 : 0, retry + 1);
+					return this.nextUrl(peek ? peek + 1 : 0, peek ? retry : retry + 1);
 				}
 
 				// If we're nearing the end of the buffer, grab more stumbles
