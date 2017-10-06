@@ -67,11 +67,11 @@ config.modes = {
 
 config.accessToken = 'su_accesstoken'
 config.accessTokenHeader = 'X-Su-AccessTokenKey';
-config.defaultHeaders = { 
+config.defaultHeaders = {
     "X-Su-ConsumerKey":    "fdca7c36dbe636926ba914ac07c6d00241ec3441",
-    "X-Su-ClientId"   :    "448f3699-fbb8-a606-3f20-2d3e620c152c"    ,
     "X-Su-Version"    :    "Unibar " + browser.runtime.getManifest().version,
 };
+
 
 config.api = {}
 config.api.conversations = {
@@ -140,4 +140,12 @@ config.api.stumbleupon = {
 	accessTokenHeader: config.accessTokenHeader,
 }
 
-
+browser.storage.local.get('clientid', function(obj) {
+	if(obj && obj.clientid) {
+		config.defaultHeaders['X-Su-ClientId'] = obj.clientid
+	} else {
+		var guid = Guid.create().value
+		config.defaultHeaders['X-Su-ClientId'] = guid
+		return browser.storage.local.set({clientid: guid})
+	}
+})
