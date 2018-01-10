@@ -1,3 +1,7 @@
 /ChromeBar
 /EdgeBar
 /OperaBar
+StumbleBar/
+artifact/
+target/
+utils/prepare.sh
