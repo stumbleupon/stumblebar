@@ -359,7 +359,7 @@ StumbleUponApi.prototype = {
 						return this.nextUrl(peek ? 1 : 0, retry + 1);
 					}.bind(this));
 				}
-	
+
 				// If we're not peeking, move the stumble pointer forward
 				stumblePos += peek || 1;
 				if (!peek) {
@@ -371,7 +371,7 @@ StumbleUponApi.prototype = {
 				if (this.seen[stumbles[stumblePos].urlid]) {
 					debug("Already seen", stumbles[stumblePos].urlid);
 					this.reportStumble([stumbles[stumblePos].urlid], stumbles[stumblePos].mode, stumbles[stumblePos].modeinfo);
-					return this.nextUrl(peek ? peek + 1 : 0, retry);
+					return this.nextUrl(peek ? peek + 1 : 0, peek ? retry : retry + 1);
 				}
 
 				// If we're nearing the end of the buffer, grab more stumbles
@@ -437,4 +437,3 @@ StumbleUponApi.prototype = {
 	}
 
 }
-
