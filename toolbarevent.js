@@ -96,7 +96,7 @@ ToolbarEvent.shareToExternal = function(request, sender) {
 		.then(function(urlid) { return urlid || ToolbarEvent._discover(request, sender).then(function(url) { return url.publicid; }); }) // Discover url if we don't have an urlid
 		.then(function(urlid) { return urlid && (Page.getUrlByUrlid(urlid, config.mode) || ToolbarEvent.api.getUrlByUrlid(urlid)); }) // Get the SU Url Object
  		.then(function(SUurl) { // SHARE IT!!!!
-			var shareableUrl = request.data.value === 'mix' ? SUurl.url : config.suPages.stumble
+			var shareableUrl = (request.data.value === 'mix') ? SUurl.url : config.suPages.stumble
 			.form({
 				baseProto: config.baseProto,
 				baseUrl:   config.baseUrl,
