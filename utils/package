@@ -81,6 +81,7 @@ git ls-tree -r master --name-only | egrep '\.css' | xargs -I {} node_modules/cle
 
 
 export BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')"
+export MS_BUILD_VERSION="$(cat manifest.json | grep '"version"' | sed -e 's/.*: "//' -e 's/".*//')"
 if [ ! "$(egrep 'heads/master$' .git/HEAD)" ]; then
 	export BUILD_VERSION="${BUILD_VERSION}$(cat .git/HEAD | sed -e 's@.*/@@g' -e 's/^/-beta-/g')"
 fi
@@ -144,7 +145,7 @@ cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > target/manifest.
 node node_modules/manifoldjs/manifoldjs.js -l debug -p edgeextension -f edgeextension -m target/manifest.json -d EdgeBar/
 cp -rp asset/msedge/appxmanifest.xml EdgeBar/StumbleBar/edgeextension/manifest/
 cp -f asset/msedge/Assets/* EdgeBar/StumbleBar/edgeextension/manifest/Assets/
-sed -i -e "s~SUBSTITUTE-VERSION-HERE~${BUILD_VERSION}.0.0~" EdgeBar/StumbleBar/edgeextension/manifest/appxmanifest.xml
+sed -i -e "s~SUBSTITUTE-VERSION-HERE~${MS_BUILD_VERSION}.0.0~" EdgeBar/StumbleBar/edgeextension/manifest/appxmanifest.xml
 #cat manifest.json | pcregrep -v -M '"applications"(.|\n)*?},' > EdgeBar/Extension/manifest.json
 cd EdgeBar/StumbleBar/edgeextension/manifest/Extension
 convert asset/Logo-128.png -resize 40x40 asset/Logo-40.png
